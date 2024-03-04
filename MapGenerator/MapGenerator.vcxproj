@@ -76,6 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)MapGenerator\ThirdParty;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;$(SolutionDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -90,6 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)MapGenerator\ThirdParty;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;$(SolutionDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)MapGenerator\ThirdParty;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)MapGenerator\ThirdParty;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;$(SolutionDir)\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <AdditionalModuleDependencies>
       </AdditionalModuleDependencies>
@@ -124,6 +126,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)MapGenerator\ThirdParty;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;$(SolutionDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,6 +155,9 @@
     <ClCompile Include="Scene\Mesh.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\TerrainEntity.cpp" />
+    <ClCompile Include="Src\core\Engine.cpp" />
+    <ClCompile Include="Src\glad.c" />
+    <ClCompile Include="Src\Main.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_demo.cpp" />
     <ClCompile Include="ThirdParty\imgui\imgui_draw.cpp" />
@@ -181,6 +187,7 @@
     <ClInclude Include="Mesh\CubeMesh.h" />
     <ClInclude Include="Scene\TerrainEntity.h" />
     <ClInclude Include="Scene\TerrainParameters.h" />
+    <ClInclude Include="Src\core\Engine.h" />
     <ClInclude Include="ThirdParty\imgui\imconfig.h" />
     <ClInclude Include="ThirdParty\imgui\imgui.h" />
     <ClInclude Include="ThirdParty\imgui\imgui_impl_glfw.h" />

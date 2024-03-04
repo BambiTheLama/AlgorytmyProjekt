@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Src">
+      <UniqueIdentifier>{9fc6e92f-aa76-4de9-a82c-ddf5149433ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\core">
+      <UniqueIdentifier>{298201a6-9421-404c-97bf-9a0118b4a3c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MapGenerator.cpp">
@@ -92,6 +98,15 @@
     </ClCompile>
     <ClCompile Include="Mesh\PlaneMesh.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Main.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\core\Engine.cpp">
+      <Filter>Src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\glad.c">
+      <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +196,9 @@
     </ClInclude>
     <ClInclude Include="Mesh\PlaneMesh.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\Engine.h">
+      <Filter>Src\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

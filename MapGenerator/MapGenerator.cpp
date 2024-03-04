@@ -2,7 +2,7 @@
 #include "Core/EngineCore.h"
 #include "Mesh/TerrainMesh.h"
 #include "Mesh/PlaneMesh.h"
-
+#ifdef PjoterMode
 int main()
 {
     EngineCore* core = EngineCore::GetInstance();
@@ -35,3 +35,4 @@ int main()
  
     return 0;
 }
+#endif
