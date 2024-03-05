@@ -10,7 +10,7 @@ public:
 
 	~VAO();
 
-	void linkData(VBO *vbo, GLuint index, GLuint size, GLenum type, GLsizeiptr stride, void* offset);
+	void linkData(VBO &vbo, GLuint index, GLuint size, GLenum type, GLsizeiptr stride, void* offset);
 
 	void bind();
 

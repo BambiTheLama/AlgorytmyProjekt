@@ -6,7 +6,7 @@ class VBO
 {
 	GLuint ID;
 public:
-	VBO(GLfloat* vertices, GLsizeiptr size);
+	VBO(GLfloat* vertices, GLsizeiptr size, GLenum drawType = GL_STATIC_DRAW);
 
 	~VBO();
 

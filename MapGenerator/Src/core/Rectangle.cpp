@@ -22,9 +22,9 @@ Rectangle::Rectangle(float x, float y, float w, float h)
 	vao.bind();
 	colors = new VBO(col, sizeof(col));
 	vertices = new VBO(ver, sizeof(ver));
-	vao.linkData(vertices, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+	vao.linkData(*vertices, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
 
-	vao.linkData(colors, 1, 4, GL_FLOAT, 4 * sizeof(float), (void*)0);
+	vao.linkData(*colors, 1, 4, GL_FLOAT, 4 * sizeof(float), (void*)0);
 	index = new EBO(ind, sizeof(ind));
 
 	vao.unbind();
