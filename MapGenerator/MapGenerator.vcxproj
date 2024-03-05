@@ -146,7 +146,7 @@
     <ClCompile Include="Src\core\EBO.cpp" />
     <ClCompile Include="Src\core\Engine.cpp" />
     <ClCompile Include="Src\core\Rectangle.cpp" />
-    <ClCompile Include="Src\core\Shaider.cpp" />
+    <ClCompile Include="Src\core\Shader.cpp" />
     <ClCompile Include="Src\core\VAO.cpp" />
     <ClCompile Include="Src\core\VBO.cpp" />
     <ClCompile Include="Src\glad.c" />
@@ -156,7 +156,7 @@
     <ClInclude Include="Src\core\EBO.h" />
     <ClInclude Include="Src\core\Engine.h" />
     <ClInclude Include="Src\core\Rectangle.h" />
-    <ClInclude Include="Src\core\Shaider.h" />
+    <ClInclude Include="Src\core\Shader.h" />
     <ClInclude Include="Src\core\VAO.h" />
     <ClInclude Include="Src\core\VBO.h" />
   </ItemGroup>

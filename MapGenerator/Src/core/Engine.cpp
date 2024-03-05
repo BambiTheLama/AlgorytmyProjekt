@@ -3,7 +3,7 @@
 #include "EBO.h"
 #include "VAO.h"
 #include "VBO.h"
-#include "Shaider.h"
+#include "Shader.h"
 #include "Rectangle.h"
 
 Engine::Engine()
@@ -55,8 +55,8 @@ void Engine::start()
 {
 	float lastTime = glfwGetTime();	
 
-	Shaider shaider("Src/Shader/Dif.vert", "Src/Shader/Dif.frag");
-	Rectangle rec(0, 0, 20, 20);
+	Shader Shader("Src/Shader/Dif.vert", "Src/Shader/Dif.frag");
+	Rectangle rec(0, 0, 1, 0.7f);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -70,7 +70,7 @@ void Engine::start()
 		glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		shaider.active();
+		Shader.active();
 		rec.draw();
 		glfwSwapBuffers(window);
 

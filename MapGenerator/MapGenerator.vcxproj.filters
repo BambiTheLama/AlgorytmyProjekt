@@ -34,10 +34,12 @@
     <ClCompile Include="Src\core\EBO.cpp">
       <Filter>Src\core</Filter>
     </ClCompile>
-    <ClCompile Include="Src\core\Shaider.cpp">
+    <ClCompile Include="Src\core\Shader.cpp">
       <Filter>Src\core</Filter>
     </ClCompile>
-    <ClCompile Include="Src\core\Rectangle.cpp" />
+    <ClCompile Include="Src\core\Rectangle.cpp">
+      <Filter>Src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\core\Engine.h">
@@ -52,10 +54,12 @@
     <ClInclude Include="Src\core\EBO.h">
       <Filter>Src\core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\Shaider.h">
+    <ClInclude Include="Src\core\Shader.h">
       <Filter>Src\core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\Rectangle.h" />
+    <ClInclude Include="Src\core\Rectangle.h">
+      <Filter>Src\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\basic.shader" />

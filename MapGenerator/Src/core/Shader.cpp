@@ -1,26 +1,26 @@
-#include "Shaider.h"
+#include "Shader.h"
 #include <string>
 #include <fstream>
 #include <iostream>
 
-std::string readShaider(const char* path)
+std::string readShader(const char* path)
 {
 	std::ifstream reader(path);
-	std::string shaider;
+	std::string Shader;
 	if (reader.is_open())
 	{
 		reader.seekg(0, std::ios::end);
-		shaider.resize(reader.tellg());
+		Shader.resize(reader.tellg());
 		reader.seekg(0, std::ios::beg);
-		reader.read(&shaider[0], shaider.size());
+		reader.read(&Shader[0], Shader.size());
 	}
 	else
 	{
-		std::cout << "Cant find the shaider in the location[" << path << "]\n";
+		std::cout << "Cant find the Shader in the location[" << path << "]\n";
 	}
 	reader.close();
 
-	return shaider;
+	return Shader;
 }
 
 void compileErrors(unsigned int shader, const char* type)
@@ -50,10 +50,10 @@ void compileErrors(unsigned int shader, const char* type)
 }
 
 
-Shaider::Shaider(const char* vertex, const char* frag)
+Shader::Shader(const char* vertex, const char* frag)
 {
-	std::string sVertexCode = readShaider(vertex);
-	std::string sFragCode = readShaider(frag);
+	std::string sVertexCode = readShader(vertex);
+	std::string sFragCode = readShader(frag);
 
 	const char* vertexCode = sVertexCode.c_str();
 	const char* fragCode = sFragCode.c_str();
@@ -71,6 +71,7 @@ Shaider::Shaider(const char* vertex, const char* frag)
 	compileErrors(fragID, "FRAGMENT");
 
 	ID = glCreateProgram();
+
 	glAttachShader(ID, vertID);
 	glAttachShader(ID, fragID);
 	glLinkProgram(ID);
@@ -81,12 +82,12 @@ Shaider::Shaider(const char* vertex, const char* frag)
 
 }
 
-Shaider::~Shaider()
+Shader::~Shader()
 {
 	glDeleteProgram(ID);
 }
 
-void Shaider::active()
+void Shader::active()
 {
 	glUseProgram(ID);
 }

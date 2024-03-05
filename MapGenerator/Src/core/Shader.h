@@ -1,13 +1,13 @@
 #pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-class Shaider
+class Shader
 {
 	GLuint ID;
 public:
-	Shaider(const char* vertex, const char* frag);
+	Shader(const char* vertex, const char* frag);
 
-	~Shaider();
+	~Shader();
 
 	void active();
 
