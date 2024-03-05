@@ -1,5 +1,10 @@
 #include "Engine.h"
 #include <iostream>
+#include "EBO.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "Shaider.h"
+#include "Rectangle.h"
 
 Engine::Engine()
 {
@@ -48,9 +53,15 @@ Engine::~Engine()
 
 void Engine::start()
 {
-	float lastTime = glfwGetTime();
+	float lastTime = glfwGetTime();	
+
+	Shaider shaider("Src/Shader/Dif.vert", "Src/Shader/Dif.frag");
+	Rectangle rec(0, 0, 20, 20);
+
 	while (!glfwWindowShouldClose(window))
 	{
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			glfwSetWindowShouldClose(window, true);
 		float currentTime = glfwGetTime();
 		delataTime = currentTime - lastTime;
 		lastTime = currentTime;
@@ -59,7 +70,8 @@ void Engine::start()
 		glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		shaider.active();
+		rec.draw();
 		glfwSwapBuffers(window);
 
 		glfwPollEvents();

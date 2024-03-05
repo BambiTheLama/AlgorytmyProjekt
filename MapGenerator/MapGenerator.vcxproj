@@ -70,6 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_SourcePath)\Dependencies\GLFW\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(VC_SourcePath)\Dependencies\GLFW\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -92,6 +98,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)MapGenerator\ThirdParty;$(SolutionDir)dependencies\GLFW\include;$(SolutionDir)dependencies\GLEW\include;$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,72 +143,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Core\DataParametersSaveManager.cpp" />
-    <ClCompile Include="Core\EngineCore.cpp" />
-    <ClCompile Include="Core\ErrorHandler.cpp" />
-    <ClCompile Include="Core\ImageManager.cpp" />
-    <ClCompile Include="MapGenerator.cpp" />
-    <ClCompile Include="Mesh\CubeMesh.cpp" />
-    <ClCompile Include="Mesh\PlaneMesh.cpp" />
-    <ClCompile Include="Mesh\TerrainMesh.cpp" />
-    <ClCompile Include="Renderer\IndexBuffer.cpp" />
-    <ClCompile Include="Renderer\Renderer.cpp" />
-    <ClCompile Include="Renderer\Shader.cpp" />
-    <ClCompile Include="Renderer\SimplexNoise.cpp" />
-    <ClCompile Include="Renderer\Texture.cpp" />
-    <ClCompile Include="Renderer\VertexArray.cpp" />
-    <ClCompile Include="Renderer\VertexBuffer.cpp" />
-    <ClCompile Include="Scene\Entity.cpp" />
-    <ClCompile Include="Scene\Mesh.cpp" />
-    <ClCompile Include="Scene\SceneManager.cpp" />
-    <ClCompile Include="Scene\TerrainEntity.cpp" />
+    <ClCompile Include="Src\core\EBO.cpp" />
     <ClCompile Include="Src\core\Engine.cpp" />
+    <ClCompile Include="Src\core\Rectangle.cpp" />
+    <ClCompile Include="Src\core\Shaider.cpp" />
+    <ClCompile Include="Src\core\VAO.cpp" />
+    <ClCompile Include="Src\core\VBO.cpp" />
     <ClCompile Include="Src\glad.c" />
     <ClCompile Include="Src\Main.cpp" />
-    <ClCompile Include="ThirdParty\imgui\imgui.cpp" />
-    <ClCompile Include="ThirdParty\imgui\imgui_demo.cpp" />
-    <ClCompile Include="ThirdParty\imgui\imgui_draw.cpp" />
-    <ClCompile Include="ThirdParty\imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="ThirdParty\imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="ThirdParty\imgui\imgui_tables.cpp" />
-    <ClCompile Include="ThirdParty\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\DataParametersSaveManager.h" />
-    <ClInclude Include="Core\EngineCore.h" />
-    <ClInclude Include="Core\ErrorHandler.h" />
-    <ClInclude Include="Core\ImageManager.h" />
-    <ClInclude Include="Mesh\PlaneMesh.h" />
-    <ClInclude Include="Mesh\TerrainMesh.h" />
-    <ClInclude Include="Renderer\IndexBuffer.h" />
-    <ClInclude Include="Renderer\Renderer.h" />
-    <ClInclude Include="Renderer\Shader.h" />
-    <ClInclude Include="Renderer\SimplexNoise.h" />
-    <ClInclude Include="Renderer\Texture.h" />
-    <ClInclude Include="Renderer\VertexArray.h" />
-    <ClInclude Include="Renderer\VertexBuffer.h" />
-    <ClInclude Include="Renderer\VertexBufferLayout.h" />
-    <ClInclude Include="Scene\Entity.h" />
-    <ClInclude Include="Scene\Mesh.h" />
-    <ClInclude Include="Scene\SceneManager.h" />
-    <ClInclude Include="Mesh\CubeMesh.h" />
-    <ClInclude Include="Scene\TerrainEntity.h" />
-    <ClInclude Include="Scene\TerrainParameters.h" />
+    <ClInclude Include="Src\core\EBO.h" />
     <ClInclude Include="Src\core\Engine.h" />
-    <ClInclude Include="ThirdParty\imgui\imconfig.h" />
-    <ClInclude Include="ThirdParty\imgui\imgui.h" />
-    <ClInclude Include="ThirdParty\imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="ThirdParty\imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="ThirdParty\imgui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="ThirdParty\imgui\imgui_internal.h" />
-    <ClInclude Include="ThirdParty\imgui\imstb_rectpack.h" />
-    <ClInclude Include="ThirdParty\imgui\imstb_textedit.h" />
-    <ClInclude Include="ThirdParty\imgui\imstb_truetype.h" />
+    <ClInclude Include="Src\core\Rectangle.h" />
+    <ClInclude Include="Src\core\Shaider.h" />
+    <ClInclude Include="Src\core\VAO.h" />
+    <ClInclude Include="Src\core\VBO.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\basic.shader" />
     <None Include="Resources\Shaders\normalDebug.shader" />
     <None Include="Resources\Shaders\water.shader" />
+    <None Include="Src\Shader\Dif.frag" />
+    <None Include="Src\Shader\Dif.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="DoxyFile.txt" />
