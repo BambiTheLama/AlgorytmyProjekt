@@ -9,6 +9,7 @@ class Engine
 	float deltaTime = 0.0f;
 	std::string title;
 	GLFWwindow* window;
+
 	
 public:
 	Engine();
