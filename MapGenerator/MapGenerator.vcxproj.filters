@@ -40,6 +40,9 @@
     <ClCompile Include="Src\core\Rectangle.cpp">
       <Filter>Src\core</Filter>
     </ClCompile>
+    <ClCompile Include="Src\core\Camera.cpp">
+      <Filter>Src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\core\Engine.h">
@@ -58,6 +61,9 @@
       <Filter>Src\core</Filter>
     </ClInclude>
     <ClInclude Include="Src\core\Rectangle.h">
+      <Filter>Src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\Camera.h">
       <Filter>Src\core</Filter>
     </ClInclude>
   </ItemGroup>

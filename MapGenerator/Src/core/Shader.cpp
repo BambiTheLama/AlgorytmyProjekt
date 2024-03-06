@@ -91,3 +91,8 @@ void Shader::active()
 {
 	glUseProgram(ID);
 }
+
+GLint Shader::getUniformLocation(const char* uniform)
+{
+	return glGetUniformLocation(ID, uniform);
+}

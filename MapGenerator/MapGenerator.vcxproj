@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\core\Camera.cpp" />
     <ClCompile Include="Src\core\EBO.cpp" />
     <ClCompile Include="Src\core\Engine.cpp" />
     <ClCompile Include="Src\core\Rectangle.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="Src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\core\Camera.h" />
     <ClInclude Include="Src\core\EBO.h" />
     <ClInclude Include="Src\core\Engine.h" />
     <ClInclude Include="Src\core\Rectangle.h" />

@@ -3,10 +3,13 @@
 layout (location = 0) in vec3 vPos;
 layout (location = 1) in vec4 vColor;
 
+uniform mat4 camera;
+uniform mat4 model;
 out vec4 color;
 
 void main()
 {
-	gl_Position = vec4(vPos,1);
+	vec3 point = vec3(model * vec4(vPos, 1.0f));
+	gl_Position = camera * vec4(point, 1.0f);
 	color = vColor;
 }

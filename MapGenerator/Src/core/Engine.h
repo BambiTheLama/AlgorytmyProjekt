@@ -6,7 +6,7 @@
 class Engine
 {
 	float height, width;
-	float delataTime = 0.0f;
+	float deltaTime = 0.0f;
 	std::string title;
 	GLFWwindow* window;
 	
@@ -17,6 +17,6 @@ public:
 
 	void start();
 
-	float getDeltaTime()const { return delataTime; }
+	float getDeltaTime()const { return deltaTime; }
 };
 

@@ -11,5 +11,6 @@ public:
 
 	void active();
 
+	GLint getUniformLocation(const char* uniform);
 };
 

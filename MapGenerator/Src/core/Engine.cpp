@@ -5,6 +5,7 @@
 #include "VBO.h"
 #include "Shader.h"
 #include "Rectangle.h"
+#include "Camera.h"
 
 Engine::Engine()
 {
@@ -57,20 +58,28 @@ void Engine::start()
 
 	Shader Shader("Src/Shader/Dif.vert", "Src/Shader/Dif.frag");
 	Rectangle rec(0, 0, 1, 0.7f);
+	Camera camera(width, height, 0.1f, 100, 45, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	while (!glfwWindowShouldClose(window))
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
-		float currentTime = glfwGetTime();
-		delataTime = currentTime - lastTime;
-		lastTime = currentTime;
 
+		float currentTime = glfwGetTime();
+		deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			camera.updatePos(glm::vec3(0.0f,0.0f,1.0f*deltaTime));
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			camera.updatePos(glm::vec3(0.0f, 0.0f, -1.0f * deltaTime));
 
 		glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		Shader.active();
+		glUniformMatrix4fv(Shader.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+		camera.useCamera(Shader, "camera");
+
 		rec.draw();
 		glfwSwapBuffers(window);
 
