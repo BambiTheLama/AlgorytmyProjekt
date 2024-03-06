@@ -77,7 +77,9 @@ void Engine::start()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		Shader.active();
-		glUniformMatrix4fv(Shader.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+		glm::mat4 modelMat = glm::mat4(1.0f);
+		modelMat = glm::translate(modelMat, glm::vec3(0.0f, 0.0f, 10.0f));
+		glUniformMatrix4fv(Shader.getUniformLocation("model"), 1, GL_FALSE, glm::value_ptr(modelMat));
 		camera.useCamera(Shader, "camera");
 
 		rec.draw();

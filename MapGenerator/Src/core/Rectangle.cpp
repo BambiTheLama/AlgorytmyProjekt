@@ -16,7 +16,7 @@ Rectangle::Rectangle(float x, float y, float w, float h)
 	};
 	GLuint ind[] = {
 		0,1,2,
-		3,2,1
+		3,1,2
 	};
 
 	vao.bind();
