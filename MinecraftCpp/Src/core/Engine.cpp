@@ -53,12 +53,14 @@ Engine::Engine()
 	gladLoadGL();
 	glViewport(0, 0, width, height);
 
-
-	glFrontFace(GL_CW);
-
 	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_MULTISAMPLE);
+
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CCW);
+
 	Cube::CubeSetUp();
 	vao = new VAO();
 	vao->bind();
@@ -69,7 +71,7 @@ Engine::Engine()
 	ebo->unbind();
 	vao->unbind();
 	shader = new Shader("Shader/Dif.vert", "Shader/Dif.frag");
-	camera = new Camera(width, height, 0.1f, 100, 45, glm::vec3(0.0f, 0.0f, 0.0f));
+	camera = new Camera(width, height, 0.1f, 100, 100, glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 Engine::~Engine()
@@ -90,25 +92,26 @@ void Engine::start()
 	Texture text("Res/1.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
 	Cube*** cub = NULL;
-	int w = 100, h = 100;
+	int w = 3, h = 2;
 	cub = new Cube * *[h];
 	for (int y = 0; y < h; y++)
 	{
 		cub[y] = new Cube * [w];
 		for (int x = 0; x < w; x++)
 		{
-			cub[y][x] = new Cube(-w / 2.0f + x, 0, -h / 2.0f + y);
-			if (x != 0 && x - 1 != w && y != 0 && y - 1 != h)
+			cub[y][x] = new Cube(-w / 2.0f + x*3, 0, -h / 2.0f + y*3);
+			if (x >= 0)
 			{
-				cub[y][x]->left = false;
-				cub[y][x]->right = false;
-				cub[y][x]->front = false;
-				cub[y][x]->back = false;
+				//cub[y][x]->left = false;
+				//cub[y][x]->right = false;
+				//cub[y][x]->front = false;
+				//cub[y][x]->back = false;
 			}
 		}
 	}
 
 	Cube c(0, 0, 1);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -132,9 +135,9 @@ void Engine::start()
 		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 			camera->updatePos(glm::vec3(0.0f, -1.0f * deltaTime, 0.0f));
 
-		glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
-
+		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 		shader->active();
 		text.bind();

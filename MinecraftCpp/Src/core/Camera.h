@@ -9,7 +9,7 @@ class Shader;
 class Camera
 {
 	glm::vec3 cameraPos;
-	glm::vec3 cameraOrientation = glm::vec3(0.0f, 0.0f, 1.0f);
+	glm::vec3 cameraOrientation = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	bool click = true;
 	float cameraSensivity = 100;

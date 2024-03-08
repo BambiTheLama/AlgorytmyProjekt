@@ -12,7 +12,6 @@ out vec2 textPos;
 
 void main()
 {
-	vec3 point = vec3( vec4(vPos+pos, 1.0f));
-	gl_Position = camera * vec4(point, 1.0f);
+	gl_Position = camera * vec4(vPos + pos, 1.0f);
 	textPos = vTexture;
 }

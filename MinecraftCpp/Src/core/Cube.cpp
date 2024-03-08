@@ -171,16 +171,7 @@ void Cube::draw()
 
 void Cube::drawFaces()
 {
-	if (up)
-	{
-		eboUp->bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	}
-	if (down)
-	{
-		eboDown->bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	}
+
 	if (left)
 	{
 		eboLeft->bind();
@@ -194,6 +185,21 @@ void Cube::drawFaces()
 	if (front)
 	{
 		eboFront->bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+	if (back)
+	{
+		eboBack->bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+	if (up)
+	{
+		eboUp->bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+	if (down)
+	{
+		eboDown->bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 }
