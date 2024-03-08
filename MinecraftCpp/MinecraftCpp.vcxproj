@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\core\Camera.cpp" />
+    <ClCompile Include="Src\core\Chunk.cpp" />
     <ClCompile Include="Src\core\Cube.cpp" />
     <ClCompile Include="Src\core\EBO.cpp" />
     <ClCompile Include="Src\core\Engine.cpp" />
@@ -169,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\core\Camera.h" />
+    <ClInclude Include="Src\core\Chunk.h" />
     <ClInclude Include="Src\core\Cube.h" />
     <ClInclude Include="Src\core\EBO.h" />
     <ClInclude Include="Src\core\Engine.h" />

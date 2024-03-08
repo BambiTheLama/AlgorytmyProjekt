@@ -10,6 +10,7 @@
 #include "Texture.h"
 #include <glm/gtx/transform.hpp>
 #include <stb/stb_image.h>
+#include <vector>
 
 static GLfloat verticies[] = {
 	1,1,1,
@@ -54,10 +55,9 @@ Engine::Engine()
 	glViewport(0, 0, width, height);
 
 	glEnable(GL_DEPTH_TEST);
-
-	glEnable(GL_MULTISAMPLE);
-
+	glDepthFunc(GL_ALWAYS);
 	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_FALSE);
 	glCullFace(GL_FRONT);
 	glFrontFace(GL_CCW);
 
@@ -76,6 +76,7 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+	Texture::clearAllTextures();
 	delete camera;
 	delete shader;
 	delete vbo;
@@ -90,27 +91,34 @@ void Engine::start()
 {
 	float lastTime = glfwGetTime();	
 	Texture text("Res/1.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-
-	Cube*** cub = NULL;
-	int w = 3, h = 2;
-	cub = new Cube * *[h];
+	{
+		Texture text2("Res/1.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+		text2.deleteTexture();
+	}
+	Texture text2("Res/1.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	std::vector<Cube*> toDraw;
+	int w = 300, h = 300;
 	for (int y = 0; y < h; y++)
 	{
-		cub[y] = new Cube * [w];
 		for (int x = 0; x < w; x++)
 		{
-			cub[y][x] = new Cube(-w / 2.0f + x*3, 0, -h / 2.0f + y*3);
-			if (x >= 0)
-			{
-				//cub[y][x]->left = false;
-				//cub[y][x]->right = false;
-				//cub[y][x]->front = false;
-				//cub[y][x]->back = false;
-			}
+			Cube* c = new Cube(-w / 2.0f + x, 0, -h / 2.0f + y);
+			toDraw.push_back(c);
+
+			if (x < w - 1)
+				c->right = false;
+			if (y < h - 1)
+				c->front = false;
+			if(y > 0)
+				c->back = false;
+			if (x > 0)
+				c->left = false;
+
 		}
 	}
 
 	Cube c(0, 0, 1);
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -122,52 +130,53 @@ void Engine::start()
 		lastTime = currentTime;
 		glfwSetWindowTitle(window, std::string(title + " :" + std::to_string(1.0f / deltaTime)+" FPS").c_str());
 		camera->update(window, deltaTime);
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			camera->updatePos(glm::vec3(0.0f,0.0f,1.0f*deltaTime));
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			camera->updatePos(glm::vec3(0.0f, 0.0f, -1.0f * deltaTime));
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			camera->updatePos(glm::vec3(1.0f * deltaTime, 0.0f, 0.0f));
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			camera->updatePos(glm::vec3(-1.0f * deltaTime, 0.0f, 0.0f));
-		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-			camera->updatePos(glm::vec3(0.0f, 1.0f * deltaTime, 0.0f));
-		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-			camera->updatePos(glm::vec3(0.0f, -1.0f * deltaTime, 0.0f));
+
 
 		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
 		shader->active();
-		text.bind();
-		text.useTexture(*shader, "tex0", 0);
+		text2.bind();
+		text2.useTexture(*shader, "tex0", 0);
 		startShaderMode(*Cube::shader);
-		for (int y = 0; y < h; y++)
-		{
-			for (int x = 0; x < w; x++)
-			{
-				cub[y][x]->draw();
-			}
-		}
+		//sortVector(toDraw);
+		for (auto c : toDraw)
+			c->draw();
 		endShaderMode();
 		camera->draw(*shader);
 		glfwSwapBuffers(window);
 
 		glfwPollEvents();
 	}
-
-	for (int y = 0; y < h; y++)
-	{
-		for (int x = 0; x < w; x++)
-		{
-			delete cub[y][x];
-		}
-		delete cub[y];
-	}
-	delete cub;
+	for (auto c : toDraw)
+		delete c;
 }
+void Engine::sortVector(std::vector<Cube*>& toSort)
+{
+	glm::vec3 pos = camera->getPos();
 
+	std::vector<float> dist;
+	for (auto c : toSort)
+	{
+		dist.push_back(glm::distance(pos, c->getPos()));
+	}
+	for (int i = 0; i < dist.size(); i++)
+	{
+		for (int j = i + 1; j < dist.size(); j++)
+		{
+			if (dist[j] > dist[i])
+			{
+				float d = dist[j];
+				dist[j] = dist[i];
+				dist[i] = d;
+				Cube* c = toSort[i];
+				toSort[i] = toSort[j];
+				toSort[j] = c;
+			}
+		}
+	}
+}
 void drawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3,glm::vec3 color)
 {
 

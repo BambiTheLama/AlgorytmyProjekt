@@ -1,6 +1,7 @@
 #pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/vec3.hpp>
 class Shader;
 class Engine;
 
@@ -22,6 +23,7 @@ private:
 	void addIndices(bool leftSide,int index,int& i, GLuint* indices);
 	static void CubeSetUp();
 	static void CubeDelete();
+	glm::vec3 getPos() { return glm::vec3(x, y, z); }
 
 };
 

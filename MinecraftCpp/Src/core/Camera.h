@@ -35,5 +35,7 @@ public:
 
 	void update(GLFWwindow* window,float deltaTime);
 
+	glm::vec3 getPos() { return cameraPos; }
+
 };
 
