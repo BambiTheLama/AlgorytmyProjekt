@@ -8,7 +8,7 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "Texture.h"
-
+#include <glm/gtx/transform.hpp>
 #include <stb/stb_image.h>
 
 static GLfloat verticies[] = {
@@ -103,6 +103,8 @@ void Engine::start()
 		float currentTime = glfwGetTime();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
+		glfwSetWindowTitle(window, std::string(title + " :" + std::to_string(1.0f / deltaTime)+" FPS").c_str());
+		camera.update(window, deltaTime);
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 			camera.updatePos(glm::vec3(0.0f,0.0f,1.0f*deltaTime));
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)

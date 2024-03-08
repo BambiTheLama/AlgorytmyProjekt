@@ -1,10 +1,9 @@
 #pragma once
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <glm/matrix.hpp>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/rotate_vector.hpp>
-#include <glm/gtx/vector_angle.hpp>
+
 
 class Shader;
 class Camera
@@ -12,10 +11,13 @@ class Camera
 	glm::vec3 cameraPos;
 	glm::vec3 cameraOrientation = glm::vec3(0.0f, 0.0f, 1.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	bool click = true;
+	float cameraSensivity = 100;
 	float cameraWidth;
 	float cameraHeight;
 	float farest;
 	float nearest;
+	float speed = 5;
 	float cameraAngleDeg = 90;
 	bool useProjection = true;
 public:
@@ -30,6 +32,8 @@ public:
 	void setUseProjection(bool use) { useProjection = use; }
 
 	void draw(Shader& shader);
+
+	void update(GLFWwindow* window,float deltaTime);
 
 };
 
