@@ -26,14 +26,13 @@ static VAO* vao = NULL;
 static VBO* vbo = NULL;
 static EBO* ebo = NULL;
 static Shader* shader = NULL;
-
+static Camera* camera = NULL;
 Engine::Engine()
 {
 	height = 900;
 	width = 1600;
 	title = "minecraft";
 
-	/* Initialize the library */
 	if (!glfwInit())
 		return;
 
@@ -41,7 +40,7 @@ Engine::Engine()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	stbi_set_flip_vertically_on_load(true);
-	/* Create a windowed mode window and its OpenGL context */
+
 	window = glfwCreateWindow(width, height, title.data(), NULL, NULL);
 	if (!window)
 	{
@@ -49,19 +48,15 @@ Engine::Engine()
 		return;
 	}
 
-	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
 	gladLoadGL();
 	glViewport(0, 0, width, height);
-	//glfwSetCursorPosCallback(window, OnMouse);
 
-	//GlCall(glEnable(GL_DEPTH_TEST));
-	//GlCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-	//GlCall(glEnable(GL_BLEND));
 
 	glFrontFace(GL_CW);
-	// Cull back faces
+
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	Cube::CubeSetUp();
@@ -74,11 +69,13 @@ Engine::Engine()
 	ebo->unbind();
 	vao->unbind();
 	shader = new Shader("Shader/Dif.vert", "Shader/Dif.frag");
+	camera = new Camera(width, height, 0.1f, 100, 45, glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 Engine::~Engine()
 {
-	//delete shader;
+	delete camera;
+	delete shader;
 	delete vbo;
 	delete vao;
 	delete ebo;
@@ -92,9 +89,26 @@ void Engine::start()
 	float lastTime = glfwGetTime();	
 	Texture text("Res/1.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 
-	Rectangle rec(0, 0, 1, 1);
-	Camera camera(width, height, 0.1f, 100, 45, glm::vec3(0.0f, 0.0f, 0.0f));
-	Cube c(0, 0, 5);
+	Cube*** cub = NULL;
+	int w = 100, h = 100;
+	cub = new Cube * *[h];
+	for (int y = 0; y < h; y++)
+	{
+		cub[y] = new Cube * [w];
+		for (int x = 0; x < w; x++)
+		{
+			cub[y][x] = new Cube(-w / 2.0f + x, 0, -h / 2.0f + y);
+			if (x != 0 && x - 1 != w && y != 0 && y - 1 != h)
+			{
+				cub[y][x]->left = false;
+				cub[y][x]->right = false;
+				cub[y][x]->front = false;
+				cub[y][x]->back = false;
+			}
+		}
+	}
+
+	Cube c(0, 0, 1);
 	while (!glfwWindowShouldClose(window))
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -104,41 +118,51 @@ void Engine::start()
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 		glfwSetWindowTitle(window, std::string(title + " :" + std::to_string(1.0f / deltaTime)+" FPS").c_str());
-		camera.update(window, deltaTime);
+		camera->update(window, deltaTime);
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			camera.updatePos(glm::vec3(0.0f,0.0f,1.0f*deltaTime));
+			camera->updatePos(glm::vec3(0.0f,0.0f,1.0f*deltaTime));
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			camera.updatePos(glm::vec3(0.0f, 0.0f, -1.0f * deltaTime));
+			camera->updatePos(glm::vec3(0.0f, 0.0f, -1.0f * deltaTime));
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			camera.updatePos(glm::vec3(1.0f * deltaTime, 0.0f, 0.0f));
+			camera->updatePos(glm::vec3(1.0f * deltaTime, 0.0f, 0.0f));
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			camera.updatePos(glm::vec3(-1.0f * deltaTime, 0.0f, 0.0f));
+			camera->updatePos(glm::vec3(-1.0f * deltaTime, 0.0f, 0.0f));
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-			camera.updatePos(glm::vec3(0.0f, 1.0f * deltaTime, 0.0f));
+			camera->updatePos(glm::vec3(0.0f, 1.0f * deltaTime, 0.0f));
 		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-			camera.updatePos(glm::vec3(0.0f, -1.0f * deltaTime, 0.0f));
+			camera->updatePos(glm::vec3(0.0f, -1.0f * deltaTime, 0.0f));
 
 		glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		shader->active();
 		text.bind();
-		text.useTexture(*shader, "tex0",0);
-
-		glUniform1i(shader->getUniformLocation("isTexture"), true);
-		glm::mat4 modelMat = glm::mat4(1.0f);
-		modelMat = glm::translate(modelMat, glm::vec3(0.0f, 0.0f, 10.0f));
-		shader->setUniformMat4(modelMat, "model");
-		camera.useCamera(*shader, "camera");
-
-		rec.draw();
-		glUniform1i(shader->getUniformLocation("isTexture"), false);
-		c.draw(*shader);
-		camera.draw(*shader);
+		text.useTexture(*shader, "tex0", 0);
+		startShaderMode(*Cube::shader);
+		for (int y = 0; y < h; y++)
+		{
+			for (int x = 0; x < w; x++)
+			{
+				cub[y][x]->draw();
+			}
+		}
+		endShaderMode();
+		camera->draw(*shader);
 		glfwSwapBuffers(window);
 
 		glfwPollEvents();
 	}
+
+	for (int y = 0; y < h; y++)
+	{
+		for (int x = 0; x < w; x++)
+		{
+			delete cub[y][x];
+		}
+		delete cub[y];
+	}
+	delete cub;
 }
 
 void drawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3,glm::vec3 color)
@@ -161,4 +185,15 @@ void drawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3,glm::vec3 color)
 	shader->setUniformMat4(modelMat, "model");
 	shader->setUniformVec4(glm::vec4(color, 1.0f), "modelColor");
 	glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, 0);
+}
+
+void startShaderMode(Shader& s)
+{
+	s.active();
+	camera->useCamera(s, "camera");
+}
+
+void endShaderMode()
+{
+	shader->active();
 }

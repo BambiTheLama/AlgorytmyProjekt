@@ -20,5 +20,9 @@ public:
 	void setUniformMat4(glm::mat4 mat,const char* uniform);
 
 	void setUniformVec4(glm::vec4 mat, const char* uniform);
+
+	void setUniformVec3(glm::vec3 vec, const char* uniform);
+
+	void setUniformI1(int v, const char* uniform);
 };
 

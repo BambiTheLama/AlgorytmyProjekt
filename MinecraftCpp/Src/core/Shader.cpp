@@ -105,4 +105,12 @@ void Shader::setUniformVec4(glm::vec4 vec, const char* uniform)
 {
 	glUniform4f(glGetUniformLocation(ID, uniform), vec.x, vec.y, vec.z, vec.w);
 }
+void Shader::setUniformVec3(glm::vec3 vec, const char* uniform)
+{
+	glUniform3f(glGetUniformLocation(ID, uniform), vec.x, vec.y, vec.z);
+}
+void Shader::setUniformI1(int v, const char* uniform)
+{
+	glUniform1i(glGetUniformLocation(ID, uniform), v);
+}
 

@@ -179,6 +179,8 @@
     <ClInclude Include="Src\core\VBO.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\Cube.frag" />
+    <None Include="Shader\Cube.vert" />
     <None Include="Shader\Dif.frag" />
     <None Include="Shader\Dif.vert" />
   </ItemGroup>

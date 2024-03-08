@@ -6,47 +6,133 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/noise.hpp>
+#include "Engine.h"
 
 static GLfloat verticies[] = {
-	1,1,1,
-	1,-1,1,
-	-1,1,1,
-	-1,-1,1,
-	1,1,-1,
-	1,-1,-1,
-	-1,1,-1,
-	-1,-1,-1,
+	///Front
+	0.5f,0.5f,0.5f,
+	0.5f,-0.5f,0.5f,
+	-0.5f,0.5f,0.5f,
+	-0.5f,-0.5f,0.5f,
+	///Ty³
+	0.5f,0.5f,-0.5f,
+	0.5f,-0.5f,-0.5f,
+	-0.5f,0.5f,-0.5f,
+	-0.5f,-0.5f,-0.5f,
+	///Lewo
+	-0.5f,0.5f,0.5f,
+	-0.5f,-0.5f,0.5f,
+	-0.5f,0.5f,-0.5f,
+	-0.5f,-0.5f,-0.5f,
+	///Prawo
+	0.5f,0.5f,0.5f,
+	0.5f,-0.5f,0.5f,
+	0.5f,0.5f,-0.5f,
+	0.5f,-0.5f,-0.5f,
+	///Gora
+	0.5f,0.5f,0.5f,
+	0.5f,0.5f,-0.5f,
+	-0.5f,0.5f,0.5f,
+	-0.5f,0.5f,-0.5f,
+	///Dol
+	0.5f,-0.5f,0.5f,
+	0.5f,-0.5f,-0.5f,
+	-0.5f,-0.5f,0.5f,
+	-0.5f,-0.5f,-0.5f,
+};
+static GLfloat texture[] = {
+	///Front
+	1.0f / 3.0f, 1,
+	1.0f / 3.0f, 0,
+	2.0f / 3.0f, 1,
+	2.0f / 3.0f, 0,
+	///Ty³
+	1.0f / 3.0f, 1,
+	1.0f / 3.0f, 0,
+	2.0f / 3.0f, 1,
+	2.0f / 3.0f, 0,
+	///Lewo
+	1.0f / 3.0f, 1,
+	1.0f / 3.0f, 0,
+	2.0f / 3.0f, 1,
+	2.0f / 3.0f, 0,
+	///Prawo
+	1.0f / 3.0f, 1,
+	1.0f / 3.0f, 0,
+	2.0f / 3.0f, 1,
+	2.0f / 3.0f, 0,
+	///Gora
+	0.0f / 3.0f, 1,
+	0.0f / 3.0f, 0,
+	1.0f / 3.0f, 1,
+	1.0f / 3.0f, 0,
+	///Dol
+	2.0f / 3.0f, 1,
+	2.0f / 3.0f, 0,
+	3.0f / 3.0f, 1,
+	3.0f / 3.0f, 0,
 };
 
-static GLuint indices[] = {
+static GLuint indicesFront[] = {
+	///Front
 	0,1,2,
 	1,3,2,
+};
+static GLuint indicesBack[] = {
+	///Ty³
 	4,6,5,
 	5,6,7,
-	0,4,1,
-	1,4,5,
-	2,3,6,
-	3,7,6,
-	0,2,4,
-	2,6,4,
-	1,5,3,
-	3,5,7,
-
 };
+static GLuint indicesLeft[] = {
+	///Lewo
+	8,9,10,
+	9,11,10,
+};
+static GLuint indicesRight[] = {
+	///Prawo
+	12,14,13,
+	13,14,15,
+};
+static GLuint indicesUp[] = {
+	///Gora
+	16,18,17,
+	17,18,19,
+};
+static GLuint indicesDown[] = {
+	///Dol
+	20,21,22,
+	22,21,23,
+};
+
+
+Shader* Cube::shader = NULL;
 static VAO* vao = NULL;
 static VBO* vboVertices = NULL;
-static EBO* ebo = NULL;
+static VBO* vboTexture = NULL;
+static EBO* eboUp = NULL;
+static EBO* eboDown = NULL;
+static EBO* eboLeft = NULL;
+static EBO* eboRight = NULL;
+static EBO* eboFront = NULL;
+static EBO* eboBack = NULL;
 
 void Cube::CubeSetUp()
 {
 	vao = new VAO();
 	vao->bind();
 	vboVertices = new VBO(verticies, sizeof(verticies));
-	ebo = new EBO(indices, sizeof(indices));
+	vboTexture = new VBO(texture, sizeof(texture));
+	eboUp = new EBO(indicesUp, sizeof(indicesUp));
+	eboDown = new EBO(indicesDown, sizeof(indicesDown));
+	eboLeft = new EBO(indicesLeft, sizeof(indicesLeft));
+	eboRight = new EBO(indicesRight, sizeof(indicesRight));
+	eboFront = new EBO(indicesFront, sizeof(indicesFront));
+	eboBack = new EBO(indicesBack, sizeof(indicesBack));
 	vao->linkData(*vboVertices, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+	vao->linkData(*vboTexture, 1, 2, GL_FLOAT, 2 * sizeof(float), (void*)0);
 	vboVertices->unbind();
-	ebo->unbind();
 	vao->unbind();
+	shader = new Shader("Shader/Cube.vert", "Shader/Cube.frag");
 
 }
 
@@ -54,7 +140,13 @@ void Cube::CubeDelete()
 {
 	delete vao;
 	delete vboVertices;
-	delete ebo;
+	delete eboUp;
+	delete eboDown;
+	delete eboLeft; 
+	delete eboRight; 
+	delete eboFront;
+	delete eboBack; 
+	delete shader;
 }
 
 Cube::Cube(float x, float y, float z)
@@ -64,14 +156,44 @@ Cube::Cube(float x, float y, float z)
 	this->z = z;
 }
 
-void Cube::draw(Shader& shader)
+void Cube::draw()
 {
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(x, y, z));
-	shader.setUniformMat4(model, "model");
-	shader.setUniformVec4(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),"modelColor");
+	const int n = (up + down + left + right + front + back) * 6;
+	if (n <= 0)
+		return;
+	shader->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
+	shader->setUniformVec3(glm::vec3(x, y, z), "pos");
 	vao->bind();
-	ebo->bind();
-	//printf("%d\n", sizeof(indices) / sizeof(GLuint));
-	glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, 0);
+	drawFaces();
+
+
+}
+
+void Cube::drawFaces()
+{
+	if (up)
+	{
+		eboUp->bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+	if (down)
+	{
+		eboDown->bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+	if (left)
+	{
+		eboLeft->bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+	if (right)
+	{
+		eboRight->bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+	if (front)
+	{
+		eboFront->bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
 }

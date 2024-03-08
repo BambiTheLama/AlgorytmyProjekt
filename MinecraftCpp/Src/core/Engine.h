@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <glm/glm.hpp>
-
+class Shader;
 class Engine
 {
 	float height, width;
@@ -25,3 +25,6 @@ public:
 
 void drawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f));
 
+void startShaderMode(Shader& s);
+
+void endShaderMode();

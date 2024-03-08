@@ -5,9 +5,11 @@ class EBO
 {
 	GLuint ID;
 public:
-	EBO(GLuint* indices, GLsizeiptr size);
+	EBO(GLuint* indices, GLsizeiptr size, GLenum drawType = GL_STATIC_DRAW);
 
 	~EBO();
+
+	void setNewIndices(GLuint* indices, GLsizeiptr size);
 
 	void bind();
 
