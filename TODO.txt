@@ -1,3 +1,2 @@
-poruszanie się kamerą
 Strukura przechowująca bloki
 Możliwość ustawiania bloków i niszczenia
