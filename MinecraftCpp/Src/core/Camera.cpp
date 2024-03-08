@@ -1,5 +1,6 @@
 #include "Camera.h"
-
+#include "Engine.h"
+#include "Shader.h"
 
 Camera::Camera(float width, float height, float farest, float neares, float cameraAngle, glm::vec3 position)
 {
@@ -33,4 +34,11 @@ void Camera::updatePos(glm::vec3 pos)
 void Camera::newPos(glm::vec3 pos)
 {
 	cameraPos = pos;
+}
+
+void Camera::draw(Shader& shader)
+{
+	glm::vec3 cameraPos = this->cameraPos + cameraOrientation;
+	drawTriangle(cameraPos + glm::vec3(0, 0, 0), cameraPos + glm::vec3(0.02f, 0.01f, 0), cameraPos + glm::vec3(-0.02f, 0.01f, 0));
+	drawTriangle(cameraPos + glm::vec3(0, 0, 0), cameraPos - glm::vec3(0.02f, 0.01f, 0), cameraPos - glm::vec3(-0.02f, 0.01f, 0));
 }

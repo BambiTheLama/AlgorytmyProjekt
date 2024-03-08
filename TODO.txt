@@ -1,4 +1,3 @@
 poruszanie się kamerą
-Klasa od sześcianów
 Strukura przechowująca bloki
 Możliwość ustawiania bloków i niszczenia

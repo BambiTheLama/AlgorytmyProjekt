@@ -10,6 +10,8 @@ public:
 
 	~VBO();
 
+	void setNewVertices(GLfloat* vertices, GLsizeiptr size);
+
 	void bind();
 
 	void unbind();

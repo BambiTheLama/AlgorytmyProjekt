@@ -2,10 +2,11 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
+#include "Shader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-GLfloat verticies[] = {
+static GLfloat verticies[] = {
 	1,1,1,
 	1,-1,1,
 	-1,1,1,
@@ -15,18 +16,8 @@ GLfloat verticies[] = {
 	-1,1,-1,
 	-1,-1,-1,
 };
-GLfloat colos[] = {
-	1,1,1,
-	1,1,1,
-	1,1,1,
-	1,1,1,
-	1,1,1,
-	1,1,1,
-	1,1,1,
-	1,1,1,
-};
 
-GLuint indices[] = {
+static GLuint indices[] = {
 	0,1,2,
 	1,3,2,
 	4,6,5,
@@ -41,23 +32,18 @@ GLuint indices[] = {
 	3,5,7,
 
 };
-VAO* vao;
-VBO* vboVertices;
-VBO* vboColors;
-EBO* ebo;
+static VAO* vao = NULL;
+static VBO* vboVertices = NULL;
+static EBO* ebo = NULL;
 
 void Cube::CubeSetUp()
 {
 	vao = new VAO();
 	vao->bind();
 	vboVertices = new VBO(verticies, sizeof(verticies));
-	vboColors = new VBO(colos, sizeof(colos));
 	ebo = new EBO(indices, sizeof(indices));
 	vao->linkData(*vboVertices, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-	vao->linkData(*vboColors, 1, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-
 	vboVertices->unbind();
-	vboColors->unbind();
 	ebo->unbind();
 	vao->unbind();
 
@@ -67,7 +53,6 @@ void Cube::CubeDelete()
 {
 	delete vao;
 	delete vboVertices;
-	delete vboColors;
 	delete ebo;
 }
 

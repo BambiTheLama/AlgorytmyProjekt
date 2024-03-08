@@ -1,7 +1,5 @@
 #include "core/Engine.h"
-#define SzymekMode
 
-#ifdef SzymekMode
 int main()
 {
 	Engine* e = new Engine();
@@ -10,4 +8,3 @@ int main()
 	delete e;
 	return 0;
 }
-#endif

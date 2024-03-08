@@ -5,7 +5,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
-#include "Shader.h"
+
+class Shader;
 class Camera
 {
 	glm::vec3 cameraPos;
@@ -27,6 +28,8 @@ public:
 	void newPos(glm::vec3 pos);
 
 	void setUseProjection(bool use) { useProjection = use; }
+
+	void draw(Shader& shader);
 
 };
 

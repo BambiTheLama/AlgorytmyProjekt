@@ -9,10 +9,11 @@ Rectangle::Rectangle(float x, float y, float w, float h)
 		x + w,y,0.0f,
 		x + w,y + h,0.0f,
 	};
-	GLfloat col[] = {
-		1,0,1,
-		1,1,0,
-		0,1,1,
+	GLfloat tex[] = {
+		0,0,
+		0,1,
+		1,0,
+		1,1,
 	};
 	GLuint ind[] = {
 		0,2,1,
@@ -20,11 +21,11 @@ Rectangle::Rectangle(float x, float y, float w, float h)
 	};
 
 	vao.bind();
-	colors = new VBO(col, sizeof(col));
+	colors = new VBO(tex, sizeof(tex));
 	vertices = new VBO(ver, sizeof(ver));
 	vao.linkData(*vertices, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
 
-	vao.linkData(*colors, 1, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+	vao.linkData(*colors, 1, 2, GL_FLOAT, 2 * sizeof(float), (void*)0);
 	index = new EBO(ind, sizeof(ind));
 
 	vao.unbind();

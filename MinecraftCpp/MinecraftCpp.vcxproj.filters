@@ -7,6 +7,12 @@
     <Filter Include="Src\Core">
       <UniqueIdentifier>{395c5723-30cd-4d13-89ad-ed92d262126c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{4f1cc40a-8295-4041-a2f0-2b2cf6e17852}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Res">
+      <UniqueIdentifier>{1d942a64-6ada-4a05-bb70-401f8b5d852d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\glad.c">
@@ -39,6 +45,9 @@
     <ClCompile Include="Src\core\VBO.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Src\core\Texture.cpp">
+      <Filter>Src\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\core\Camera.h">
@@ -65,5 +74,16 @@
     <ClInclude Include="Src\core\VBO.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Src\core\Texture.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Dif.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Dif.vert">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>
