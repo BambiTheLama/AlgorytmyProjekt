@@ -11,6 +11,8 @@ class Shader
 public:
 	Shader(const char* vertex, const char* frag);
 
+	Shader(const char* vertex, const char* geometry, const char* frag);
+
 	~Shader();
 
 	void active();

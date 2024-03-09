@@ -97,12 +97,12 @@ void Engine::start()
 	}
 	Texture text2("Res/1.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	std::vector<Cube*> toDraw;
-	int w = 300, h = 300;
+	int w = 10, h = 10;
 	for (int y = 0; y < h; y++)
 	{
 		for (int x = 0; x < w; x++)
 		{
-			Cube* c = new Cube(-w / 2.0f + x, 0, -h / 2.0f + y);
+			Cube* c = new Cube(-w / 2.0f + x, -1, -h / 2.0f + y);
 			toDraw.push_back(c);
 
 			if (x < w - 1)
@@ -125,6 +125,7 @@ void Engine::start()
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
 
+
 		float currentTime = glfwGetTime();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
@@ -137,9 +138,14 @@ void Engine::start()
 
 
 		shader->active();
-		text2.bind();
-		text2.useTexture(*shader, "tex0", 0);
+
+		text.bind();
+		text.useTexture(*shader, "tex0", 0);
 		startShaderMode(*Cube::shader);
+		if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
+			Cube::shader->setUniformI1(true, "debug");
+		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
+			Cube::shader->setUniformI1(false, "debug");
 		//sortVector(toDraw);
 		for (auto c : toDraw)
 			c->draw();

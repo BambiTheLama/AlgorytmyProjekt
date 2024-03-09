@@ -97,5 +97,8 @@
     <None Include="Shader\Cube.vert">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shader\Cube.geom">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

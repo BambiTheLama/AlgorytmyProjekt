@@ -83,6 +83,48 @@ Shader::Shader(const char* vertex, const char* frag)
 
 }
 
+Shader::Shader(const char* vertex, const char* geometry, const char* frag)
+{
+	std::string sVertexCode = readShader(vertex);
+	std::string sGeometryCode = readShader(geometry);
+	std::string sFragCode = readShader(frag);
+
+	const char* vertexCode = sVertexCode.c_str();
+	const char* geometryCode = sGeometryCode.c_str();
+	const char* fragCode = sFragCode.c_str();
+
+	GLuint vertID = glCreateShader(GL_VERTEX_SHADER);;
+
+	glShaderSource(vertID, 1, &vertexCode, NULL);
+	glCompileShader(vertID);
+	compileErrors(vertID, "VERTEX");
+
+	GLuint fragID = glCreateShader(GL_FRAGMENT_SHADER);
+
+	glShaderSource(fragID, 1, &fragCode, NULL);
+	glCompileShader(fragID);
+	compileErrors(fragID, "FRAGMENT");
+
+	GLuint geomID = glCreateShader(GL_GEOMETRY_SHADER);
+
+	glShaderSource(geomID, 1, &geometryCode, NULL);
+	glCompileShader(geomID);
+	compileErrors(geomID, "GEOMETRY");
+
+	ID = glCreateProgram();
+
+	glAttachShader(ID, vertID);
+	glAttachShader(ID, geomID);
+	glAttachShader(ID, fragID);
+	glLinkProgram(ID);
+	compileErrors(ID, "PROGRAM");
+
+	glDeleteShader(fragID);
+	glDeleteShader(geomID);
+	glDeleteShader(vertID);
+
+}
+
 Shader::~Shader()
 {
 	glDeleteProgram(ID);

@@ -3,12 +3,15 @@
 out vec4 FragColor;
 uniform vec4 modelColor;
 uniform sampler2D tex0;
-uniform bool isTexture;
-in vec4 color;
-in vec2 textPos;
+in vec2 texCoord;
+uniform bool debug;
+
 
 void main()
 {
-	FragColor = texture(tex0, textPos) * modelColor;
+    if(debug)
+		FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	else
+		FragColor = texture(tex0, texCoord) * modelColor;
 
 }

@@ -9,9 +9,16 @@ uniform vec3 pos;
 uniform vec4 modelColor;
 uniform mat4 model;
 out vec2 textPos;
+uniform bool debug;
+
+out DATA
+{
+	vec2 texCoord;
+} data_out;
 
 void main()
 {
 	gl_Position = camera * vec4(vPos + pos, 1.0f);
 	textPos = vTexture;
+	data_out.texCoord = vTexture;
 }

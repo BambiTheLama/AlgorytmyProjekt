@@ -132,7 +132,7 @@ void Cube::CubeSetUp()
 	vao->linkData(*vboTexture, 1, 2, GL_FLOAT, 2 * sizeof(float), (void*)0);
 	vboVertices->unbind();
 	vao->unbind();
-	shader = new Shader("Shader/Cube.vert", "Shader/Cube.frag");
+	shader = new Shader("Shader/Cube.vert", "Shader/Cube.geom", "Shader/Cube.frag");
 
 }
 
