@@ -18,18 +18,12 @@ enum class Faces :int
 
 class Cube
 {
-	static Shader* shader;
 	int face;
-	float x, y, z;
 public:
 
 	Cube();
 
-	Cube(float x,float y,float z);
-
 	void draw(float x, float y, float z);
-
-	void draw();
 
 	void setFaceing(int faces);
 

@@ -4,5 +4,5 @@ Block::Block(int x, int y, int z)
 {
 	this->x = x;
 	this->y = y;
-	this->x = x;
+	this->z = z;
 }

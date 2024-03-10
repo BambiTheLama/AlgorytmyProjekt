@@ -16,6 +16,9 @@
     <Filter Include="Src\World">
       <UniqueIdentifier>{5a456562-e680-4c92-a559-354857f34677}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Scene">
+      <UniqueIdentifier>{016cf8cb-c4f6-420b-8667-774213e8329b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\glad.c">
@@ -42,14 +45,20 @@
     <ClCompile Include="Src\core\Shader.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Src\core\Texture.cpp">
+      <Filter>Src\Core</Filter>
+    </ClCompile>
     <ClCompile Include="Src\core\VAO.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
     <ClCompile Include="Src\core\VBO.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Src\core\Texture.cpp">
-      <Filter>Src\Core</Filter>
+    <ClCompile Include="Src\scene\Game.cpp">
+      <Filter>Src\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\scene\Scene.cpp">
+      <Filter>Src\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Src\world\Block.cpp">
       <Filter>Src\World</Filter>
@@ -62,58 +71,67 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader\test.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\test.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Diff.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Diff.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Diff.geom">
+      <Filter>Shader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\core\Camera.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\Cube.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\EBO.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\Engine.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\json.hpp">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\Rectangle.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\Shader.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\Texture.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\VAO.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\core\VBO.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\scene\Game.h">
+      <Filter>Src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\scene\Scene.h">
+      <Filter>Src\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="Src\world\Block.h">
       <Filter>Src\World</Filter>
     </ClInclude>
     <ClInclude Include="Src\world\Chunk.h">
       <Filter>Src\World</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Camera.h">
-      <Filter>Src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Cube.h">
-      <Filter>Src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\EBO.h">
-      <Filter>Src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Engine.h">
-      <Filter>Src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Rectangle.h">
-      <Filter>Src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Shader.h">
-      <Filter>Src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Texture.h">
-      <Filter>Src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\VAO.h">
-      <Filter>Src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\VBO.h">
-      <Filter>Src\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Src\world\CubeBlock.h">
       <Filter>Src\World</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shader\Dif.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shader\Dif.vert">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shader\Cube.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shader\Cube.vert">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shader\Cube.geom">
-      <Filter>Shader</Filter>
-    </None>
   </ItemGroup>
 </Project>

@@ -104,8 +104,6 @@ static GLuint indicesDown[] = {
 	22,21,23,
 };
 
-
-Shader* Cube::shader = NULL;
 static VAO* vao = NULL;
 static VBO* vboVertices = NULL;
 static VBO* vboTexture = NULL;
@@ -132,7 +130,7 @@ void Cube::CubeSetUp()
 	vao->linkData(*vboTexture, 1, 2, GL_FLOAT, 2 * sizeof(float), (void*)0);
 	vboVertices->unbind();
 	vao->unbind();
-	shader = new Shader("Shader/Cube.vert", "Shader/Cube.geom", "Shader/Cube.frag");
+	
 
 }
 
@@ -146,47 +144,22 @@ void Cube::CubeDelete()
 	delete eboRight; 
 	delete eboFront;
 	delete eboBack; 
-	delete shader;
 }
 
 Cube::Cube()
 {
-}
-Cube::Cube(float x, float y, float z)
-{
-	this->x = x;
-	this->y = y;
-	this->z = z;
 	face = 0b111111;
-
 }
 
 void Cube::draw(float x, float y, float z)
 {
-	const int n = (((int)Faces::Left & (int)face) == (int)Faces::Left +
-		((int)Faces::Right & (int)face) == (int)Faces::Right +
-		((int)Faces::Front & (int)face) == (int)Faces::Front +
-		((int)Faces::Back & (int)face) == (int)Faces::Back +
-		((int)Faces::Up & (int)face) == (int)Faces::Up +
-		((int)Faces::Down & (int)face) == (int)Faces::Down) * 6;
-	if (n <= 0)
-		return;
-	shader->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
-	shader->setUniformVec3(glm::vec3(x, y, z), "pos");
+	Shader& s = getDiffoltShader();
 	vao->bind();
+	s.setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
+	s.setUniformVec3(glm::vec3(x, y, z), "pos");
 	drawFaces();
 }
-void Cube::draw()
-{
 
-	if (face <= 0)
-		return;
-
-	shader->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
-	shader->setUniformVec3(glm::vec3(x, y, z), "pos");
-	vao->bind();
-	drawFaces();
-}
 void Cube::setFaceing(int faces)
 {
 	this->face = faces;

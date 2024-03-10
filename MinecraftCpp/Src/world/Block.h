@@ -1,5 +1,5 @@
 #pragma once
-#include "Cube.h"
+#include "../core/Cube.h"
 
 class Block
 {
@@ -12,8 +12,10 @@ public:
 
 	virtual void draw() = 0;
 
-	virtual void setFaceing(Faces faces) = 0;
+	virtual void setFaceing(int faces) = 0;
 
-	virtual void setOneFace(Faces face, bool state) = 0;
+	virtual void setOneFace(int face, bool state = true) = 0;
+
+	friend class Chunk;
 };
 

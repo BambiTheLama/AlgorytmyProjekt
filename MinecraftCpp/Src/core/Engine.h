@@ -6,6 +6,7 @@
 #include <vector>
 class Cube;
 class Shader;
+class Chunk;
 class Engine
 {
 	float height, width;
@@ -22,9 +23,11 @@ public:
 
 	float getDeltaTime()const { return deltaTime; }
 
-	void sortVector(std::vector<Cube*>& toSort);
+	void sortVector(std::vector<Chunk*>& toSort);
 
 	friend void drawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 color);
+
+	
 };
 
 void drawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f));

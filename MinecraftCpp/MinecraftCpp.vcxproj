@@ -168,30 +168,35 @@
     <ClCompile Include="Src\core\VBO.cpp" />
     <ClCompile Include="Src\glad.c" />
     <ClCompile Include="Src\Main.cpp" />
+    <ClCompile Include="Src\scene\Game.cpp" />
+    <ClCompile Include="Src\scene\Scene.cpp" />
     <ClCompile Include="Src\world\Block.cpp" />
     <ClCompile Include="Src\world\Chunk.cpp" />
     <ClCompile Include="Src\world\CubeBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Include\Camera.h" />
-    <ClInclude Include="..\Include\Cube.h" />
-    <ClInclude Include="..\Include\EBO.h" />
-    <ClInclude Include="..\Include\Engine.h" />
-    <ClInclude Include="..\Include\Rectangle.h" />
-    <ClInclude Include="..\Include\Shader.h" />
-    <ClInclude Include="..\Include\Texture.h" />
-    <ClInclude Include="..\Include\VAO.h" />
-    <ClInclude Include="..\Include\VBO.h" />
+    <None Include="Shader\Diff.frag" />
+    <None Include="Shader\Diff.geom" />
+    <None Include="Shader\Diff.vert" />
+    <None Include="Shader\test.frag" />
+    <None Include="Shader\test.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\core\Camera.h" />
+    <ClInclude Include="Src\core\Cube.h" />
+    <ClInclude Include="Src\core\EBO.h" />
+    <ClInclude Include="Src\core\Engine.h" />
+    <ClInclude Include="Src\core\json.hpp" />
+    <ClInclude Include="Src\core\Rectangle.h" />
+    <ClInclude Include="Src\core\Shader.h" />
+    <ClInclude Include="Src\core\Texture.h" />
+    <ClInclude Include="Src\core\VAO.h" />
+    <ClInclude Include="Src\core\VBO.h" />
+    <ClInclude Include="Src\scene\Game.h" />
+    <ClInclude Include="Src\scene\Scene.h" />
     <ClInclude Include="Src\world\Block.h" />
     <ClInclude Include="Src\world\Chunk.h" />
     <ClInclude Include="Src\world\CubeBlock.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shader\Cube.frag" />
-    <None Include="Shader\Cube.geom" />
-    <None Include="Shader\Cube.vert" />
-    <None Include="Shader\Dif.frag" />
-    <None Include="Shader\Dif.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,7 +1,7 @@
 #pragma once
 #include "Block.h"
-#include "Cube.h"
-#include "Texture.h"
+#include "../core/Cube.h"
+#include "../core/Texture.h"
 class CubeBlock :
     public Block
 {
@@ -14,8 +14,8 @@ public:
 
 	virtual void draw();
 
-	virtual void setFaceing(Faces faces);
+	virtual void setFaceing(int faces);
 
-	virtual void setOneFace(Faces face, bool state);
+	virtual void setOneFace(int face, bool state = true);
 };
 

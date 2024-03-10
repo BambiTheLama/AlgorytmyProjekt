@@ -1,12 +1,32 @@
 #pragma once
 #include "Block.h"
+#include <vector>
 #define chunkW 16
 #define chunkH 16
-#define chunkThickness 16
-
+#define chunkT 16
+class Game;
 class Chunk
 {
+	
 	int x, y, z;
-	Block* blocks[chunkH][chunkW][chunkThickness];
+	Block* blocks[chunkH][chunkW][chunkT];
+	std::vector<Block*> toDelete;
+	std::vector<Block*> toAdd;
+	static Game* game;
+public:
+	Chunk(int x, int y, int z);
+
+	~Chunk();
+
+	void update(float deltaTime);
+
+	void draw();
+
+	Block* getBlock(int x, int y, int z);
+
+	bool isThisChunk(int x, int y, int z);
+
+	friend class Engine;
+	
 };
 

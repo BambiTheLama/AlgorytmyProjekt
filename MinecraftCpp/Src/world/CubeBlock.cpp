@@ -8,21 +8,24 @@ CubeBlock::CubeBlock(int x, int y, int z, const char* path):Block(x,y,z)
 
 CubeBlock::~CubeBlock()
 {
-
+	delete cube;
+	delete texture;
 }
 
 void CubeBlock::draw()
 {
+	texture->useTexture("tex0", 0);
+	texture->bind();
 	cube->draw(x, y, z);
 }
 
-void CubeBlock::setFaceing(Faces faces)
+void CubeBlock::setFaceing(int faces)
 {
 	//texture->useTexture()
-	//cube->setFaceing(faces);
+	cube->setFaceing(faces);
 }
 
-void CubeBlock::setOneFace(Faces face, bool state)
+void CubeBlock::setOneFace(int face, bool state)
 {
-	//cube->setOneFace(face, state);
+	cube->setOneFace(face, state);
 }

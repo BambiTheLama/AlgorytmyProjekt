@@ -11,6 +11,8 @@
 #include <glm/gtx/transform.hpp>
 #include <stb/stb_image.h>
 #include <vector>
+#include "../World/Chunk.h"
+#include "../scene/Game.h"
 
 static GLfloat verticies[] = {
 	1,1,1,
@@ -70,7 +72,7 @@ Engine::Engine()
 	vbo->unbind();
 	ebo->unbind();
 	vao->unbind();
-	shader = new Shader("Shader/Dif.vert", "Shader/Dif.frag");
+	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
 	camera = new Camera(width, height, 0.1f, 100, 60, glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
@@ -90,37 +92,9 @@ Engine::~Engine()
 void Engine::start()
 {
 	float lastTime = glfwGetTime();	
-	Texture text("Res/1.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-	{
-		Texture text2("Res/1.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-		text2.deleteTexture();
-	}
-	Texture text2("Res/1.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	std::vector<Cube*> toDraw;
-	int w = 10, h = 10;
-	for (int y = 0; y < h; y++)
-	{
-		for (int x = 0; x < w; x++)
-		{
-			Cube* c = new Cube(-w / 2.0f + x, -1, -h / 2.0f + y);
-			toDraw.push_back(c);
-
-			if (x < w - 1)
-				c->setOneFace((int)Faces::Right,false);
-			if (y < h - 1)
-				c->setOneFace((int)Faces::Front, false);
-			if(y > 0)
-				c->setOneFace((int)Faces::Back, false);
-			if (x > 0)
-				c->setOneFace((int)Faces::Left, false);
-			
-
-
-		}
-	}
-
-	Cube c(0, 0, 1);
-
+	
+	Game* game = new Game();
+	Chunk::game = game;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -133,58 +107,24 @@ void Engine::start()
 		lastTime = currentTime;
 		glfwSetWindowTitle(window, std::string(title + " :" + std::to_string(1.0f / deltaTime)+" FPS").c_str());
 		camera->update(window, deltaTime);
-
-
+		game->update(deltaTime);
 		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-		shader->active();
-
-		text.bind();
-		text.useTexture(*shader, "tex0", 0);
-		startShaderMode(*Cube::shader);
+		startShaderMode(*shader);
 		if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
-			Cube::shader->setUniformI1(true, "debug");
+			shader->setUniformI1(true, "debug");
 		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
-			Cube::shader->setUniformI1(false, "debug");
-		//sortVector(toDraw);
-		for (auto c : toDraw)
-			c->draw();
+			shader->setUniformI1(false, "debug");
+		game->draw();
 		endShaderMode();
 		camera->draw(*shader);
 		glfwSwapBuffers(window);
 
 		glfwPollEvents();
 	}
-	for (auto c : toDraw)
-		delete c;
+	delete game;
 }
-void Engine::sortVector(std::vector<Cube*>& toSort)
-{
-	glm::vec3 pos = camera->getPos();
 
-	std::vector<float> dist;
-	for (auto c : toSort)
-	{
-		//dist.push_back(glm::distance(pos, c->getPos()));
-	}
-	for (int i = 0; i < dist.size(); i++)
-	{
-		for (int j = i + 1; j < dist.size(); j++)
-		{
-			if (dist[j] > dist[i])
-			{
-				float d = dist[j];
-				dist[j] = dist[i];
-				dist[i] = d;
-				Cube* c = toSort[i];
-				toSort[i] = toSort[j];
-				toSort[j] = c;
-			}
-		}
-	}
-}
 void drawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3,glm::vec3 color)
 {
 
