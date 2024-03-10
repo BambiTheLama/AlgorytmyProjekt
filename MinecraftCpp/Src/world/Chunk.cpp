@@ -32,48 +32,20 @@ void Chunk::update(float deltaTime)
 {
 	for (auto b : toAdd)
 	{
-		if (!b)
-			continue;
-		Block* block = game->getBlockAt(b->x, b->y + 1, b->z);
-		if (block)
-		{
-			b->setOneFace((int)Faces::Up, false);
-			block->setOneFace((int)Faces::Down, false);
-		}
-		block = game->getBlockAt(b->x, b->y - 1, b->z);
-		if (block)
-		{
-			block->setOneFace((int)Faces::Up, false);
-			b->setOneFace((int)Faces::Down, false);
-		}
-		block = game->getBlockAt(b->x, b->y, b->z + 1);
-		if (block)
-		{
-			b->setOneFace((int)Faces::Front, false);
-			block->setOneFace((int)Faces::Back, false);
-		}
-		block = game->getBlockAt(b->x, b->y, b->z - 1);
-		if (block)
-		{
-			block->setOneFace((int)Faces::Front, false);
-			b->setOneFace((int)Faces::Back, false);
-		}
-		block = game->getBlockAt(b->x + 1, b->y, b->z);
-		if (block)
-		{
-			block->setOneFace((int)Faces::Left, false);
-			b->setOneFace((int)Faces::Right, false);
-		}
-		block = game->getBlockAt(b->x - 1, b->y, b->z);
-		if (block)
-		{
-			b->setOneFace((int)Faces::Left, false);
-			block->setOneFace((int)Faces::Right, false);
-		}
+		game->setFaceing(b, false);
+		
 	}
 	toAdd.clear();
+	for (auto b : toDelete)
+	{
+		game->setFaceing(b->x, b->y, b->z, true);
+		delete b;
+	}
+	toDelete.clear();
 
 }
+
+
 
 void Chunk::draw()
 {
@@ -91,6 +63,18 @@ Block* Chunk::getBlock(int x, int y, int z)
 	if (x >= 0 && x < chunkW && y >= 0 && y < chunkH && z >= 0 && z < chunkT)
 		return blocks[y][x][z];
 	return NULL;
+}
+
+void Chunk::deleteBlock(Block* b)
+{
+	int x = b->x - this->x * chunkW;
+	int y = b->y - this->y * chunkH;
+	int z = b->z - this->z * chunkT;
+	if (x >= 0 && x < chunkW && y >= 0 && y < chunkH && z >= 0 && z < chunkT)
+	{
+		toDelete.push_back(blocks[y][x][z]);
+		blocks[y][x][z] = NULL;
+	}
 }
 
 bool Chunk::isThisChunk(int x, int y, int z)

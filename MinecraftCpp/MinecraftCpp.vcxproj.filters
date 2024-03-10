@@ -100,9 +100,6 @@
     <ClInclude Include="Src\core\Engine.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\json.hpp">
-      <Filter>Src\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Src\core\Rectangle.h">
       <Filter>Src\Core</Filter>
     </ClInclude>

@@ -17,5 +17,6 @@ public:
 	virtual void setOneFace(int face, bool state = true) = 0;
 
 	friend class Chunk;
+	friend class Game;
 };
 

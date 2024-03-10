@@ -186,7 +186,6 @@
     <ClInclude Include="Src\core\Cube.h" />
     <ClInclude Include="Src\core\EBO.h" />
     <ClInclude Include="Src\core\Engine.h" />
-    <ClInclude Include="Src\core\json.hpp" />
     <ClInclude Include="Src\core\Rectangle.h" />
     <ClInclude Include="Src\core\Shader.h" />
     <ClInclude Include="Src\core\Texture.h" />

@@ -93,7 +93,7 @@ void Engine::start()
 {
 	float lastTime = glfwGetTime();	
 	
-	Game* game = new Game(camera);
+	Game* game = new Game(camera,window);
 
 
 	while (!glfwWindowShouldClose(window))

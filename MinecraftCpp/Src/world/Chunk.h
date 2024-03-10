@@ -24,6 +24,8 @@ public:
 
 	Block* getBlock(int x, int y, int z);
 
+	void deleteBlock(Block* b);
+
 	bool isThisChunk(int x, int y, int z);
 
 	glm::vec3 getPos() { return glm::vec3(x * chunkW + chunkW / 2, y * chunkH + chunkH / 2, z * chunkT + chunkT / 2); }

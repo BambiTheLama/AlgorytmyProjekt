@@ -36,5 +36,7 @@ public:
 
 	glm::vec3 getPos() { return cameraPos; }
 
+	glm::vec3 getDir() { return cameraOrientation; }
+
 };
 
