@@ -8,7 +8,7 @@ class CubeBlock :
 	Cube* cube;
 	Texture* texture;
 public:
-	CubeBlock(int x, int y, int z,const char* path);
+	CubeBlock(int x, int y, int z, const char* path);
 
 	~CubeBlock();
 

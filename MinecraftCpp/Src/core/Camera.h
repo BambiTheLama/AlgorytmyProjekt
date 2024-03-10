@@ -4,7 +4,6 @@
 #include <glm/matrix.hpp>
 #include <glm/glm.hpp>
 
-
 class Shader;
 class Camera
 {

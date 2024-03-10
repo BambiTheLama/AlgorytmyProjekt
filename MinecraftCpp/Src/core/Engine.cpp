@@ -93,8 +93,8 @@ void Engine::start()
 {
 	float lastTime = glfwGetTime();	
 	
-	Game* game = new Game();
-	Chunk::game = game;
+	Game* game = new Game(camera);
+
 
 	while (!glfwWindowShouldClose(window))
 	{

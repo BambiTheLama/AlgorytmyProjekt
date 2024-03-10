@@ -13,7 +13,7 @@ Chunk::Chunk(int x, int y, int z)
 		for (int i = 0; i < chunkW; i++)
 			for (int k = 0; k < chunkT; k++)
 			{
-				blocks[j][i][k] = new CubeBlock(i + x * chunkW, j + y * chunkH, k + z * chunkT, "Res/test1.png");
+				blocks[j][i][k] = new CubeBlock(i + x * chunkW, j + y * chunkH, k + z * chunkT, "Res/1.jpg");
 				toAdd.push_back(blocks[j][i][k]);
 			}
 
@@ -26,7 +26,6 @@ Chunk::~Chunk()
 			for (int k = 0; k < chunkT; k++)
 				if (blocks[j][i][k])
 					delete blocks[j][i][k];
-
 }
 
 void Chunk::update(float deltaTime)

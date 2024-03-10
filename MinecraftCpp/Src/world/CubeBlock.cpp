@@ -3,6 +3,7 @@
 CubeBlock::CubeBlock(int x, int y, int z, const char* path):Block(x,y,z)
 {
 	cube = new Cube();
+
 	texture = new Texture(path);
 }
 

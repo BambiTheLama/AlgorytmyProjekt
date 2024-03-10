@@ -47,20 +47,20 @@ static GLfloat texture[] = {
 	2.0f / 3.0f, 1,
 	2.0f / 3.0f, 0,
 	///Ty³
-	1.0f / 3.0f, 1,
-	1.0f / 3.0f, 0,
 	2.0f / 3.0f, 1,
 	2.0f / 3.0f, 0,
+	1.0f / 3.0f, 1,
+	1.0f / 3.0f, 0,
 	///Lewo
 	1.0f / 3.0f, 1,
 	1.0f / 3.0f, 0,
 	2.0f / 3.0f, 1,
 	2.0f / 3.0f, 0,
 	///Prawo
-	1.0f / 3.0f, 1,
-	1.0f / 3.0f, 0,
 	2.0f / 3.0f, 1,
 	2.0f / 3.0f, 0,
+	1.0f / 3.0f, 1,
+	1.0f / 3.0f, 0,
 	///Gora
 	0.0f / 3.0f, 1,
 	0.0f / 3.0f, 0,
@@ -173,35 +173,35 @@ void Cube::setOneFace(int face, bool state)
 
 void Cube::drawFaces()
 {
-
+	const int n = 6;
 	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
 	{
 		eboLeft->bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
 	}
 	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
 	{
 		eboRight->bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
 	}
 	if (((int)Faces::Front & (int)face) == (int)Faces::Front)
 	{
 		eboFront->bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
 	}
 	if (((int)Faces::Back & (int)face) == (int)Faces::Back)
 	{
 		eboBack->bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
 	}
 	if (((int)Faces::Up & (int)face) == (int)Faces::Up)
 	{
 		eboUp->bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
 	}
 	if (((int)Faces::Down & (int)face) == (int)Faces::Down)
 	{
 		eboDown->bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
 	}
 }

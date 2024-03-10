@@ -36,7 +36,7 @@ void debugMode()
     vec4 p1 = gl_in[0].gl_Position;
     vec4 p2 = gl_in[1].gl_Position;
     vec4 p3 = gl_in[2].gl_Position;
-    float v = 6f;
+    float v = 36f;
     gl_Position =  p1;
     EmitVertex();
 
@@ -48,10 +48,10 @@ void debugMode()
 
     EndPrimitive();
 
-    gl_Position =  p2;
+    gl_Position =  p3;
     EmitVertex();
 
-    gl_Position =  p3;
+    gl_Position =  p2;
     EmitVertex();
      
     gl_Position =  (p1/v + p2 + p3)/2;
@@ -69,10 +69,13 @@ void debugMode()
     EmitVertex();
 
     EndPrimitive();
+
+
 }
 
 void main()
 {
+
     if(debug)
         debugMode();
     else

@@ -18,6 +18,10 @@ Texture::Texture(const char* path, GLenum textureType, GLenum slot, GLenum forma
 		}
 
 	}
+	std::string s(path);
+	if (s.size() > 4 && s.at(s.size() - 4) == '.' && s.at(s.size() - 3) == 'j' && s.at(s.size() - 2) == 'p' && s.at(s.size() - 1) == 'g')
+		format = GL_RGB;
+
 	this->path = path;
 	type = textureType;
 	int numColCh;
