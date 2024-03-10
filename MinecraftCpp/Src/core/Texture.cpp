@@ -1,6 +1,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include <string>
+#include "Engine.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
@@ -74,6 +75,12 @@ void Texture::useTexture(Shader& shader, const char* uniform, GLuint unit)
 {
 	shader.active();
 	glUniform1i(shader.getUniformLocation(uniform), unit);
+}
+void Texture::useTexture(const char* uniform, GLuint unit)
+{
+	Shader& s = getDiffoltShader();
+	//s.active();
+	glUniform1i(s.getUniformLocation(uniform), unit);
 }
 void Texture::clearAllTextures()
 {

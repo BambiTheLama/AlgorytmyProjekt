@@ -149,55 +149,84 @@ void Cube::CubeDelete()
 	delete shader;
 }
 
+Cube::Cube()
+{
+}
 Cube::Cube(float x, float y, float z)
 {
 	this->x = x;
 	this->y = y;
 	this->z = z;
+	face = 0b111111;
+
 }
 
-void Cube::draw()
+void Cube::draw(float x, float y, float z)
 {
-	const int n = (up + down + left + right + front + back) * 6;
+	const int n = (((int)Faces::Left & (int)face) == (int)Faces::Left +
+		((int)Faces::Right & (int)face) == (int)Faces::Right +
+		((int)Faces::Front & (int)face) == (int)Faces::Front +
+		((int)Faces::Back & (int)face) == (int)Faces::Back +
+		((int)Faces::Up & (int)face) == (int)Faces::Up +
+		((int)Faces::Down & (int)face) == (int)Faces::Down) * 6;
 	if (n <= 0)
 		return;
 	shader->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
 	shader->setUniformVec3(glm::vec3(x, y, z), "pos");
 	vao->bind();
 	drawFaces();
+}
+void Cube::draw()
+{
 
+	if (face <= 0)
+		return;
 
+	shader->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
+	shader->setUniformVec3(glm::vec3(x, y, z), "pos");
+	vao->bind();
+	drawFaces();
+}
+void Cube::setFaceing(int faces)
+{
+	this->face = faces;
+}
+
+void Cube::setOneFace(int face, bool state)
+{
+	int f = (int)this->face & ~((int)face);
+	this->face = (f | ((int)face * state));
 }
 
 void Cube::drawFaces()
 {
 
-	if (left)
+	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
 	{
 		eboLeft->bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
-	if (right)
+	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
 	{
 		eboRight->bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
-	if (front)
+	if (((int)Faces::Front & (int)face) == (int)Faces::Front)
 	{
 		eboFront->bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
-	if (back)
+	if (((int)Faces::Back & (int)face) == (int)Faces::Back)
 	{
 		eboBack->bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
-	if (up)
+	if (((int)Faces::Up & (int)face) == (int)Faces::Up)
 	{
 		eboUp->bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
-	if (down)
+	if (((int)Faces::Down & (int)face) == (int)Faces::Down)
 	{
 		eboDown->bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

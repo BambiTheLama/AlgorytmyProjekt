@@ -92,6 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>;..\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -109,7 +110,7 @@
       <ConformanceMode>true</ConformanceMode>
       <ExceptionHandling>false</ExceptionHandling>
       <StringPooling>false</StringPooling>
-      <AdditionalIncludeDirectories>..\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Include;..\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -126,6 +127,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>;..\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,7 +145,7 @@
       <ConformanceMode>true</ConformanceMode>
       <ExceptionHandling>false</ExceptionHandling>
       <StringPooling>false</StringPooling>
-      <AdditionalIncludeDirectories>..\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Include;..\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,7 +158,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\core\Camera.cpp" />
-    <ClCompile Include="Src\core\Chunk.cpp" />
     <ClCompile Include="Src\core\Cube.cpp" />
     <ClCompile Include="Src\core\EBO.cpp" />
     <ClCompile Include="Src\core\Engine.cpp" />
@@ -167,18 +168,23 @@
     <ClCompile Include="Src\core\VBO.cpp" />
     <ClCompile Include="Src\glad.c" />
     <ClCompile Include="Src\Main.cpp" />
+    <ClCompile Include="Src\world\Block.cpp" />
+    <ClCompile Include="Src\world\Chunk.cpp" />
+    <ClCompile Include="Src\world\CubeBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\core\Camera.h" />
-    <ClInclude Include="Src\core\Chunk.h" />
-    <ClInclude Include="Src\core\Cube.h" />
-    <ClInclude Include="Src\core\EBO.h" />
-    <ClInclude Include="Src\core\Engine.h" />
-    <ClInclude Include="Src\core\Rectangle.h" />
-    <ClInclude Include="Src\core\Shader.h" />
-    <ClInclude Include="Src\core\Texture.h" />
-    <ClInclude Include="Src\core\VAO.h" />
-    <ClInclude Include="Src\core\VBO.h" />
+    <ClInclude Include="..\Include\Camera.h" />
+    <ClInclude Include="..\Include\Cube.h" />
+    <ClInclude Include="..\Include\EBO.h" />
+    <ClInclude Include="..\Include\Engine.h" />
+    <ClInclude Include="..\Include\Rectangle.h" />
+    <ClInclude Include="..\Include\Shader.h" />
+    <ClInclude Include="..\Include\Texture.h" />
+    <ClInclude Include="..\Include\VAO.h" />
+    <ClInclude Include="..\Include\VBO.h" />
+    <ClInclude Include="Src\world\Block.h" />
+    <ClInclude Include="Src\world\Chunk.h" />
+    <ClInclude Include="Src\world\CubeBlock.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Cube.frag" />

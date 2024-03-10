@@ -5,16 +5,35 @@
 class Shader;
 class Engine;
 
+enum class Faces :int
+{
+	Up    = 0b000001,
+	Down  = 0b000010,
+	Right = 0b000100,
+	Left  = 0b001000,
+	Front = 0b010000,
+	Back  = 0b100000,
+};
+
+
 class Cube
 {
 	static Shader* shader;
+	int face;
 	float x, y, z;
-
 public:
-	bool up = true, down = true, left = true, right = true, front = true, back = true;
-	Cube(float x, float y, float z);
+
+	Cube();
+
+	Cube(float x,float y,float z);
+
+	void draw(float x, float y, float z);
 
 	void draw();
+
+	void setFaceing(int faces);
+
+	void setOneFace(int face, bool state = true);
 
 	friend class Engine;
 private:
@@ -23,7 +42,5 @@ private:
 	void addIndices(bool leftSide,int index,int& i, GLuint* indices);
 	static void CubeSetUp();
 	static void CubeDelete();
-	glm::vec3 getPos() { return glm::vec3(x, y, z); }
-
 };
 

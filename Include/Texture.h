@@ -24,6 +24,8 @@ public:
 
 	void useTexture(Shader& shader, const char* uniform, GLuint unit);
 
+	void useTexture(const char* uniform, GLuint unit);
+
 	int getW() const { return w; }
 
 	int getH() const { return h; }
@@ -35,7 +37,6 @@ private:
 	static void clearAllTextures();
 
 	void copyData(Texture& texture);
-
 
 };
 

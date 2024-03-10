@@ -13,6 +13,9 @@
     <Filter Include="Res">
       <UniqueIdentifier>{1d942a64-6ada-4a05-bb70-401f8b5d852d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\World">
+      <UniqueIdentifier>{5a456562-e680-4c92-a559-354857f34677}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\glad.c">
@@ -48,40 +51,52 @@
     <ClCompile Include="Src\core\Texture.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Src\core\Chunk.cpp">
-      <Filter>Src\Core</Filter>
+    <ClCompile Include="Src\world\Block.cpp">
+      <Filter>Src\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Chunk.cpp">
+      <Filter>Src\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\CubeBlock.cpp">
+      <Filter>Src\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\core\Camera.h">
+    <ClInclude Include="Src\world\Block.h">
+      <Filter>Src\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Chunk.h">
+      <Filter>Src\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Camera.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\Cube.h">
+    <ClInclude Include="..\Include\Cube.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\EBO.h">
+    <ClInclude Include="..\Include\EBO.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\Engine.h">
+    <ClInclude Include="..\Include\Engine.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\Rectangle.h">
+    <ClInclude Include="..\Include\Rectangle.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\Shader.h">
+    <ClInclude Include="..\Include\Shader.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\VAO.h">
+    <ClInclude Include="..\Include\Texture.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\VBO.h">
+    <ClInclude Include="..\Include\VAO.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\Texture.h">
+    <ClInclude Include="..\Include\VBO.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\core\Chunk.h">
-      <Filter>Src\Core</Filter>
+    <ClInclude Include="Src\world\CubeBlock.h">
+      <Filter>Src\World</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

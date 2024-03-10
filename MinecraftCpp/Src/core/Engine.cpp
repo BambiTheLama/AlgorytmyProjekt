@@ -71,7 +71,7 @@ Engine::Engine()
 	ebo->unbind();
 	vao->unbind();
 	shader = new Shader("Shader/Dif.vert", "Shader/Dif.frag");
-	camera = new Camera(width, height, 0.1f, 100, 100, glm::vec3(0.0f, 0.0f, 0.0f));
+	camera = new Camera(width, height, 0.1f, 100, 60, glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 Engine::~Engine()
@@ -106,13 +106,15 @@ void Engine::start()
 			toDraw.push_back(c);
 
 			if (x < w - 1)
-				c->right = false;
+				c->setOneFace((int)Faces::Right,false);
 			if (y < h - 1)
-				c->front = false;
+				c->setOneFace((int)Faces::Front, false);
 			if(y > 0)
-				c->back = false;
+				c->setOneFace((int)Faces::Back, false);
 			if (x > 0)
-				c->left = false;
+				c->setOneFace((int)Faces::Left, false);
+			
+
 
 		}
 	}
@@ -165,7 +167,7 @@ void Engine::sortVector(std::vector<Cube*>& toSort)
 	std::vector<float> dist;
 	for (auto c : toSort)
 	{
-		dist.push_back(glm::distance(pos, c->getPos()));
+		//dist.push_back(glm::distance(pos, c->getPos()));
 	}
 	for (int i = 0; i < dist.size(); i++)
 	{
@@ -214,4 +216,9 @@ void startShaderMode(Shader& s)
 void endShaderMode()
 {
 	shader->active();
+}
+
+Shader& getDiffoltShader()
+{
+	return *shader;
 }
