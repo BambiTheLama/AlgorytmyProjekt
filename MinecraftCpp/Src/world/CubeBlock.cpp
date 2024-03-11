@@ -1,4 +1,5 @@
 #include "CubeBlock.h"
+#include "../core/Engine.h"
 
 CubeBlock::CubeBlock(int x, int y, int z, const char* path):Block(x,y,z)
 {
@@ -17,6 +18,13 @@ void CubeBlock::draw()
 {
 	texture->useTexture("tex0", 0);
 	texture->bind();
+	cube->draw(x, y, z);
+}
+void CubeBlock::drawSelect()
+{
+	Texture* t = getSelect();
+	t->useTexture("tex0", 0);
+	t->bind();
 	cube->draw(x, y, z);
 }
 

@@ -3,7 +3,7 @@
 Game::Game(Camera* camera,GLFWwindow* window)
 {
 	int h = 1;
-	int w = 1;
+	int w = 3;
 	Chunk::game = this;
 	this->camera = camera;
 	for (int i = 0; i < w; i++)
@@ -20,31 +20,32 @@ Game::~Game()
 		delete c;
 	chunks.clear();
 }
-
+Block* b = NULL;
 void Game::update(float deltaTime)
 {
 	for (auto c : chunks)
 		c->update(deltaTime);
 	sortChunks();
-	if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	
+	
+	glm::vec3 pos = camera->getPos();
+	glm::vec3 dir = camera->getDir();
+	int n = 0;
+	while (n < 100)
 	{
-		glm::vec3 pos = camera->getPos();
-		glm::vec3 dir = camera->getDir();
-		int n = 0;
-		while (n < 100)
+		int x = pos.x + n * dir.x;
+		int y = pos.y + n * dir.y;
+		int z = pos.z + n * dir.z;
+		b = getBlockAt(x, y, z);
+		if (b)
 		{
-			int x = pos.x + n * dir.x;
-			int y = pos.y + n * dir.y;
-			int z = pos.z + n * dir.z;
-			Block* b = getBlockAt(x, y, z);
-			if (b)
-			{
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 				deleteBlock(b);
-				break;
-			}
-			n++;
+			break;
 		}
+		n++;
 	}
+	
 
 	
 }
@@ -53,6 +54,8 @@ void Game::draw()
 {
 	for (auto c : chunks)
 		c->draw(camera->getPos());
+	if (b)
+		b->drawSelect();
 }
 
 Block* Game::getBlockAt(int x, int y, int z)

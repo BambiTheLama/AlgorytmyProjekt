@@ -14,6 +14,8 @@ public:
 
 	virtual void draw();
 
+	virtual void drawSelect();
+
 	virtual void setFaceing(int faces);
 
 	virtual void setOneFace(int face, bool state = true);

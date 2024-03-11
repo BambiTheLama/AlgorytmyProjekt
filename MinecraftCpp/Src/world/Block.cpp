@@ -1,4 +1,7 @@
 #include "Block.h"
+#include "../core/Texture.h"
+
+
 
 Block::Block(int x, int y, int z)
 {

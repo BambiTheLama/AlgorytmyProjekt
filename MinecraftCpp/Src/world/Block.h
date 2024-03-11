@@ -1,8 +1,9 @@
 #pragma once
 #include "../core/Cube.h"
-
+class Texture;
 class Block
 {
+	
 protected:
 	int x, y, z;
 public:
@@ -11,6 +12,8 @@ public:
 	virtual ~Block(){}
 
 	virtual void draw() = 0;
+
+	virtual void drawSelect() = 0;
 
 	virtual void setFaceing(int faces) = 0;
 

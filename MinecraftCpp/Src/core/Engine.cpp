@@ -30,6 +30,7 @@ static VBO* vbo = NULL;
 static EBO* ebo = NULL;
 static Shader* shader = NULL;
 static Camera* camera = NULL;
+Texture* select = NULL;
 Engine::Engine()
 {
 	height = 900;
@@ -57,9 +58,8 @@ Engine::Engine()
 	glViewport(0, 0, width, height);
 
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_ALWAYS);
 	glEnable(GL_CULL_FACE);
-	glDepthMask(GL_FALSE);
+
 	glCullFace(GL_FRONT);
 	glFrontFace(GL_CCW);
 
@@ -74,6 +74,7 @@ Engine::Engine()
 	vao->unbind();
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
 	camera = new Camera(width, height, 0.1f, 100, 60, glm::vec3(0.0f, 0.0f, 0.0f));
+	select = new Texture("Res/Selected.png");
 }
 
 Engine::~Engine()
@@ -84,6 +85,7 @@ Engine::~Engine()
 	delete vbo;
 	delete vao;
 	delete ebo;
+	delete select;
 	Cube::CubeDelete();
 	glfwDestroyWindow(window);
 	glfwTerminate();
@@ -161,4 +163,9 @@ void endShaderMode()
 Shader& getDiffoltShader()
 {
 	return *shader;
+}
+
+Texture* getSelect()
+{
+	return select;
 }
