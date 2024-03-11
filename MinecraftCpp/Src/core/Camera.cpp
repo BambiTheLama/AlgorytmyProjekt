@@ -23,9 +23,10 @@ void Camera::useCamera(Shader& shader, const char* uniform)
 	glm::mat4 projection = glm::mat4(1.0f);
 
 	view = glm::lookAt(cameraPos, cameraPos + cameraOrientation, up);
-
-	projection = glm::perspective(glm::radians(cameraAngleDeg), cameraWidth / cameraHeight, nearest, farest);
-
+	if (useProjection)
+		projection = glm::perspective(glm::radians(cameraAngleDeg), cameraWidth / cameraHeight, nearest, farest);
+	else
+		projection = glm::ortho(0.0f, cameraWidth, 0.0f, cameraHeight);
 	glUniformMatrix4fv(shader.getUniformLocation(uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
 }
 
@@ -42,8 +43,10 @@ void Camera::newPos(glm::vec3 pos)
 void Camera::draw(Shader& shader)
 {
 	glm::vec3 cameraPos = this->cameraPos + cameraOrientation;
-	drawTriangle(cameraPos + glm::vec3(0, 0, 0), cameraPos + glm::vec3(0.02f, 0.01f, 0), cameraPos + glm::vec3(-0.02f, 0.01f, 0));
-	drawTriangle(cameraPos + glm::vec3(0, 0, 0), cameraPos - glm::vec3(0.02f, 0.01f, 0), cameraPos - glm::vec3(-0.02f, 0.01f, 0));
+	glm::vec3 right = glm::normalize(glm::cross(up, cameraOrientation));
+	shader.setUniformVec3(glm::vec3(0.0f), "pos");
+	drawTriangle(cameraPos - right, cameraPos + right, cameraPos);
+	drawTriangle(cameraPos + right, cameraPos - right, cameraPos);
 }
 
 void Camera::update(GLFWwindow* window, float deltaTime)

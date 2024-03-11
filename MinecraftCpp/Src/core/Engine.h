@@ -8,6 +8,7 @@ class Cube;
 class Shader;
 class Chunk;
 class Texture;
+
 class Engine
 {
 	float height, width;

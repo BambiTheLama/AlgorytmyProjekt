@@ -13,6 +13,7 @@
 #include <vector>
 #include "../World/Chunk.h"
 #include "../scene/Game.h"
+#include "Font.h"
 
 static GLfloat verticies[] = {
 	1,1,1,
@@ -28,7 +29,10 @@ static GLuint indices[] = {
 static VAO* vao = NULL;
 static VBO* vbo = NULL;
 static EBO* ebo = NULL;
+static GLuint textVAO;
+static GLuint textVBO;
 static Shader* shader = NULL;
+static Shader* textShader = NULL;
 static Camera* camera = NULL;
 Texture* select = NULL;
 Engine::Engine()
@@ -62,6 +66,8 @@ Engine::Engine()
 
 	glCullFace(GL_FRONT);
 	glFrontFace(GL_CW);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	Cube::CubeSetUp();
 	vao = new VAO();
@@ -72,9 +78,20 @@ Engine::Engine()
 	vbo->unbind();
 	ebo->unbind();
 	vao->unbind();
+	glGenVertexArrays(1, &textVAO);
+	glGenBuffers(1, &textVBO);
+	glBindVertexArray(textVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
 	camera = new Camera(width, height, 0.1f, 100, 60, glm::vec3(0.0f, 0.0f, 0.0f));
 	select = new Texture("Res/Selected.png");
+	Font::setUpFonts();
 }
 
 Engine::~Engine()
