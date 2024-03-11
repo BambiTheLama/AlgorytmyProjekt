@@ -74,34 +74,30 @@ static GLfloat texture[] = {
 };
 
 static GLuint indicesFront[] = {
-	///Front
-	0,1,2,
-	1,3,2,
+	0,2,1,
+	1,2,3,
 };
 static GLuint indicesBack[] = {
-	///Ty³
-	4,6,5,
-	5,6,7,
+	4,5,6,
+	6,5,7,
 };
 static GLuint indicesLeft[] = {
-	///Lewo
-	8,9,10,
-	9,11,10,
+	8,10,9,
+	9,10,11,
 };
 static GLuint indicesRight[] = {
-	///Prawo
-	12,14,13,
-	13,14,15,
+
+	12,13,14,
+	13,15,14,
 };
 static GLuint indicesUp[] = {
-	///Gora
-	16,18,17,
-	17,18,19,
+
+	16,17,18,
+	17,19,18,
 };
 static GLuint indicesDown[] = {
-	///Dol
-	20,21,22,
-	22,21,23,
+	20,22,21,
+	21,22,23,
 };
 
 static VAO* vao = NULL;

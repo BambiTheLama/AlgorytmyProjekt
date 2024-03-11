@@ -12,6 +12,7 @@ class Game :
     std::vector<Chunk*> toDelete;
     Camera *camera;
     GLFWwindow* window;
+    Block* b = NULL;
 public:
     Game(Camera *camera, GLFWwindow* window);
 

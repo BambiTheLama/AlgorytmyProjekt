@@ -20,7 +20,7 @@ Game::~Game()
 		delete c;
 	chunks.clear();
 }
-Block* b = NULL;
+
 void Game::update(float deltaTime)
 {
 	for (auto c : chunks)
@@ -53,7 +53,7 @@ void Game::update(float deltaTime)
 void Game::draw()
 {
 	for (auto c : chunks)
-		c->draw(camera->getPos());
+		c->draw();
 	if (b)
 		b->drawSelect();
 }
