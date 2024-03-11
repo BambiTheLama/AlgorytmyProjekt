@@ -20,7 +20,7 @@ class Camera
 	float cameraAngleDeg = 90;
 	bool useProjection = true;
 public:
-	Camera(float width, float height, float farest, float neares,float cameraAngle=45.0f, glm::vec3 position = glm::vec3(0));
+	Camera(float width, float height, float neares, float farest,float cameraAngle=45.0f, glm::vec3 position = glm::vec3(0));
 
 	void useCamera(Shader& shader,const char* uniform);
 

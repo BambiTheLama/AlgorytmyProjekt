@@ -60,8 +60,8 @@ Engine::Engine()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CW);
 
 	Cube::CubeSetUp();
 	vao = new VAO();

@@ -7,7 +7,7 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-Camera::Camera(float width, float height, float farest, float neares, float cameraAngle, glm::vec3 position)
+Camera::Camera(float width, float height, float neares, float farest, float cameraAngle, glm::vec3 position)
 {
 	cameraHeight = height;
 	cameraWidth = width;
