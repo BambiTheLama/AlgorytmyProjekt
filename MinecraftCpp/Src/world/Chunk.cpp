@@ -47,14 +47,81 @@ void Chunk::update(float deltaTime)
 
 
 
-void Chunk::draw()
+void Chunk::draw(glm::vec3 playerPos)
 {
-	for (int j = 0; j < chunkH; j++)
-		for (int i = 0; i < chunkW; i++)
-			for (int k = 0; k < chunkT; k++)
-				if (blocks[j][i][k])
-					blocks[j][i][k]->draw();
+	int y = playerPos.y - this->y * chunkH;
+	int x = playerPos.x - this->x * chunkW;
+	int z = playerPos.z - this->z * chunkT;
+	if (y <= 0)
+	{
+		for (int i = chunkH - 1; i >= 0; i--)
+			drawLineY(x, i, z);
+	}
+	else if (y >= chunkH)
+	{
+		for (int i = 0; i < chunkH; i++)
+			drawLineY(x, i, z);
+	}
+	else
+	{
+		for (int i = chunkH - 1; i >= y; i--)
+			drawLineY(x, i, z);
+		for (int i = 0; i < y; i++)
+			drawLineY(x, i, z);
+	}
 }
+
+void Chunk::drawLineY(int x, int y, int z)
+{
+	if (x <= 0)
+	{
+		for (int i = 0; i < chunkW; i++)
+			drawLineX(i, y, z);
+	}
+	else if (x >= chunkW)
+	{
+
+		for (int i = chunkW - 1; i >= 0; i--)
+			drawLineX(i, y, z);
+	}
+	else
+	{
+		for (int i = chunkW - 1; i >= x; i--)
+			drawLineX(i, y, z);
+		for (int i = 0; i < x; i++)
+			drawLineX(i, y, z);
+	}
+}
+
+void Chunk::drawLineX(int x, int y, int z)
+{
+	if (z <= 0)
+	{
+		for (int i = 0; i < chunkT; i++)
+			drawLineZ(x, y, i);
+	}
+	else if (z >= chunkT)
+	{
+		for (int i = chunkT - 1; i >= 0; i--)
+			drawLineZ(x, y, i);
+	}
+	else
+	{
+		for (int i = chunkT - 1; i >= z; i--)
+			drawLineZ(x, y, i);
+		for (int i = 0; i < z; i++)
+			drawLineZ(x, y, i);
+	}
+}
+
+void Chunk::drawLineZ(int x, int y, int z)
+{
+	if (blocks[y][x][z])
+		blocks[y][x][z]->draw();
+
+}
+
+
 Block* Chunk::getBlock(int x, int y, int z)
 {
 	x -= this->x * chunkW;

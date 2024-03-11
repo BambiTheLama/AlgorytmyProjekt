@@ -20,7 +20,13 @@ public:
 
 	void update(float deltaTime);
 
-	void draw();
+	void draw(glm::vec3 playerPos);
+
+	void drawLineY(int x,int y,int z);
+
+	void drawLineX(int x, int y, int z);
+
+	void drawLineZ(int x, int y, int z);
 
 	Block* getBlock(int x, int y, int z);
 

@@ -2,14 +2,14 @@
 
 Game::Game(Camera* camera,GLFWwindow* window)
 {
-	int h = 2;
-	int w = 2;
+	int h = 1;
+	int w = 1;
 	Chunk::game = this;
 	this->camera = camera;
 	for (int i = 0; i < w; i++)
 		for (int j = 0; j < h; j++)
 			chunks.push_back(new Chunk(i-w/2, -1, j-h/2));
-	chunks.push_back(new Chunk(0, 0, 0));
+	//chunks.push_back(new Chunk(0, 0, 0));
 	this->window = window;
 }
 
@@ -52,7 +52,7 @@ void Game::update(float deltaTime)
 void Game::draw()
 {
 	for (auto c : chunks)
-		c->draw();
+		c->draw(camera->getPos());
 }
 
 Block* Game::getBlockAt(int x, int y, int z)
