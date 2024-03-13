@@ -24,12 +24,12 @@ Chunk::Chunk(int x, int y, int z)
 	terrain.SetFractalGain(1.5f);
 	terrain.SetFractalLacunarity(1.529f);
 	terrain.SetFractalWeightedStrength(-0.2f);
-	
+	const int height = maxH - minH;
 
 	for (int i = 0; i < chunkW; i++)
 		for (int k = 0; k < chunkT; k++)
 		{
-			int h = terrain.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT) * 32 - (this->y * chunkH);
+			int h = (terrain.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT) + 1) / 2 * height + minH - (this->y * chunkH);
 			if (h > chunkH)
 				h = chunkH;
 			for (int j = 0; j < h; j++)

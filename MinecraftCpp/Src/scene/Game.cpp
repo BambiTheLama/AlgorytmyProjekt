@@ -2,17 +2,23 @@
 
 Game::Game(Camera* camera,GLFWwindow* window)
 {
-	int t = 10;
-	int h = 5;
-	int w = 10;
+	int t = 5;
+	int h = 3;
+	int w = 5;
 	Chunk::game = this;
 	this->camera = camera;
 	for (int i = 0; i < w; i++)
 		for (int j = 0; j < h; j++)
 			for (int k = 0; k < t; k++)
-				chunks.push_back(new Chunk(i - w / 2, j - h / 2, k - t / 2));
+				chunks.push_back(new Chunk(i - w / 2, j-1, k - t / 2));
 	//chunks.push_back(new Chunk(0, 0, 0));
 	this->window = window;
+	glm::vec3 pos = camera->getPos();
+	while (getBlockAt(pos.x,pos.y,pos.z))
+	{
+		pos.y++;
+	}
+	camera->newPos(pos);
 }
 
 Game::~Game()

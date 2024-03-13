@@ -1,2 +1,2 @@
-Strukura przechowująca bloki
-Możliwość ustawiania bloków i niszczenia
+
+Możliwość ustawiania bloków

@@ -4,6 +4,8 @@
 #define chunkW 16
 #define chunkH 16
 #define chunkT 16
+#define minH 2
+#define maxH 100
 class Game;
 class Chunk
 {
