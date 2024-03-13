@@ -2,13 +2,15 @@
 
 Game::Game(Camera* camera,GLFWwindow* window)
 {
-	int h = 1;
-	int w = 3;
+	int t = 10;
+	int h = 5;
+	int w = 10;
 	Chunk::game = this;
 	this->camera = camera;
 	for (int i = 0; i < w; i++)
 		for (int j = 0; j < h; j++)
-			chunks.push_back(new Chunk(i-w/2, -1, j-h/2));
+			for (int k = 0; k < t; k++)
+				chunks.push_back(new Chunk(i - w / 2, j - h / 2, k - t / 2));
 	//chunks.push_back(new Chunk(0, 0, 0));
 	this->window = window;
 }
@@ -53,7 +55,12 @@ void Game::update(float deltaTime)
 void Game::draw()
 {
 	for (auto c : chunks)
-		c->draw();
+	{
+		float dist =glm::distance(camera->getPos(), glm::vec3(c->x * chunkW, c->y * chunkH, c->z * chunkT));
+		if(dist<camera->getRange()*1.5f)
+			c->draw();
+	}
+
 	if (b)
 		b->drawSelect();
 }

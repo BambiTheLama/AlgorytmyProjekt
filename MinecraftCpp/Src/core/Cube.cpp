@@ -149,6 +149,8 @@ Cube::Cube()
 
 void Cube::draw(float x, float y, float z)
 {
+	if (face <= 0)
+		return;
 	Shader& s = getDiffoltShader();
 	vao->bind();
 	s.setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");

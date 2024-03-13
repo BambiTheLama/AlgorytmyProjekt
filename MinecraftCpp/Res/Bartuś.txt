@@ -1,0 +1,16 @@
+Textura osobjętna rozdzielczość byle by:
+pierwsza 1/3 textury była górą bloku
+druga 1/3 textury  była bokiem bloku 
+Trzecia 1/3 textury była dołem bloku
+Każdy kolejny segment obok drugiego 
+
+
+Drzewa:
+	KONAR: Brzozy, Dęba, Sosny
+	Liście Brzozy, Dęba, Sosny
+	Sadzonki Brzozy, Deba, Sosny
+Podłoże
+	Piasek, Dirt, Grass, Stone, Snieg, 
+
+
+

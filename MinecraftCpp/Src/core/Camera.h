@@ -34,9 +34,11 @@ public:
 
 	void update(GLFWwindow* window,float deltaTime);
 
-	glm::vec3 getPos() { return cameraPos; }
+	glm::vec3 getPos() const { return cameraPos; }
 
-	glm::vec3 getDir() { return cameraOrientation; }
+	glm::vec3 getDir() const  { return cameraOrientation; }
+
+	float getRange() const { return farest; }
 
 };
 
