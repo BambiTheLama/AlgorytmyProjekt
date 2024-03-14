@@ -25,6 +25,8 @@ public:
 
 	void setUniformVec3(glm::vec3 vec, const char* uniform);
 
+	void setUniformVec2(glm::vec2 vec, const char* uniform);
+
 	void setUniformI1(int v, const char* uniform);
 };
 

@@ -26,6 +26,8 @@ public:
 
 	void useTexture(const char* uniform, GLuint unit);
 
+	void setTextureSize(const char* uniform);
+
 	int getW() const { return w; }
 
 	int getH() const { return h; }

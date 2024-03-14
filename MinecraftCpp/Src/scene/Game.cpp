@@ -19,6 +19,7 @@ Game::Game(Camera* camera,GLFWwindow* window)
 		pos.y++;
 	}
 	camera->newPos(pos);
+
 }
 
 Game::~Game()

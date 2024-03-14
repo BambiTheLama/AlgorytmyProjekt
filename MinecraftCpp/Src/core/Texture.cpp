@@ -86,6 +86,7 @@ void Texture::useTexture(const char* uniform, GLuint unit)
 	//s.active();
 	glUniform1i(s.getUniformLocation(uniform), unit);
 }
+
 void Texture::clearAllTextures()
 {
 	for (auto t : textures)

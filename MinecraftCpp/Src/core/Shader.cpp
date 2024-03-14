@@ -151,6 +151,10 @@ void Shader::setUniformVec3(glm::vec3 vec, const char* uniform)
 {
 	glUniform3f(glGetUniformLocation(ID, uniform), vec.x, vec.y, vec.z);
 }
+void Shader::setUniformVec2(glm::vec2 vec, const char* uniform)
+{
+	glUniform2f(glGetUniformLocation(ID, uniform), vec.x, vec.y);
+}
 void Shader::setUniformI1(int v, const char* uniform)
 {
 	glUniform1i(glGetUniformLocation(ID, uniform), v);

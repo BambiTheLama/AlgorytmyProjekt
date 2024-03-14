@@ -39,12 +39,12 @@ std::vector<glm::vec3> CubeBlock::getVertexPos()
 std::vector<glm::vec2> CubeBlock::getVertexTexture()
 {
 	std::vector<glm::vec2> text = cube->getVertexTexture(textureFaces);
+	std::vector<glm::vec2> text2;
 	for (auto t : text)
 	{
-		t.x = (textureX + t.x);
-		t.y = (textureY + t.y);
+		text2.push_back(glm::vec2(textureX + t.x, textureY + t.y));
 	}
-	return text;
+	return text2;
 }
 
 std::vector<GLuint> CubeBlock::getIndex()

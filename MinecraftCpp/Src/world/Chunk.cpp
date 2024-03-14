@@ -36,7 +36,7 @@ Chunk::Chunk(int x, int y, int z)
 				h = chunkH;
 			for (int j = 0; j < h; j++)
 			{
-				blocks[j][i][k] = new CubeBlock(i + x * chunkW, j + y * chunkH, k + z * chunkT);
+				blocks[j][i][k] = new CubeBlock(i + x * chunkW, j + y * chunkH, k + z * chunkT,0,0,3);
 				toAdd.push_back(blocks[j][i][k]);
 			}
 		}
