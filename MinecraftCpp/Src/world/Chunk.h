@@ -7,13 +7,23 @@
 #define minH 2
 #define maxH 100
 class Game;
+class VBO;
+class VAO;
+class EBO;
 class Chunk
 {
-	
 	int x, y, z;
 	Block* blocks[chunkH][chunkW][chunkT];
 	std::vector<Block*> toDelete;
 	std::vector<Block*> toAdd;
+	std::vector<Block*> toDraw;
+	VAO* vao = NULL;
+	VBO *vboVert = NULL;
+	VBO *vboTexture = NULL;
+	EBO *index = NULL;
+	std::vector<glm::vec3> vertV;
+	std::vector<glm::vec2> textV;
+	std::vector<GLuint> indexV;
 	static Game* game;
 public:
 	Chunk(int x, int y, int z);
@@ -34,6 +44,9 @@ public:
 
 	friend class Game;
 
-	
+private:
+	void genVerticesPos();
+	void genVerticesTexture();
+	void genIndex();
 };
 

@@ -8,154 +8,9 @@
 #include <glm/gtc/noise.hpp>
 #include "Engine.h"
 
-static GLfloat verticies[] = {
-	///Front
-	0.5f,0.5f,0.5f,
-	0.5f,-0.5f,0.5f,
-	-0.5f,0.5f,0.5f,
-	-0.5f,-0.5f,0.5f,
-	///Ty³
-	0.5f,0.5f,-0.5f,
-	0.5f,-0.5f,-0.5f,
-	-0.5f,0.5f,-0.5f,
-	-0.5f,-0.5f,-0.5f,
-	///Lewo
-	-0.5f,0.5f,0.5f,
-	-0.5f,-0.5f,0.5f,
-	-0.5f,0.5f,-0.5f,
-	-0.5f,-0.5f,-0.5f,
-	///Prawo
-	0.5f,0.5f,0.5f,
-	0.5f,-0.5f,0.5f,
-	0.5f,0.5f,-0.5f,
-	0.5f,-0.5f,-0.5f,
-	///Gora
-	0.5f,0.5f,0.5f,
-	0.5f,0.5f,-0.5f,
-	-0.5f,0.5f,0.5f,
-	-0.5f,0.5f,-0.5f,
-	///Dol
-	0.5f,-0.5f,0.5f,
-	0.5f,-0.5f,-0.5f,
-	-0.5f,-0.5f,0.5f,
-	-0.5f,-0.5f,-0.5f,
-};
-static GLfloat texture[] = {
-	///Front
-	1.0f / 3.0f, 1,
-	1.0f / 3.0f, 0,
-	2.0f / 3.0f, 1,
-	2.0f / 3.0f, 0,
-	///Ty³
-	2.0f / 3.0f, 1,
-	2.0f / 3.0f, 0,
-	1.0f / 3.0f, 1,
-	1.0f / 3.0f, 0,
-	///Lewo
-	1.0f / 3.0f, 1,
-	1.0f / 3.0f, 0,
-	2.0f / 3.0f, 1,
-	2.0f / 3.0f, 0,
-	///Prawo
-	2.0f / 3.0f, 1,
-	2.0f / 3.0f, 0,
-	1.0f / 3.0f, 1,
-	1.0f / 3.0f, 0,
-	///Gora
-	0.0f / 3.0f, 1,
-	0.0f / 3.0f, 0,
-	1.0f / 3.0f, 1,
-	1.0f / 3.0f, 0,
-	///Dol
-	2.0f / 3.0f, 1,
-	2.0f / 3.0f, 0,
-	3.0f / 3.0f, 1,
-	3.0f / 3.0f, 0,
-};
-
-static GLuint indicesFront[] = {
-	0,2,1,
-	1,2,3,
-};
-static GLuint indicesBack[] = {
-	4,5,6,
-	6,5,7,
-};
-static GLuint indicesLeft[] = {
-	8,10,9,
-	9,10,11,
-};
-static GLuint indicesRight[] = {
-
-	12,13,14,
-	13,15,14,
-};
-static GLuint indicesUp[] = {
-
-	16,17,18,
-	17,19,18,
-};
-static GLuint indicesDown[] = {
-	20,22,21,
-	21,22,23,
-};
-
-static VAO* vao = NULL;
-static VBO* vboVertices = NULL;
-static VBO* vboTexture = NULL;
-static EBO* eboUp = NULL;
-static EBO* eboDown = NULL;
-static EBO* eboLeft = NULL;
-static EBO* eboRight = NULL;
-static EBO* eboFront = NULL;
-static EBO* eboBack = NULL;
-
-void Cube::CubeSetUp()
-{
-	vao = new VAO();
-	vao->bind();
-	vboVertices = new VBO(verticies, sizeof(verticies));
-	vboTexture = new VBO(texture, sizeof(texture));
-	eboUp = new EBO(indicesUp, sizeof(indicesUp));
-	eboDown = new EBO(indicesDown, sizeof(indicesDown));
-	eboLeft = new EBO(indicesLeft, sizeof(indicesLeft));
-	eboRight = new EBO(indicesRight, sizeof(indicesRight));
-	eboFront = new EBO(indicesFront, sizeof(indicesFront));
-	eboBack = new EBO(indicesBack, sizeof(indicesBack));
-	vao->linkData(*vboVertices, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-	vao->linkData(*vboTexture, 1, 2, GL_FLOAT, 2 * sizeof(float), (void*)0);
-	vboVertices->unbind();
-	vao->unbind();
-	
-
-}
-
-void Cube::CubeDelete()
-{
-	delete vao;
-	delete vboVertices;
-	delete eboUp;
-	delete eboDown;
-	delete eboLeft; 
-	delete eboRight; 
-	delete eboFront;
-	delete eboBack; 
-}
-
 Cube::Cube()
 {
 	face = 0b111111;
-}
-
-void Cube::draw(float x, float y, float z)
-{
-	if (face <= 0)
-		return;
-	Shader& s = getDiffoltShader();
-	vao->bind();
-	s.setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
-	s.setUniformVec3(glm::vec3(x, y, z), "pos");
-	drawFaces();
 }
 
 void Cube::setFaceing(int faces)
@@ -169,37 +24,206 @@ void Cube::setOneFace(int face, bool state)
 	this->face = (f | ((int)face * state));
 }
 
-void Cube::drawFaces()
+std::vector<glm::vec3> Cube::getVertexPos()
 {
-	const int n = 6;
-	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
-	{
-		eboLeft->bind();
-		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
-	}
-	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
-	{
-		eboRight->bind();
-		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
-	}
+	std::vector<glm::vec3> vertexPos;
+	if (face <= 0)
+		return vertexPos;
 	if (((int)Faces::Front & (int)face) == (int)Faces::Front)
 	{
-		eboFront->bind();
-		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
+		vertexPos.push_back(glm::vec3(1, 1, 1));
+		vertexPos.push_back(glm::vec3(1, 0, 1));
+		vertexPos.push_back(glm::vec3(0, 1, 1));
+		vertexPos.push_back(glm::vec3(0, 0, 1));
 	}
 	if (((int)Faces::Back & (int)face) == (int)Faces::Back)
 	{
-		eboBack->bind();
-		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
+		vertexPos.push_back(glm::vec3(1, 1, 0));
+		vertexPos.push_back(glm::vec3(1, 0, 0));
+		vertexPos.push_back(glm::vec3(0, 1, 0));
+		vertexPos.push_back(glm::vec3(0, 0, 0));
+	}
+	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
+	{
+		vertexPos.push_back(glm::vec3(0, 1, 1));
+		vertexPos.push_back(glm::vec3(0, 0, 1));
+		vertexPos.push_back(glm::vec3(0, 1, 0));
+		vertexPos.push_back(glm::vec3(0, 0, 0));
+	}
+	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
+	{
+		vertexPos.push_back(glm::vec3(1, 1, 1));
+		vertexPos.push_back(glm::vec3(1, 0, 1));
+		vertexPos.push_back(glm::vec3(1, 1, 0));
+		vertexPos.push_back(glm::vec3(1, 0, 0));
 	}
 	if (((int)Faces::Up & (int)face) == (int)Faces::Up)
 	{
-		eboUp->bind();
-		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
+		vertexPos.push_back(glm::vec3(1, 1, 1));
+		vertexPos.push_back(glm::vec3(1, 1, 0));
+		vertexPos.push_back(glm::vec3(0, 1, 1));
+		vertexPos.push_back(glm::vec3(0, 1, 0));
 	}
 	if (((int)Faces::Down & (int)face) == (int)Faces::Down)
 	{
-		eboDown->bind();
-		glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, 0);
+		vertexPos.push_back(glm::vec3(1, 0, 1));
+		vertexPos.push_back(glm::vec3(1, 0, 0));
+		vertexPos.push_back(glm::vec3(0, 0, 1));
+		vertexPos.push_back(glm::vec3(0, 0, 0));
 	}
+	return vertexPos;
+}
+
+std::vector<glm::vec2> Cube::getVertexTexture(int textureSides)
+{
+#define addTexture1 textPos.push_back(glm::vec2(0, 1));\
+					textPos.push_back(glm::vec2(0, 0));\
+					textPos.push_back(glm::vec2(1, 1));\
+					textPos.push_back(glm::vec2(1, 0));
+#define addTexture2 textPos.push_back(glm::vec2(1, 1));\
+					textPos.push_back(glm::vec2(1, 0));\
+					textPos.push_back(glm::vec2(2, 1));\
+					textPos.push_back(glm::vec2(2, 0));
+#define addTexture3 textPos.push_back(glm::vec2(2, 1));\
+					textPos.push_back(glm::vec2(2, 0));\
+					textPos.push_back(glm::vec2(3, 1));\
+					textPos.push_back(glm::vec2(3, 0));
+	std::vector<glm::vec2> textPos;
+	if (face <= 0)
+		return textPos;
+
+	if (((int)Faces::Front & (int)face) == (int)Faces::Front)
+	{
+		if (textureSides < 2)
+		{
+			addTexture1
+		}
+		else
+		{
+			addTexture2
+		}
+
+	}
+	if (((int)Faces::Back & (int)face) == (int)Faces::Back)
+	{
+		if (textureSides < 2)
+		{
+			addTexture1
+		}
+		else
+		{
+			addTexture2
+		}
+	}
+	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
+	{
+		if (textureSides < 2)
+		{
+			addTexture1
+		}
+		else
+		{
+			addTexture2
+		}
+	}
+	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
+	{
+		if (textureSides < 2)
+		{
+			addTexture1
+		}
+		else
+		{
+			addTexture2
+		}
+	}
+	if (((int)Faces::Up & (int)face) == (int)Faces::Up)
+	{
+		addTexture1
+	}
+	if (((int)Faces::Down & (int)face) == (int)Faces::Down)
+	{
+		if (textureSides < 3)
+		{
+			addTexture1
+		}
+		else
+		{
+			addTexture3
+		}
+	}
+
+	return textPos;
+}
+
+std::vector<GLuint> Cube::getIndex()
+{
+#define addIndicesOrder1 index.push_back(startIndex + 0);index.push_back(startIndex + 2);\
+						 index.push_back(startIndex + 1);index.push_back(startIndex + 1);\
+						 index.push_back(startIndex + 2);index.push_back(startIndex + 3);startIndex += 4;
+#define addIndicesOrder2 index.push_back(startIndex + 0);index.push_back(startIndex + 1);\
+						 index.push_back(startIndex + 2);index.push_back(startIndex + 1);\
+						 index.push_back(startIndex + 3);index.push_back(startIndex + 2);startIndex += 4;
+
+	std::vector<GLuint> index;
+	if (face <= 0)
+		return index;
+	int startIndex = 0;
+
+	if (((int)Faces::Front & (int)face) == (int)Faces::Front)
+	{
+		addIndicesOrder1
+	}
+	if (((int)Faces::Back & (int)face) == (int)Faces::Back)
+	{
+		addIndicesOrder2
+	}
+	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
+	{
+		addIndicesOrder1
+	}
+	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
+	{
+		addIndicesOrder2
+	}
+	if (((int)Faces::Up & (int)face) == (int)Faces::Up)
+	{
+		addIndicesOrder2
+	}
+	if (((int)Faces::Down & (int)face) == (int)Faces::Down)
+	{
+		addIndicesOrder1
+	}
+	return index;
+}
+
+GLuint Cube::indexSize()
+{
+	GLuint indexS = 0;
+	if (((int)Faces::Front & (int)face) == (int)Faces::Front)
+	{
+		indexS++;
+	}
+	if (((int)Faces::Back & (int)face) == (int)Faces::Back)
+	{
+		indexS++;
+	}
+	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
+	{
+		indexS++;
+	}
+	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
+	{
+		indexS++;
+	}
+	if (((int)Faces::Up & (int)face) == (int)Faces::Up)
+	{
+		indexS++;
+	}
+	if (((int)Faces::Down & (int)face) == (int)Faces::Down)
+	{
+		indexS++;
+	}
+	indexS *= 4;
+	return indexS;
 }

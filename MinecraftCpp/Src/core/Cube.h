@@ -1,7 +1,9 @@
 #pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
+#include <vector>
+
 class Shader;
 class Engine;
 
@@ -29,12 +31,15 @@ public:
 
 	void setOneFace(int face, bool state = true);
 
+	std::vector<glm::vec3> getVertexPos();
+
+	std::vector<glm::vec2> getVertexTexture(int textureSides);
+
+	std::vector<GLuint> getIndex();
+
+	GLuint indexSize();
+
 	friend class Engine;
-private:
-	void drawFaces();
-	void setUpIndices(const int n, GLuint* indices);
-	void addIndices(bool leftSide,int index,int& i, GLuint* indices);
-	static void CubeSetUp();
-	static void CubeDelete();
+
 };
 

@@ -69,7 +69,6 @@ Engine::Engine()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Cube::CubeSetUp();
 	vao = new VAO();
 	vao->bind();
 	vbo = new VBO(verticies, sizeof(verticies), GL_DYNAMIC_DRAW);
@@ -90,7 +89,7 @@ Engine::Engine()
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
 	camera = new Camera(width, height, 0.1f, 100, 60, glm::vec3(0.0f, 0.0f, 0.0f));
-	select = new Texture("Res/Selected.png");
+	select = new Texture("Res/1.jpg");
 	Font::setUpFonts();
 }
 
@@ -103,7 +102,6 @@ Engine::~Engine()
 	delete vao;
 	delete ebo;
 	delete select;
-	Cube::CubeDelete();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 }
@@ -130,6 +128,8 @@ void Engine::start()
 		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		startShaderMode(*shader);
+		select->useTexture("tex0", 0);
+		select->bind();
 		if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
 			shader->setUniformI1(true, "debug");
 		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
