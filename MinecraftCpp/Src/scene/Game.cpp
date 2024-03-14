@@ -2,15 +2,15 @@
 
 Game::Game(Camera* camera,GLFWwindow* window)
 {
-	int t = 5;
-	int h = 3;
-	int w = 5;
+	int t = 10;
+	int h = 5;
+	int w = 10;
 	Chunk::game = this;
 	this->camera = camera;
 	for (int i = 0; i < w; i++)
 		for (int j = 0; j < h; j++)
 			for (int k = 0; k < t; k++)
-				chunks.push_back(new Chunk(i - w / 2, j-1, k - t / 2));
+				chunks.push_back(new Chunk(i, j, k));
 	//chunks.push_back(new Chunk(0, 0, 0));
 	this->window = window;
 	glm::vec3 pos = camera->getPos();
@@ -33,9 +33,7 @@ void Game::update(float deltaTime)
 {
 	for (auto c : chunks)
 		c->update(deltaTime);
-	sortChunks();
-	
-	
+
 	glm::vec3 pos = camera->getPos();
 	glm::vec3 dir = camera->getDir();
 	int n = 0;
@@ -68,7 +66,10 @@ void Game::draw()
 	}
 
 	if (b)
-		b->drawSelect();
+	{
+
+	}
+
 }
 
 Block* Game::getBlockAt(int x, int y, int z)
@@ -85,31 +86,6 @@ void Game::deleteBlock(Block* b)
 			c->deleteBlock(b);
 }
 
-void Game::sortChunks()
-{
-	glm::vec3 pos = camera->getPos();
-
-	std::vector<float> dist;
-	for (auto c : chunks)
-	{
-		dist.push_back(glm::distance(pos, c->getPos()));
-	}
-	for (int i = 0; i < dist.size(); i++)
-	{
-		for (int j = i + 1; j < dist.size(); j++)
-		{
-			if (dist[j] > dist[i])
-			{
-				float d = dist[j];
-				dist[j] = dist[i];
-				dist[i] = d;
-				Chunk* c = chunks[i];
-				chunks[i] = chunks[j];
-				chunks[j] = c;
-			}
-		}
-	}
-}
 
 void Game::setFaceing(int x, int y, int z, bool display)
 {

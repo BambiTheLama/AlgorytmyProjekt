@@ -26,8 +26,6 @@ public:
 
     void deleteBlock(Block* b);
 
-    void sortChunks();
-
     void setFaceing(int x,int y,int z,bool display);
 
     void setFaceing(Block* b, bool display);
