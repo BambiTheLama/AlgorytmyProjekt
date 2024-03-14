@@ -76,18 +76,18 @@ std::vector<glm::vec3> Cube::getVertexPos()
 
 std::vector<glm::vec2> Cube::getVertexTexture(int textureSides)
 {
-#define addTexture1 textPos.push_back(glm::vec2(0, 1));\
-					textPos.push_back(glm::vec2(0, 0));\
-					textPos.push_back(glm::vec2(1, 1));\
-					textPos.push_back(glm::vec2(1, 0));
-#define addTexture2 textPos.push_back(glm::vec2(1, 1));\
+#define addTexture1 textPos.push_back(glm::vec2(0, 0));\
+					textPos.push_back(glm::vec2(0, 1));\
 					textPos.push_back(glm::vec2(1, 0));\
-					textPos.push_back(glm::vec2(2, 1));\
-					textPos.push_back(glm::vec2(2, 0));
-#define addTexture3 textPos.push_back(glm::vec2(2, 1));\
+					textPos.push_back(glm::vec2(1, 1));
+#define addTexture2 textPos.push_back(glm::vec2(1, 0));\
+					textPos.push_back(glm::vec2(1, 1));\
 					textPos.push_back(glm::vec2(2, 0));\
-					textPos.push_back(glm::vec2(3, 1));\
-					textPos.push_back(glm::vec2(3, 0));
+					textPos.push_back(glm::vec2(2, 1));
+#define addTexture3 textPos.push_back(glm::vec2(2, 0));\
+					textPos.push_back(glm::vec2(2, 1));\
+					textPos.push_back(glm::vec2(3, 0));\
+					textPos.push_back(glm::vec2(3, 1));
 	std::vector<glm::vec2> textPos;
 	if (face <= 0)
 		return textPos;
