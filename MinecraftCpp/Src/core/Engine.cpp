@@ -89,7 +89,7 @@ Engine::Engine()
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
 	camera = new Camera(width, height, 0.1f, 300, 60, glm::vec3(0.0f, 0.0f, 0.0f));
-	select = new Texture("Res/1.jpg");
+	select = new Texture("Res/Blocks.png");
 	Font::setUpFonts();
 	
 }
@@ -131,7 +131,7 @@ void Engine::start()
 		startShaderMode(*shader);
 		select->useTexture("tex0", 0);
 
-		shader->setUniformVec2(glm::vec2(select->getW() / 3, select->getH()), "textSize");
+		shader->setUniformVec2(glm::vec2( 4, 5), "textSize");
 		select->bind();
 		if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
 			shader->setUniformI1(true, "debug");

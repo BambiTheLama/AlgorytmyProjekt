@@ -20,5 +20,5 @@ void main()
 {
 	gl_Position = camera * model * vec4(vPos, 1.0f);
 	textPos = vTexture/textSize;
-	data_out.texCoord = vTexture;
+	data_out.texCoord = textPos;
 }
