@@ -176,6 +176,7 @@
     <ClCompile Include="Src\scene\Game.cpp" />
     <ClCompile Include="Src\scene\Scene.cpp" />
     <ClCompile Include="Src\world\Block.cpp" />
+    <ClCompile Include="Src\world\BlocksCreator.cpp" />
     <ClCompile Include="Src\world\Chunk.cpp" />
     <ClCompile Include="Src\world\CubeBlock.cpp" />
   </ItemGroup>
@@ -200,6 +201,7 @@
     <ClInclude Include="Src\scene\Game.h" />
     <ClInclude Include="Src\scene\Scene.h" />
     <ClInclude Include="Src\world\Block.h" />
+    <ClInclude Include="Src\world\BlocksCreator.h" />
     <ClInclude Include="Src\world\Chunk.h" />
     <ClInclude Include="Src\world\CubeBlock.h" />
   </ItemGroup>

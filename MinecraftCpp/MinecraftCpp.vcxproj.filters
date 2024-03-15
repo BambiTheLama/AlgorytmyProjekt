@@ -72,6 +72,9 @@
     <ClCompile Include="Src\core\Font.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Src\world\BlocksCreator.cpp">
+      <Filter>Src\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\test.frag">
@@ -135,6 +138,9 @@
     </ClInclude>
     <ClInclude Include="Src\core\Font.h">
       <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\BlocksCreator.h">
+      <Filter>Src\World</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

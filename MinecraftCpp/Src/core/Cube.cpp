@@ -13,15 +13,15 @@ Cube::Cube()
 	face = 0b111111;
 }
 
-void Cube::setFaceing(int faces)
+void Cube::setFaceing(char faces)
 {
 	this->face = faces;
 }
 
-void Cube::setOneFace(int face, bool state)
+void Cube::setOneFace(char face, bool state)
 {
-	int f = (int)this->face & ~((int)face);
-	this->face = (f | ((int)face * state));
+	char f = (char)this->face & ~((char)face);
+	this->face = (f | ((char)face * state));
 }
 
 std::vector<glm::vec3> Cube::getVertexPos()

@@ -20,16 +20,16 @@ enum class Faces :int
 
 class Cube
 {
-	int face;
+	char face;
 public:
 
 	Cube();
 
 	void draw(float x, float y, float z);
 
-	void setFaceing(int faces);
+	void setFaceing(char faces);
 
-	void setOneFace(int face, bool state = true);
+	void setOneFace(char face, bool state = true);
 
 	std::vector<glm::vec3> getVertexPos();
 
