@@ -19,63 +19,7 @@ Chunk::Chunk(int x, int y, int z)
 			{
 				blocks[j][i][k] = NULL;
 			}
-	FastNoiseLite terrain(69);
-	terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
-	terrain.SetFrequency(0.005f);
-	terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
-	terrain.SetFractalOctaves(3);
-	terrain.SetFractalGain(1.5f);
-	terrain.SetFractalLacunarity(1.529f);
-	terrain.SetFractalWeightedStrength(-0.2f);
-	const int height = maxH - minH;
-
-	for (int i = 0; i < chunkW; i++)
-		for (int k = 0; k < chunkT; k++)
-		{
-			int h = (terrain.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT) + 1) / 2 * height + minH - (this->y * chunkH);
-			int h2 = h;
-			if (h > chunkH)
-				h = chunkH;
-			for (int j = 0; j < chunkH && j<h2-4; j++)
-			{
-				blocks[j][i][k] = createBlock(2);
-				if (blocks[j][i][k])
-				{
-					toAdd.push_back(blocks[j][i][k]);
-					blocks[j][i][k]->x = i + x * chunkW;
-					blocks[j][i][k]->y = j + y * chunkH;
-					blocks[j][i][k]->z = k + z * chunkT;
-				}
-			}
-			for (int j = (h2 - 4) < 0 ? 0 : h2 - 4; j < h; j++)
-			{
-				blocks[j][i][k] = createBlock(1);
-				if (blocks[j][i][k])
-				{
-					toAdd.push_back(blocks[j][i][k]);
-					blocks[j][i][k]->x = i + x * chunkW;
-					blocks[j][i][k]->y = j + y * chunkH;
-					blocks[j][i][k]->z = k + z * chunkT;
-				}
-			}
-			if (h >= 0 && h < chunkH)
-			{
-				if (blocks[h][i][k])
-					delete blocks[h][i][k];
-				blocks[h][i][k] = createBlock(0);
-				if (blocks[h][i][k])
-				{
-					toAdd.push_back(blocks[h][i][k]);
-					blocks[h][i][k]->x = i + x * chunkW;
-					blocks[h][i][k]->y = h + y * chunkH;
-					blocks[h][i][k]->z = k + z * chunkT;
-				}
-
-
-
-			}
-
-		}
+	generateTeren();
 	vao = new VAO();
 	vboVert = new VBO(vertV);
 	vboTexture = new VBO(textV);
@@ -229,4 +173,65 @@ void Chunk::genIndex()
 					lastIndex += blocks[j][i][k]->indexSize();
 				}
 	index->setNewVertices(indexV);
+}
+
+void Chunk::generateTeren()
+{
+	FastNoiseLite terrain(2137);
+	terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+	terrain.SetFrequency(0.003f);
+	terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
+	terrain.SetFractalOctaves(2);
+	terrain.SetFractalGain(5.0f);
+	terrain.SetFractalLacunarity(1.529f);
+	terrain.SetFractalWeightedStrength(3.304f);
+	const int height = maxH - minH;
+
+	for (int i = 0; i < chunkW; i++)
+		for (int k = 0; k < chunkT; k++)
+		{
+			int h = (terrain.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT) + 1) / 2 * height + minH - (this->y * chunkH);
+			int h2 = h;
+			if (h > chunkH)
+				h = chunkH;
+			for (int j = 0; j < chunkH && j < h2 - 4; j++)
+			{
+				blocks[j][i][k] = createBlock(2);
+				if (blocks[j][i][k])
+				{
+					toAdd.push_back(blocks[j][i][k]);
+					blocks[j][i][k]->x = i + x * chunkW;
+					blocks[j][i][k]->y = j + y * chunkH;
+					blocks[j][i][k]->z = k + z * chunkT;
+				}
+			}
+			for (int j = (h2 - 4) < 0 ? 0 : h2 - 4; j < h; j++)
+			{
+				blocks[j][i][k] = createBlock(1);
+				if (blocks[j][i][k])
+				{
+					toAdd.push_back(blocks[j][i][k]);
+					blocks[j][i][k]->x = i + x * chunkW;
+					blocks[j][i][k]->y = j + y * chunkH;
+					blocks[j][i][k]->z = k + z * chunkT;
+				}
+			}
+			if (h >= 0 && h < chunkH)
+			{
+				if (blocks[h][i][k])
+					delete blocks[h][i][k];
+				blocks[h][i][k] = createBlock(0);
+				if (blocks[h][i][k])
+				{
+					toAdd.push_back(blocks[h][i][k]);
+					blocks[h][i][k]->x = i + x * chunkW;
+					blocks[h][i][k]->y = h + y * chunkH;
+					blocks[h][i][k]->z = k + z * chunkT;
+				}
+
+
+
+			}
+
+		}
 }

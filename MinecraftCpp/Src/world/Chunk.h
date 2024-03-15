@@ -48,5 +48,6 @@ private:
 	void genVerticesPos();
 	void genVerticesTexture();
 	void genIndex();
+	void generateTeren();
 };
 
