@@ -5,6 +5,7 @@
 class CubeBlock :
     public Block
 {
+	char toSetUp = 0b111111;
 	Cube* cube;
 	int textureFaces;
 	int textureX, textureY;
@@ -24,5 +25,9 @@ public:
 	std::vector<GLuint> getIndex();
 
 	GLuint indexSize();
+
+	virtual char faceToSetUp() { return toSetUp; }
+
+	virtual bool isTransparent() { return false; }
 };
 

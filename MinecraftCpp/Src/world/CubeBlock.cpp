@@ -23,6 +23,7 @@ void CubeBlock::setFaceing(int faces)
 void CubeBlock::setOneFace(int face, bool state)
 {
 	cube->setOneFace(face, state);
+	toSetUp -= (toSetUp & face);
 }
 
 std::vector<glm::vec3> CubeBlock::getVertexPos()

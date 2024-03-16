@@ -25,6 +25,7 @@ class Chunk
 	std::vector<glm::vec2> textV;
 	std::vector<GLuint> indexV;
 	static Game* game;
+	bool genVertices = true;
 public:
 	Chunk(int x, int y, int z);
 
@@ -41,6 +42,8 @@ public:
 	bool isThisChunk(int x, int y, int z);
 
 	glm::vec3 getPos() { return glm::vec3(x * chunkW + chunkW / 2, y * chunkH + chunkH / 2, z * chunkT + chunkT / 2); }
+
+	void genVerticesFlag() { genVertices = true; }
 
 	friend class Game;
 

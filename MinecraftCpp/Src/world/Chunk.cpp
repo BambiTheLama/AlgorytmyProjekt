@@ -6,6 +6,9 @@
 #include "../core/VBO.h"
 #include "../core/EBO.h"
 #include "BlocksCreator.h"
+#define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
+							for (int i = 0; i < chunkW; i++)\
+								for (int k = 0; k < chunkT; k++)
 Game* Chunk::game = NULL;
 
 Chunk::Chunk(int x, int y, int z)
@@ -16,12 +19,10 @@ Chunk::Chunk(int x, int y, int z)
 	this->x = x;
 	this->y = y;
 	this->z = z;
-	for (int j = 0; j < chunkH; j++)
-		for (int i = 0; i < chunkW; i++)
-			for (int k = 0; k < chunkT; k++)
-			{
-				blocks[j][i][k] = NULL;
-			}
+	forAllBlocks
+	{
+		blocks[j][i][k] = NULL;
+	}
 	generateTeren();
 
 }
@@ -45,11 +46,15 @@ Chunk::~Chunk()
 
 void Chunk::update(float deltaTime)
 {
-
 	for (auto b : toAdd)
 	{
-		if(b)
-			game->setFaceing(b, false);
+		if (b)
+		{
+			if (b->faceToSetUp() <= 0)
+				continue;
+			game->setFaceing(b, false, b->faceToSetUp());
+		}
+
 		
 	}
 
@@ -62,8 +67,9 @@ void Chunk::update(float deltaTime)
 		}
 
 	}
-	if (toAdd.size() > 0 || toDelete.size() > 0)
+	if (genVertices||toAdd.size() > 0 || toDelete.size() > 0)
 	{
+		genVertices = false;
 		if(!vao)
 			vao = new VAO();
 		if(!vboVert)
@@ -88,8 +94,6 @@ void Chunk::update(float deltaTime)
 
 }
 
-
-
 void Chunk::draw()
 {
 	if (indexV.size() > 0)
@@ -99,7 +103,6 @@ void Chunk::draw()
 	}
 
 }
-
 
 Block* Chunk::getBlock(int x, int y, int z)
 {
@@ -135,53 +138,49 @@ void Chunk::genVerticesPos()
 {
 	vertV.clear();
 	GLuint lastIndex = 0;
-	for (int j = 0; j < chunkH; j++)
-		for (int i = 0; i < chunkW; i++)
-			for (int k = 0; k < chunkT; k++)
-				if (blocks[j][i][k])
-				{
-					if (blocks[j][i][k]->indexSize() <= 0)
-						continue;
-					std::vector<glm::vec3> vertTmp = blocks[j][i][k]->getVertexPos();
+	forAllBlocks
+	if (blocks[j][i][k])
+	{
+		if (blocks[j][i][k]->indexSize() <= 0)
+			continue;
+		std::vector<glm::vec3> vertTmp = blocks[j][i][k]->getVertexPos();
 
-					vertV.insert(vertV.end(), vertTmp.begin(), vertTmp.end());
-				}
+		vertV.insert(vertV.end(), vertTmp.begin(), vertTmp.end());
+	}
 	vboVert->setNewVertices(vertV);
 }
+
 void Chunk::genVerticesTexture()
 {
 	textV.clear();
-	for (int j = 0; j < chunkH; j++)
-		for (int i = 0; i < chunkW; i++)
-			for (int k = 0; k < chunkT; k++)
-				if (blocks[j][i][k])
-				{
-					if (blocks[j][i][k]->indexSize() <= 0)
-						continue;
-					std::vector<glm::vec2> textTmp = blocks[j][i][k]->getVertexTexture();
+	forAllBlocks
+	if (blocks[j][i][k])
+	{
+		if (blocks[j][i][k]->indexSize() <= 0)
+			continue;
+		std::vector<glm::vec2> textTmp = blocks[j][i][k]->getVertexTexture();
 
-					textV.insert(textV.end(), textTmp.begin(), textTmp.end());
-				}
+		textV.insert(textV.end(), textTmp.begin(), textTmp.end());
+	}
 	vboTexture->setNewVertices(textV);
 }
+
 void Chunk::genIndex()
 {
 	indexV.clear();
 	GLuint lastIndex = 0;
-	for (int j = 0; j < chunkH; j++)
-		for (int i = 0; i < chunkW; i++)
-			for (int k = 0; k < chunkT; k++)
-				if (blocks[j][i][k])
-				{
-					if (blocks[j][i][k]->indexSize() <= 0)
-						continue;
-					std::vector<GLuint> indexTmp = blocks[j][i][k]->getIndex();
-					for (auto ind : indexTmp)
-					{
-						indexV.push_back(ind + lastIndex);
-					}
-					lastIndex += blocks[j][i][k]->indexSize();
-				}
+	forAllBlocks
+	if (blocks[j][i][k])
+	{
+		if (blocks[j][i][k]->indexSize() <= 0)
+			continue;
+		std::vector<GLuint> indexTmp = blocks[j][i][k]->getIndex();
+		for (auto ind : indexTmp)
+		{
+			indexV.push_back(ind + lastIndex);
+		}
+		lastIndex += blocks[j][i][k]->indexSize();
+	}
 	index->setNewVertices(indexV);
 }
 
@@ -209,7 +208,7 @@ void Chunk::generateTeren()
 				blocks[j][i][k] = createBlock(2);
 				if (blocks[j][i][k])
 				{
-					toAdd.push_back(blocks[j][i][k]);
+					//toAdd.push_back(blocks[j][i][k]);
 					blocks[j][i][k]->x = i + x * chunkW;
 					blocks[j][i][k]->y = j + y * chunkH;
 					blocks[j][i][k]->z = k + z * chunkT;
@@ -220,7 +219,7 @@ void Chunk::generateTeren()
 				blocks[j][i][k] = createBlock(1);
 				if (blocks[j][i][k])
 				{
-					toAdd.push_back(blocks[j][i][k]);
+					//toAdd.push_back(blocks[j][i][k]);
 					blocks[j][i][k]->x = i + x * chunkW;
 					blocks[j][i][k]->y = j + y * chunkH;
 					blocks[j][i][k]->z = k + z * chunkT;
@@ -233,7 +232,7 @@ void Chunk::generateTeren()
 				blocks[h][i][k] = createBlock(0);
 				if (blocks[h][i][k])
 				{
-					toAdd.push_back(blocks[h][i][k]);
+					//toAdd.push_back(blocks[h][i][k]);
 					blocks[h][i][k]->x = i + x * chunkW;
 					blocks[h][i][k]->y = h + y * chunkH;
 					blocks[h][i][k]->z = k + z * chunkT;
@@ -244,4 +243,47 @@ void Chunk::generateTeren()
 			}
 
 		}
+	forAllBlocks
+	{
+		if (j - 1 > 0 && blocks[j][i][k] && blocks[j - 1][i][k] &&
+			!blocks[j][i][k]->isTransparent() && !blocks[j - 1][i][k]->isTransparent())
+		{
+			blocks[j][i][k]->setOneFace((int)Faces::Down, false);
+			blocks[j - 1][i][k]->setOneFace((int)Faces::Up, false);
+		}
+		if (j + 1 < chunkH && blocks[j][i][k] && blocks[j + 1][i][k] &&
+			!blocks[j][i][k]->isTransparent() && !blocks[j + 1][i][k]->isTransparent())
+		{
+			blocks[j][i][k]->setOneFace((int)Faces::Up, false);
+			blocks[j + 1][i][k]->setOneFace((int)Faces::Down, false);
+		}
+		if (i - 1 > 0 && blocks[j][i][k] && blocks[j][i - 1][k] &&
+			!blocks[j][i][k]->isTransparent() && !blocks[j][i - 1][k]->isTransparent())
+		{
+			blocks[j][i][k]->setOneFace((int)Faces::Left, false);
+			blocks[j][i - 1][k]->setOneFace((int)Faces::Right, false);
+		}
+		if (i + 1 < chunkW && blocks[j][i][k] && blocks[j][i + 1][k] &&
+			!blocks[j][i][k]->isTransparent() && !blocks[j][i + 1][k]->isTransparent())
+		{
+			blocks[j][i][k]->setOneFace((int)Faces::Right, false);
+			blocks[j][i + 1][k]->setOneFace((int)Faces::Left, false);
+		}
+		if (k - 1 > 0 && blocks[j][i][k] && blocks[j][i][k - 1] &&
+			!blocks[j][i][k]->isTransparent() && !blocks[j][i][k - 1]->isTransparent())
+		{
+			blocks[j][i][k]->setOneFace((int)Faces::Back, false);
+			blocks[j][i][k - 1]->setOneFace((int)Faces::Front, false);
+		}
+		if (k + 1 < chunkT && blocks[j][i][k] && blocks[j][i][k + 1] &&
+			!blocks[j][i][k]->isTransparent() && !blocks[j][i][k + 1]->isTransparent())
+		{
+			blocks[j][i][k]->setOneFace((int)Faces::Front, false);
+			blocks[j][i][k + 1]->setOneFace((int)Faces::Back, false);
+		}
+		if ((i == 0 || i == chunkW - 1 || j == 0 || j == chunkH - 1 || k == 0 || k == chunkT - 1) && blocks[j][i][k])
+		{
+			toAdd.push_back(blocks[j][i][k]);
+		}
+	}
 }

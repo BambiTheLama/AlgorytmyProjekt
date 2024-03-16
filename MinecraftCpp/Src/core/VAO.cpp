@@ -1,10 +1,14 @@
 #include "VAO.h"
 #include "VBO.h"
-
+#include "../Properties.h"
 VAO::VAO()
 {
 	glGenVertexArrays(1, &ID);
+#ifdef DebugInfoMode
+#define info
 	printf("[INFO]: Succesful Create VAO %d\n", (int)ID);
+#endif
+
 }
 
 VAO::~VAO()

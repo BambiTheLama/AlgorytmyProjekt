@@ -16,7 +16,7 @@ enum class Faces :int
 	Front = 0b010000,
 	Back  = 0b100000,
 };
-
+#define checkFace(face,myFace) ((int)Faces::face & (int)myFace) == (int)Faces::face
 
 class Cube
 {

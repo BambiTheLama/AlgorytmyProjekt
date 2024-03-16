@@ -29,42 +29,42 @@ std::vector<glm::vec3> Cube::getVertexPos()
 	std::vector<glm::vec3> vertexPos;
 	if (face <= 0)
 		return vertexPos;
-	if (((int)Faces::Front & (int)face) == (int)Faces::Front)
+	if (checkFace(Front, face))
 	{
 		vertexPos.push_back(glm::vec3(1, 1, 1));
 		vertexPos.push_back(glm::vec3(1, 0, 1));
 		vertexPos.push_back(glm::vec3(0, 1, 1));
 		vertexPos.push_back(glm::vec3(0, 0, 1));
 	}
-	if (((int)Faces::Back & (int)face) == (int)Faces::Back)
+	if (checkFace(Back, face))
 	{
 		vertexPos.push_back(glm::vec3(1, 1, 0));
 		vertexPos.push_back(glm::vec3(1, 0, 0));
 		vertexPos.push_back(glm::vec3(0, 1, 0));
 		vertexPos.push_back(glm::vec3(0, 0, 0));
 	}
-	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
+	if (checkFace(Left, face))
 	{
 		vertexPos.push_back(glm::vec3(0, 1, 1));
 		vertexPos.push_back(glm::vec3(0, 0, 1));
 		vertexPos.push_back(glm::vec3(0, 1, 0));
 		vertexPos.push_back(glm::vec3(0, 0, 0));
 	}
-	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
+	if (checkFace(Right, face))
 	{
 		vertexPos.push_back(glm::vec3(1, 1, 1));
 		vertexPos.push_back(glm::vec3(1, 0, 1));
 		vertexPos.push_back(glm::vec3(1, 1, 0));
 		vertexPos.push_back(glm::vec3(1, 0, 0));
 	}
-	if (((int)Faces::Up & (int)face) == (int)Faces::Up)
+	if (checkFace(Up, face))
 	{
 		vertexPos.push_back(glm::vec3(1, 1, 1));
 		vertexPos.push_back(glm::vec3(1, 1, 0));
 		vertexPos.push_back(glm::vec3(0, 1, 1));
 		vertexPos.push_back(glm::vec3(0, 1, 0));
 	}
-	if (((int)Faces::Down & (int)face) == (int)Faces::Down)
+	if (checkFace(Down, face))
 	{
 		vertexPos.push_back(glm::vec3(1, 0, 1));
 		vertexPos.push_back(glm::vec3(1, 0, 0));

@@ -4,6 +4,7 @@
 #include "Engine.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
+#include "../Properties.h"
 
 std::vector<Texture*> Texture::textures;
 
@@ -45,11 +46,18 @@ Texture::Texture(const char* path, GLenum textureType, GLenum slot, GLenum forma
 	glBindTexture(type, 0);
 	if (w <= 0 && h <= 0)
 	{
+#ifdef DebugFailMode
+#define info
 		printf("[FAIL]: No texture loaded [%s]\n", path);
+#endif
 	}
 	else
 	{
+#ifdef DebugInfoMode
+#define info
 		printf("[Info]: Texture loaded succesful ID: %d, [%s]\n", ID, path);
+#endif
+
 		textures.push_back(new Texture(*this));
 	}
 
@@ -91,7 +99,11 @@ void Texture::clearAllTextures()
 {
 	for (auto t : textures)
 	{
+#ifdef DebugInfoMode
+#define info
 		printf("[Info]: Texture destroyed succesful ID: %d, [%s]\n", t->ID, t->path);
+#endif
+
 		glDeleteTextures(1, &t->ID);
 
 	}
@@ -115,7 +127,10 @@ void Texture::deleteTexture()
 	{
 		if (std::string(path).compare(t->path) == 0)
 		{
+#ifdef DebugInfoMode
+#define info
 			printf("[Info]: Texture destroyed succesful ID: %d, [%s]\n", t->ID, t->path);
+#endif
 			glDeleteTextures(1, &t->ID);
 			break;
 		}

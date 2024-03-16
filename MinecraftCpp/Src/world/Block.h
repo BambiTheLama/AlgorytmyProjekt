@@ -26,6 +26,10 @@ public:
 
 	virtual GLuint indexSize() = 0;
 
+	virtual char faceToSetUp() { return 0; }
+
+	virtual bool isTransparent() { return true; }
+
 	friend class Chunk;
 	friend class Game;
 };

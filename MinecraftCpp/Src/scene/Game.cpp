@@ -108,86 +108,118 @@ void Game::deleteBlock(Block* b)
 }
 
 
-void Game::setFaceing(int x, int y, int z, bool display)
+void Game::setFaceing(int x, int y, int z, bool display, char face)
 {
-	Block* block = getBlockAt(x, y + 1, z);
-	if (block)
-	{
-		block->setOneFace((int)Faces::Down, display);
+#define setFaceingDef(CheckingFace,face,x1,y1,z1) \
+	if (checkFace(CheckingFace, face))\
+	{\
+		block = getBlockAt(x1, y1, z1);\
+		if (block)\
+		{\
+			block->setOneFace((int)Faces::CheckingFace, display);\
+			setGenVerticesFlagAt(x1, y1, z1);\
+		}\
 	}
-	block = getBlockAt(x, y - 1, z);
-	if (block)
-	{
-		block->setOneFace((int)Faces::Up, display);
-	}
-	block = getBlockAt(x, y, z + 1);
-	if (block)
-	{
-		block->setOneFace((int)Faces::Back, display);
-	}
-	block = getBlockAt(x, y, z - 1);
-	if (block)
-	{
-		block->setOneFace((int)Faces::Front, display);
-	}
-	block = getBlockAt(x + 1, y, z);
-	if (block)
-	{
-		block->setOneFace((int)Faces::Left, display);
-	}
-	block = getBlockAt(x - 1, y, z);
-	if (block)
-	{
-		block->setOneFace((int)Faces::Right, display);
-	}
+					
+
+	Block* block;
+	setFaceingDef(Front, face, x, y, z - 1)
+	setFaceingDef(Back, face, x, y, z + 1)
+	setFaceingDef(Left, face, x + 1, y, z)
+	setFaceingDef(Right, face, x - 1, y + 1, z)
+	setFaceingDef(Up, face, x, y - 1, z)
+	setFaceingDef(Down, face, x, y + 1, z)
+
+	setGenVerticesFlagAt(x, y, z);
 }
-void Game::setFaceing(Block* b, bool display)
+void Game::setFaceing(Block* b, bool display, char face)
 {
 	if (!b)
 		return;
-	Block* block = getBlockAt(b->x, b->y + 1, b->z);
-	if (block)
+	Block* block;
+	if (checkFace(Front, face))
 	{
-		b->setOneFace((int)Faces::Up, display);
-		block->setOneFace((int)Faces::Down, display);
+		block = getBlockAt(b->x, b->y, b->z + 1);
+		if (block)
+		{
+			b->setOneFace((int)Faces::Front, display);
+			block->setOneFace((int)Faces::Back, display);
+			setGenVerticesFlagAt(b->x, b->y, b->z + 1);
+		}
 	}
-	block = getBlockAt(b->x, b->y - 1, b->z);
-	if (block)
+	if (checkFace(Back, face))
 	{
-		block->setOneFace((int)Faces::Up, display);
-		b->setOneFace((int)Faces::Down, display);
+		block = getBlockAt(b->x, b->y, b->z - 1);
+		if (block)
+		{
+			block->setOneFace((int)Faces::Front, display);
+			b->setOneFace((int)Faces::Back, display);
+			setGenVerticesFlagAt(b->x, b->y, b->z - 1);
+		}
 	}
-	block = getBlockAt(b->x, b->y, b->z + 1);
-	if (block)
+	if (checkFace(Up, face))
 	{
-		b->setOneFace((int)Faces::Front, display);
-		block->setOneFace((int)Faces::Back, display);
+		block = getBlockAt(b->x, b->y + 1, b->z);
+		if (block)
+		{
+			b->setOneFace((int)Faces::Up, display);
+			block->setOneFace((int)Faces::Down, display);
+			setGenVerticesFlagAt(b->x, b->y + 1, b->z);
+		}
 	}
-	block = getBlockAt(b->x, b->y, b->z - 1);
-	if (block)
+	if (checkFace(Down, face))
 	{
-		block->setOneFace((int)Faces::Front, display);
-		b->setOneFace((int)Faces::Back, display);
+		block = getBlockAt(b->x, b->y - 1, b->z);
+		if (block)
+		{
+			block->setOneFace((int)Faces::Up, display);
+			b->setOneFace((int)Faces::Down, display);
+			setGenVerticesFlagAt(b->x, b->y - 1, b->z);
+		}
 	}
-	block = getBlockAt(b->x + 1, b->y, b->z);
-	if (block)
+	if (checkFace(Left, face))
 	{
-		block->setOneFace((int)Faces::Left, display);
-		b->setOneFace((int)Faces::Right, display);
+		block = getBlockAt(b->x - 1, b->y, b->z);
+		if (block)
+		{
+			b->setOneFace((int)Faces::Left, display);
+			block->setOneFace((int)Faces::Right, display);
+			setGenVerticesFlagAt(b->x - 1, b->y, b->z);
+		}
 	}
-	block = getBlockAt(b->x - 1, b->y, b->z);
-	if (block)
+	if (checkFace(Right, face))
 	{
-		b->setOneFace((int)Faces::Left, display);
-		block->setOneFace((int)Faces::Right, display);
+		block = getBlockAt(b->x + 1, b->y, b->z);
+		if (block)
+		{
+			block->setOneFace((int)Faces::Left, display);
+			b->setOneFace((int)Faces::Right, display);
+			setGenVerticesFlagAt(b->x + 1, b->y, b->z);
+		}
 	}
-}
 
+	setGenVerticesFlagAt(b->x, b->y, b->z);
+}
+void Game::setGenVerticesFlagAt(int x, int y, int z)
+{
+	for (auto c : chunks)
+		if (c->isThisChunk(x, y, z))
+		{
+			c->genVerticesFlag();
+			return;
+		}
+}
 void Game::worldGenerateFun()
 {
+	glm::vec3 camPos = camera->getPos();
 	while (gameRunning)
 	{
-		genWorld();
+		if (camPos == camera->getPos()|| posToGenChunk.size()>0)
+		{
+			genWorld();
+		}
+		camPos = camera->getPos();
+
 	}
 }
 

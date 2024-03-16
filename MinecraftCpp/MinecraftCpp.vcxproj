@@ -198,6 +198,7 @@
     <ClInclude Include="Src\core\Texture.h" />
     <ClInclude Include="Src\core\VAO.h" />
     <ClInclude Include="Src\core\VBO.h" />
+    <ClInclude Include="Src\Properties.h" />
     <ClInclude Include="Src\scene\Game.h" />
     <ClInclude Include="Src\scene\Scene.h" />
     <ClInclude Include="Src\world\Block.h" />

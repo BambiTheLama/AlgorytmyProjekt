@@ -21,7 +21,7 @@ class Game :
     GLFWwindow* window;
     Block* b = NULL;
     std::vector<glm::vec3> posToGenChunk;
-    int range = 3;
+    int range = 4;
 public:
     Game(Camera *camera, GLFWwindow* window);
 
@@ -39,9 +39,11 @@ public:
 
     void deleteBlock(Block* b);
 
-    void setFaceing(int x,int y,int z,bool display);
+    void setFaceing(int x,int y,int z,bool display, char face = 0b111111);
 
-    void setFaceing(Block* b, bool display);
+    void setFaceing(Block* b, bool display, char face = 0b111111);
+
+    void setGenVerticesFlagAt(int x, int y, int z);
 
 private:
     void worldGenerateFun();

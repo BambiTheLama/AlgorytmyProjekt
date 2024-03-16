@@ -25,10 +25,7 @@ public:
 
 	float getDeltaTime()const { return deltaTime; }
 
-	void sortVector(std::vector<Chunk*>& toSort);
-
 	friend void drawTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 color);
-
 	
 };
 
