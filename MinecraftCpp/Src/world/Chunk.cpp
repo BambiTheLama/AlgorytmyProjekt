@@ -200,10 +200,7 @@ void Chunk::generateTeren()
 		for (int k = 0; k < chunkT; k++)
 		{
 			int h = (terrain.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT) + 1) / 2 * height + minH - (this->y * chunkH);
-			int h2 = h;
-			if (h > chunkH)
-				h = chunkH;
-			for (int j = 0; j < chunkH && j < h2 - dirtSize; j++)
+			for (int j = 0; j < chunkH && j < h - dirtSize; j++)
 			{
 				blocks[j][i][k] = createBlock(2);
 				if (blocks[j][i][k])
@@ -214,9 +211,9 @@ void Chunk::generateTeren()
 					blocks[j][i][k]->z = k + z * chunkT;
 				}
 			}
-			for (int j = (h2 - dirtSize) < 0 ? 0 : h2 - dirtSize; j < h; j++)
+			for (int j = (h - dirtSize) < 0 ? 0 : h - dirtSize; j < h && j < chunkH; j++)
 			{
-				blocks[j][i][k] = createBlock(1);
+				blocks[j][i][k] = createBlock(j == h - 1 ? 0 : 1);
 				if (blocks[j][i][k])
 				{
 					//toAdd.push_back(blocks[j][i][k]);
@@ -225,22 +222,7 @@ void Chunk::generateTeren()
 					blocks[j][i][k]->z = k + z * chunkT;
 				}
 			}
-			if (h >= 0 && h < chunkH)
-			{
-				if (blocks[h][i][k])
-					delete blocks[h][i][k];
-				blocks[h][i][k] = createBlock(0);
-				if (blocks[h][i][k])
-				{
-					//toAdd.push_back(blocks[h][i][k]);
-					blocks[h][i][k]->x = i + x * chunkW;
-					blocks[h][i][k]->y = h + y * chunkH;
-					blocks[h][i][k]->z = k + z * chunkT;
-				}
 
-
-
-			}
 
 		}
 	forAllBlocks
