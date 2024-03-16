@@ -88,7 +88,7 @@ Engine::Engine()
 	glBindVertexArray(0);
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
-	camera = new Camera(width, height, 0.1f, 300, 60, glm::vec3(0.0f, 0.0f, 0.0f));
+	camera = new Camera(width, height, 0.1f, 300, 60, glm::vec3(0.0f, 100.0f, 0.0f));
 	select = new Texture("Res/Blocks.png");
 	Font::setUpFonts();
 	
@@ -113,7 +113,7 @@ void Engine::start()
 	
 	Game* game = new Game(camera,window);
 
-
+	game->start();
 	while (!glfwWindowShouldClose(window))
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -138,11 +138,14 @@ void Engine::start()
 		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
 			shader->setUniformI1(false, "debug");
 		game->draw();
-		endShaderMode();
+		game->endPhase();
+		
 		camera->draw(*shader);
+		endShaderMode();
 		glfwSwapBuffers(window);
 
 		glfwPollEvents();
+
 	}
 	delete game;
 }

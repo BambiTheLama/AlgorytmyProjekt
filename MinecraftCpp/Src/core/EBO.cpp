@@ -3,12 +3,14 @@
 EBO::EBO(std::vector<GLuint>& indices)
 {
 	glGenBuffers(1, &ID);
+	printf("[INFO]: Succesful Create EBO %d\n", (int)ID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * indices.size(), indices.data(), GL_DYNAMIC_DRAW);
 }
 EBO::EBO(GLuint* indices, GLsizeiptr size, GLenum drawType)
 {
 	glGenBuffers(1, &ID);
+	printf("[INFO]: Succesful Create EBO %d\n", (int)ID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, drawType);
 }

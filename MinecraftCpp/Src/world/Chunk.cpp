@@ -10,6 +10,9 @@ Game* Chunk::game = NULL;
 
 Chunk::Chunk(int x, int y, int z)
 {
+	vertV = std::vector<glm::vec3>();
+	textV = std::vector<glm::vec2>();
+	indexV = std::vector<GLuint>();
 	this->x = x;
 	this->y = y;
 	this->z = z;
@@ -20,17 +23,7 @@ Chunk::Chunk(int x, int y, int z)
 				blocks[j][i][k] = NULL;
 			}
 	generateTeren();
-	vao = new VAO();
-	vboVert = new VBO(vertV);
-	vboTexture = new VBO(textV);
-	index = new EBO(indexV);
-	vao->linkData(*vboVert, 0, 3, GL_FLOAT, sizeof(glm::vec3), (void*)0);
-	vao->linkData(*vboTexture, 1, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
-	index->bind();
-	vao->unbind();
-	vboVert->unbind();
-	vboTexture->unbind();
-	index->unbind();
+
 }
 
 Chunk::~Chunk()
@@ -55,17 +48,30 @@ void Chunk::update(float deltaTime)
 
 	for (auto b : toAdd)
 	{
-		game->setFaceing(b, false);
+		if(b)
+			game->setFaceing(b, false);
 		
 	}
 
 	for (auto b : toDelete)
 	{
-		game->setFaceing(b->x, b->y, b->z, true);
-		delete b;
+		if (b)
+		{
+			game->setFaceing(b->x, b->y, b->z, true);
+			delete b;
+		}
+
 	}
 	if (toAdd.size() > 0 || toDelete.size() > 0)
 	{
+		if(!vao)
+			vao = new VAO();
+		if(!vboVert)
+			vboVert = new VBO(vertV);
+		if(!vboTexture)
+			vboTexture = new VBO(textV);
+		if(!index)
+			index = new EBO(indexV);
 		toDelete.clear();
 		toAdd.clear();
 		genIndex();
@@ -76,6 +82,7 @@ void Chunk::update(float deltaTime)
 		vao->linkData(*vboTexture, 1, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
 		index->bind();
 		vao->unbind();
+
 	}
 
 
@@ -85,9 +92,12 @@ void Chunk::update(float deltaTime)
 
 void Chunk::draw()
 {
-	vao->bind();
+	if (indexV.size() > 0)
+	{
+		vao->bind();
+		glDrawElements(GL_TRIANGLES, indexV.size(), GL_UNSIGNED_INT, 0);
+	}
 
-	glDrawElements(GL_TRIANGLES, indexV.size(), GL_UNSIGNED_INT, 0);
 }
 
 

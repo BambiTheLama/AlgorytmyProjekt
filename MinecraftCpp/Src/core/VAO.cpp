@@ -4,6 +4,7 @@
 VAO::VAO()
 {
 	glGenVertexArrays(1, &ID);
+	printf("[INFO]: Succesful Create VAO %d\n", (int)ID);
 }
 
 VAO::~VAO()

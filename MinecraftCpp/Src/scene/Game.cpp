@@ -2,16 +2,13 @@
 
 Game::Game(Camera* camera,GLFWwindow* window)
 {
-	int t = 10;
-	int h = 5;
-	int w = 10;
+
 	Chunk::game = this;
 	this->camera = camera;
-	for (int i = 0; i < w; i++)
-		for (int j = 0; j < h; j++)
-			for (int k = 0; k < t; k++)
-				chunks.push_back(new Chunk(i, j, k));
-	//chunks.push_back(new Chunk(0, 0, 0));
+	do {
+		genWorld();
+	} while (posToGenChunk.size() > 0);
+
 	this->window = window;
 	glm::vec3 pos = camera->getPos();
 	while (getBlockAt(pos.x,pos.y,pos.z))
@@ -24,14 +21,25 @@ Game::Game(Camera* camera,GLFWwindow* window)
 
 Game::~Game()
 {
+	gameRunning = false;
+	if (worldGenerateT.joinable())
+		worldGenerateT.join();
 	Chunk::game = NULL;
 	for (auto c : chunks)
 		delete c;
 	chunks.clear();
 }
 
+void Game::start()
+{
+	gameRunning = true;
+	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
+}
+
 void Game::update(float deltaTime)
 {
+
+	chunksMutex.lock();
 	for (auto c : chunks)
 		c->update(deltaTime);
 
@@ -52,13 +60,13 @@ void Game::update(float deltaTime)
 		}
 		n++;
 	}
-	
+	chunksMutex.unlock();
 
-	
 }
 
 void Game::draw()
 {
+	chunksMutex.lock();
 	for (auto c : chunks)
 	{
 		float dist =glm::distance(camera->getPos(), glm::vec3(c->x * chunkW, c->y * chunkH, c->z * chunkT));
@@ -70,14 +78,26 @@ void Game::draw()
 	{
 
 	}
+	chunksMutex.unlock();
 
 }
-
+void Game::endPhase()
+{
+	chunksMutex.lock();
+	toAddMutex.lock();
+	for (auto a : toAdd)
+		chunks.push_back(a);
+	toAdd.clear();
+	chunksMutex.unlock();
+	toAddMutex.unlock();
+}
 Block* Game::getBlockAt(int x, int y, int z)
 {
 	for (auto c : chunks)
 		if (c->isThisChunk(x, y, z))
+		{
 			return c->getBlock(x, y, z);
+		}
 	return NULL;
 }
 void Game::deleteBlock(Block* b)
@@ -161,4 +181,72 @@ void Game::setFaceing(Block* b, bool display)
 		b->setOneFace((int)Faces::Left, display);
 		block->setOneFace((int)Faces::Right, display);
 	}
+}
+
+void Game::worldGenerateFun()
+{
+	while (gameRunning)
+	{
+		genWorld();
+	}
+}
+
+void Game::genWorld()
+{
+	glm::vec3 camPos = camera->getPos();
+	camPos.x /= chunkW;
+	camPos.y /= chunkH;
+	camPos.z /= chunkT;
+	if (posToGenChunk.size() <= 0)
+	{
+		for (int y = camPos.y - range; y < camPos.y + range; y++)
+			for (int x = camPos.x - range; x < camPos.x + range; x++)
+				for (int z = camPos.z - range; z < camPos.z + range; z++)
+				{
+					bool breked = false;
+					toAddMutex.lock();
+					for (auto c : toAdd)
+						if (c->y == y && c->z == z && c->x == x)
+						{
+							breked = true;
+							break;
+						}
+					toAddMutex.unlock();
+					chunksMutex.lock();
+					for (auto c : chunks)
+						if (c->y == y && c->z == z && c->x == x)
+						{
+							breked = true;
+							break;
+						}
+					if (!breked)
+						posToGenChunk.push_back(glm::vec3(x, y, z));
+					chunksMutex.unlock();
+				}
+	}
+	if (posToGenChunk.size() <= 0)
+		return;
+	glm::vec3 pos = posToGenChunk.back();
+	posToGenChunk.pop_back();
+	toAddMutex.lock();
+	bool breked = false;
+	for (auto c : toAdd)
+		if (c->y == pos.y && c->z == pos.z && c->x == pos.x)
+		{
+			breked = true;
+			break;
+		}
+	toAddMutex.unlock();
+	Chunk* c = NULL;
+	float dist = glm::distance(pos, camPos);
+
+	if (dist <= range * 1.5f)
+	{
+		c = new Chunk(pos.x, pos.y, pos.z);
+	}
+
+	toAddMutex.lock();
+	if(c)
+		toAdd.push_back(c);
+	toAddMutex.unlock();
 }
