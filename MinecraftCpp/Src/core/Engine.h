@@ -37,4 +37,4 @@ void endShaderMode();
 
 Shader& getDiffoltShader();
 
-Texture* getSelect();
+Texture* getBlocks();

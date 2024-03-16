@@ -1,23 +1,20 @@
 #include "EBO.h"
 #include "../Properties.h"
-
-EBO::EBO(std::vector<GLuint>& indices)
+EBO::EBO()
 {
 	glGenBuffers(1, &ID);
 #ifdef DebugInfoMode
 #define info
 	printf("[INFO]: Succesful Create EBO %d\n", (int)ID);
 #endif
+}
+EBO::EBO(std::vector<GLuint>& indices):EBO()
+{
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * indices.size(), indices.data(), GL_DYNAMIC_DRAW);
 }
-EBO::EBO(GLuint* indices, GLsizeiptr size, GLenum drawType)
+EBO::EBO(GLuint* indices, GLsizeiptr size, GLenum drawType) :EBO()
 {
-	glGenBuffers(1, &ID);
-#ifdef DebugInfoMode
-#define info
-	printf("[INFO]: Succesful Create EBO %d\n", (int)ID);
-#endif
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, drawType);
 }
@@ -30,6 +27,11 @@ void EBO::setNewIndices(GLuint* indices, GLsizeiptr size)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_DYNAMIC_DRAW);
+}
+void EBO::setNewIndices(std::vector<GLuint>& indices)
+{
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * indices.size(), indices.data(), GL_DYNAMIC_DRAW);
 }
 void EBO::setNewVertices(std::vector<GLuint>& indices)
 {

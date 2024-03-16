@@ -22,6 +22,11 @@ class Game :
     Block* b = NULL;
     std::vector<glm::vec3> posToGenChunk;
     int range = 4;
+    VAO *vao;
+    VBO *vboPos;
+    VBO *vboTex;
+    EBO *ebo;
+    Texture* selection;
 public:
     Game(Camera *camera, GLFWwindow* window);
 

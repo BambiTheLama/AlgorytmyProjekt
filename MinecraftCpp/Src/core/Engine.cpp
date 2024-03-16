@@ -34,7 +34,7 @@ static GLuint textVBO;
 static Shader* shader = NULL;
 static Shader* textShader = NULL;
 static Camera* camera = NULL;
-Texture* select = NULL;
+static Texture* blocks = NULL;
 Engine::Engine()
 {
 	height = 900;
@@ -89,7 +89,7 @@ Engine::Engine()
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
 	camera = new Camera(width, height, 0.1f, 300, 60, glm::vec3(0.0f, 100.0f, 0.0f));
-	select = new Texture("Res/Blocks.png");
+	blocks = new Texture("Res/Blocks.png");
 	Font::setUpFonts();
 	
 }
@@ -102,7 +102,7 @@ Engine::~Engine()
 	delete vbo;
 	delete vao;
 	delete ebo;
-	delete select;
+	delete blocks;
 	glfwDestroyWindow(window);
 	glfwTerminate();
 }
@@ -129,10 +129,10 @@ void Engine::start()
 		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		startShaderMode(*shader);
-		select->useTexture("tex0", 0);
+		blocks->useTexture("tex0", 0);
 
 		shader->setUniformVec2(glm::vec2( 4, 5), "textSize");
-		select->bind();
+		blocks->bind();
 		if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
 			shader->setUniformI1(true, "debug");
 		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
@@ -188,7 +188,7 @@ Shader& getDiffoltShader()
 	return *shader;
 }
 
-Texture* getSelect()
+Texture* getBlocks()
 {
-	return select;
+	return blocks;
 }

@@ -7,6 +7,8 @@ class VBO
 {
 	GLuint ID;
 public:
+	VBO();
+
 	VBO(std::vector<glm::vec3>& vertices);
 
 	VBO(std::vector<glm::vec2>& vertices);

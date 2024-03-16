@@ -1,33 +1,27 @@
 #include "VBO.h"
 #include "../Properties.h"
-VBO::VBO(std::vector<glm::vec3>& vertices)
+
+VBO::VBO()
 {
 	glGenBuffers(1, &ID);
 #ifdef DebugInfoMode
 #define info
 	printf("[INFO]: Succesful Create VBO %d\n", (int)ID);
 #endif
+}
+
+VBO::VBO(std::vector<glm::vec3>& vertices):VBO()
+{
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_DYNAMIC_DRAW);
 }
-VBO::VBO(std::vector<glm::vec2>& vertices)
+VBO::VBO(std::vector<glm::vec2>& vertices) :VBO()
 {
-	glGenBuffers(1, &ID);
-#ifdef DebugInfoMode
-#define info
-	printf("[INFO]: Succesful Create VBO %d\n", (int)ID);
-#endif
-
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec2), vertices.data(), GL_DYNAMIC_DRAW);
 }
-VBO::VBO(GLfloat* vertices, GLsizeiptr size, GLenum drawType)
+VBO::VBO(GLfloat* vertices, GLsizeiptr size, GLenum drawType) :VBO()
 {
-	glGenBuffers(1, &ID);
-#ifdef DebugInfoMode
-#define info
-	printf("[INFO]: Succesful Create VBO %d\n", (int)ID);
-#endif
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 	glBufferData(GL_ARRAY_BUFFER, size, vertices, drawType);
 }

@@ -7,6 +7,8 @@ class EBO
 {
 	GLuint ID;
 public:
+	EBO();
+
 	EBO(std::vector<GLuint>& indices);
 
 	EBO(GLuint* indices, GLsizeiptr size, GLenum drawType = GL_STATIC_DRAW);
@@ -16,6 +18,8 @@ public:
 	void setNewIndices(GLuint* indices, GLsizeiptr size);
 
 	void setNewVertices(std::vector<GLuint>& indices);
+
+	void setNewIndices(std::vector<GLuint>& indices);
 
 	void bind();
 

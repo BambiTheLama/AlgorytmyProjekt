@@ -1,5 +1,10 @@
 #include "Game.h"
-
+#include "../core/VBO.h"
+#include "../core/EBO.h"
+#include "../core/VAO.h"
+#include "../core/Texture.h"
+#include "../core/Engine.h"
+#include "../core/Shader.h"
 Game::Game(Camera* camera,GLFWwindow* window)
 {
 
@@ -16,7 +21,11 @@ Game::Game(Camera* camera,GLFWwindow* window)
 		pos.y++;
 	}
 	camera->newPos(pos);
-
+	vao = new VAO();
+	vboPos = new VBO();
+	vboTex = new VBO();
+	ebo = new EBO();
+	selection = new Texture("Res/Selected.jpg");
 }
 
 Game::~Game()
@@ -76,7 +85,26 @@ void Game::draw()
 
 	if (b)
 	{
+		std::vector<GLuint> ind = b->getIndex();
+		if (ind.size() > 0)
+		{
+			vao->bind();
+			std::vector<glm::vec3> pos = b->getVertexPos();
+			std::vector<glm::vec2> tex = b->getVertexTexture();
+			vboPos->setNewVertices(pos);
+			vboTex->setNewVertices(tex);
+			ebo->setNewIndices(ind);
+			ebo->bind();
 
+			Shader& shader = getDiffoltShader();
+			glUniform1i(shader.getUniformLocation("tex0"), 0);
+			shader.setUniformVec2(glm::vec2(1, 1), "textSize");
+			shader.active();
+			selection->bind();
+			glDisable(GL_DEPTH_TEST);
+			glDrawElements(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, 0);
+			glEnable(GL_DEPTH_TEST);
+		}
 	}
 	chunksMutex.unlock();
 
@@ -126,7 +154,7 @@ void Game::setFaceing(int x, int y, int z, bool display, char face)
 	setFaceingDef(Front, face, x, y, z - 1)
 	setFaceingDef(Back, face, x, y, z + 1)
 	setFaceingDef(Left, face, x + 1, y, z)
-	setFaceingDef(Right, face, x - 1, y + 1, z)
+	setFaceingDef(Right, face, x - 1, y, z)
 	setFaceingDef(Up, face, x, y - 1, z)
 	setFaceingDef(Down, face, x, y + 1, z)
 

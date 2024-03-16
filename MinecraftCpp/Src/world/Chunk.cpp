@@ -195,7 +195,7 @@ void Chunk::generateTeren()
 	terrain.SetFractalLacunarity(1.529f);
 	terrain.SetFractalWeightedStrength(3.304f);
 	const int height = maxH - minH;
-
+	const int dirtSize = 5;
 	for (int i = 0; i < chunkW; i++)
 		for (int k = 0; k < chunkT; k++)
 		{
@@ -203,7 +203,7 @@ void Chunk::generateTeren()
 			int h2 = h;
 			if (h > chunkH)
 				h = chunkH;
-			for (int j = 0; j < chunkH && j < h2 - 4; j++)
+			for (int j = 0; j < chunkH && j < h2 - dirtSize; j++)
 			{
 				blocks[j][i][k] = createBlock(2);
 				if (blocks[j][i][k])
@@ -214,7 +214,7 @@ void Chunk::generateTeren()
 					blocks[j][i][k]->z = k + z * chunkT;
 				}
 			}
-			for (int j = (h2 - 4) < 0 ? 0 : h2 - 4; j < h; j++)
+			for (int j = (h2 - dirtSize) < 0 ? 0 : h2 - dirtSize; j < h; j++)
 			{
 				blocks[j][i][k] = createBlock(1);
 				if (blocks[j][i][k])
