@@ -10,9 +10,7 @@ Game::Game(Camera* camera,GLFWwindow* window)
 
 	Chunk::game = this;
 	this->camera = camera;
-	do {
-		genWorld();
-	} while (posToGenChunk.size() > 0);
+
 
 	this->window = window;
 	glm::vec3 pos = camera->getPos();
@@ -33,6 +31,8 @@ Game::~Game()
 	gameRunning = false;
 	if (worldGenerateT.joinable())
 		worldGenerateT.join();
+	if (worldDestroyT.joinable())
+		worldDestroyT.join();
 	Chunk::game = NULL;
 	for (auto c : chunks)
 		delete c;
@@ -43,6 +43,7 @@ void Game::start()
 {
 	gameRunning = true;
 	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
+	worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
 }
 
 void Game::update(float deltaTime)
@@ -60,7 +61,7 @@ void Game::update(float deltaTime)
 		int x = pos.x + n * dir.x;
 		int y = pos.y + n * dir.y;
 		int z = pos.z + n * dir.z;
-		b = getBlockAt(x, y, z);
+		//b = getBlockAt(x, y, z);
 		if (b)
 		{
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
@@ -69,6 +70,29 @@ void Game::update(float deltaTime)
 		}
 		n++;
 	}
+	toAddMutex.lock();
+	for (auto a : toAdd)
+		chunks.push_back(a);
+	toAdd.clear();
+	toAddMutex.unlock();
+	toDeleteMutex.lock();
+	for (auto d : toDelete)
+	{
+		int r = -1;
+		for (int i=0;i<chunks.size();i++)
+		{
+			if (chunks[i] == d)
+			{
+				r = i;
+				delete d;
+				break;
+			}
+		}
+		if (r >= 0 && r < chunks.size())
+			chunks.erase(chunks.begin() + r);
+	}
+	toDelete.clear();
+	toDeleteMutex.unlock();
 	chunksMutex.unlock();
 
 }
@@ -109,16 +133,7 @@ void Game::draw()
 	chunksMutex.unlock();
 
 }
-void Game::endPhase()
-{
-	chunksMutex.lock();
-	toAddMutex.lock();
-	for (auto a : toAdd)
-		chunks.push_back(a);
-	toAdd.clear();
-	chunksMutex.unlock();
-	toAddMutex.unlock();
-}
+
 Block* Game::getBlockAt(int x, int y, int z)
 {
 	for (auto c : chunks)
@@ -242,9 +257,23 @@ void Game::worldGenerateFun()
 	glm::vec3 camPos = camera->getPos();
 	while (gameRunning)
 	{
-		if (camPos == camera->getPos()|| posToGenChunk.size()>0)
+		if (camPos != camera->getPos()|| posToGenChunk.size()>0)
 		{
 			genWorld();
+		}
+		camPos = camera->getPos();
+
+	}
+}
+
+void Game::worldDestroyFun()
+{
+	glm::vec3 camPos = camera->getPos();
+	while (gameRunning)
+	{
+		if (camPos != camera->getPos() || posToGenChunk.size() > 0)
+		{
+			desWorld();
 		}
 		camPos = camera->getPos();
 
@@ -300,7 +329,7 @@ void Game::genWorld()
 	Chunk* c = NULL;
 	float dist = glm::distance(pos, camPos);
 
-	if (dist <= range * 1.5f)
+	if (dist <= range)
 	{
 		c = new Chunk(pos.x, pos.y, pos.z);
 	}
@@ -309,4 +338,48 @@ void Game::genWorld()
 	if(c)
 		toAdd.push_back(c);
 	toAddMutex.unlock();
+}
+
+void Game::desWorld()
+{
+	glm::vec3 camPos = camera->getPos();
+	camPos.x /= chunkW;
+	camPos.y /= chunkH;
+	camPos.z /= chunkT;
+	
+	chunksMutex.lock();
+	for (auto c : chunks)
+		if (glm::distance(camPos,c->getLocation())>range*1.1f)
+		{
+			toSave.push_back(c);
+		}
+	toDeleteMutex.lock();
+	camPos = camera->getPos();
+	camPos.x /= chunkW;
+	camPos.y /= chunkH;
+	camPos.z /= chunkT;
+	for (auto c : toSave)
+	{
+		c->save();
+
+		if (glm::distance(camPos, c->getLocation()) > range * 1.1f)
+		{
+			bool addToDelete = true;
+			for (auto d : toDelete)
+				if (c == d)
+				{
+					addToDelete = false;
+					break;
+				}
+
+			if (addToDelete)
+				toDelete.push_back(c);
+
+		}
+
+	}
+	toSave.clear();
+	chunksMutex.unlock();
+	toDeleteMutex.unlock();
+
 }

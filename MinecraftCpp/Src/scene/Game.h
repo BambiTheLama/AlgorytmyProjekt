@@ -12,16 +12,19 @@ class Game :
 {
     bool gameRunning;
     std::thread worldGenerateT;
+    std::thread worldDestroyT;
     std::mutex toAddMutex;
+    std::mutex toDeleteMutex;
     std::mutex chunksMutex;
     std::vector<Chunk*> chunks;
     std::vector<Chunk*> toAdd;
     std::vector<Chunk*> toDelete;
+    std::vector<Chunk*> toSave;
     Camera *camera;
     GLFWwindow* window;
     Block* b = NULL;
     std::vector<glm::vec3> posToGenChunk;
-    int range = 4;
+    int range = 5;
     VAO *vao;
     VBO *vboPos;
     VBO *vboTex;
@@ -38,8 +41,6 @@ public:
 
     void draw();
 
-    void endPhase();
-
     Block* getBlockAt(int x, int y, int z);
 
     void deleteBlock(Block* b);
@@ -53,6 +54,10 @@ public:
 private:
     void worldGenerateFun();
 
+    void worldDestroyFun();
+
     void genWorld();
+
+    void desWorld();
 };
 

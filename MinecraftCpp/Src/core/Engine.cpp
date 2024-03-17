@@ -137,9 +137,7 @@ void Engine::start()
 			shader->setUniformI1(true, "debug");
 		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
 			shader->setUniformI1(false, "debug");
-		game->draw();
-		game->endPhase();
-		
+		game->draw();		
 		camera->draw(*shader);
 		endShaderMode();
 		glfwSwapBuffers(window);

@@ -54,8 +54,6 @@ void Chunk::update(float deltaTime)
 				continue;
 			game->setFaceing(b, false, b->faceToSetUp());
 		}
-
-		
 	}
 
 	for (auto b : toDelete)

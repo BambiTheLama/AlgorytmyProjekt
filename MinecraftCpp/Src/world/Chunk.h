@@ -2,7 +2,7 @@
 #include "Block.h"
 #include <vector>
 #define chunkW 16
-#define chunkH 16
+#define chunkH 64
 #define chunkT 16
 #define minH 2
 #define maxH 100
@@ -41,7 +41,11 @@ public:
 
 	bool isThisChunk(int x, int y, int z);
 
+	void save(){}
+
 	glm::vec3 getPos() { return glm::vec3(x * chunkW + chunkW / 2, y * chunkH + chunkH / 2, z * chunkT + chunkT / 2); }
+
+	glm::vec3 getLocation() { return glm::vec3(x, y, z); }
 
 	void genVerticesFlag() { genVertices = true; }
 
