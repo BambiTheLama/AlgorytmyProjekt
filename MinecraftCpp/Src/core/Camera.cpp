@@ -28,6 +28,7 @@ void Camera::useCamera(Shader& shader, const char* uniform)
 	else
 		projection = glm::ortho(0.0f, cameraWidth, 0.0f, cameraHeight);
 	glUniformMatrix4fv(shader.getUniformLocation(uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
+
 }
 
 void Camera::updatePos(glm::vec3 pos)
@@ -45,8 +46,7 @@ void Camera::draw(Shader& shader)
 	glm::vec3 cameraPos = this->cameraPos + cameraOrientation;
 	glm::vec3 right = glm::normalize(glm::cross(up, cameraOrientation));
 	shader.setUniformVec3(glm::vec3(0.0f), "pos");
-	drawTriangle(cameraPos - right, cameraPos + right, cameraPos);
-	drawTriangle(cameraPos + right, cameraPos - right, cameraPos);
+
 }
 
 void Camera::update(GLFWwindow* window, float deltaTime)

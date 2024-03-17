@@ -8,17 +8,22 @@ uniform vec2 textSize;
 uniform mat4 camera;
 uniform vec4 modelColor;
 uniform mat4 model;
-out vec2 textPos;
 uniform bool debug;
+
+out vec2 textPos;
+out vec3 currentPos;
 
 out DATA
 {
 	vec2 texCoord;
 } data_out;
 
+
+
 void main()
 {
-	gl_Position = camera * model * vec4(vPos, 1.0f);
-	textPos = vTexture/textSize;
+	currentPos = vec3(model * vec4(vPos, 1.0f));
+	gl_Position = camera * vec4(currentPos, 1.0f);
+	textPos = vTexture / textSize;
 	data_out.texCoord = textPos;
 }

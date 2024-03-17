@@ -8,7 +8,7 @@
 
 std::vector<Texture*> Texture::textures;
 
-Texture::Texture(const char* path, GLenum textureType, GLenum slot, GLenum format, GLenum pixelType)
+Texture::Texture(const char* path, GLenum textureType, GLenum slot, GLenum format, GLenum pixelType,GLenum genFormat)
 {
 	for (auto t : textures)
 	{
@@ -28,7 +28,8 @@ Texture::Texture(const char* path, GLenum textureType, GLenum slot, GLenum forma
 	int numColCh;
 	unsigned char* bytes = stbi_load(path, &w, &h, &numColCh, 0);
 	glGenTextures(1, &ID);
-	glActiveTexture(slot);
+	glActiveTexture(GL_TEXTURE0 + slot);
+	this->slot = slot;
 	glBindTexture(type, ID);
 
 	glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
@@ -37,7 +38,7 @@ Texture::Texture(const char* path, GLenum textureType, GLenum slot, GLenum forma
 	glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glTexImage2D(type, 0, GL_RGBA, w, h, 0, format, pixelType, bytes);
+	glTexImage2D(type, 0, genFormat, w, h, 0, format, pixelType, bytes);
 
 	glGenerateMipmap(type);
 
@@ -75,6 +76,7 @@ Texture::~Texture()
 
 void Texture::bind()
 {
+	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(type, ID);
 }
 

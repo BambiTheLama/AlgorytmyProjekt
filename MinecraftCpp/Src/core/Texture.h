@@ -9,10 +9,12 @@ class Texture
 	GLenum type;
 	int w, h;
 	const char* path;
+	GLenum slot;
 	static std::vector<Texture*> textures;
 public:
 
-	Texture(const char* path, GLenum textureType = GL_TEXTURE_2D, GLenum slot = GL_TEXTURE0, GLenum format = GL_RGBA, GLenum pixelType = GL_UNSIGNED_BYTE);
+	Texture(const char* path, GLenum textureType = GL_TEXTURE_2D, GLenum slot = GL_TEXTURE0,
+		GLenum format = GL_RGBA, GLenum pixelType = GL_UNSIGNED_BYTE, GLenum genFormat = GL_RGBA);
 
 	Texture(Texture& texture);
 
