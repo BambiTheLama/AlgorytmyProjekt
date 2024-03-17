@@ -6,13 +6,20 @@
 #include "../core/VBO.h"
 #include "../core/EBO.h"
 #include "BlocksCreator.h"
+#include <json.hpp>
+#include <fstream>
+#include "../Properties.h"
+#include <direct.h>
+
 #define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
 							for (int i = 0; i < chunkW; i++)\
 								for (int k = 0; k < chunkT; k++)
 Game* Chunk::game = NULL;
+std::string Chunk::path = "World/";
 
 Chunk::Chunk(int x, int y, int z)
 {
+
 	vertV = std::vector<glm::vec3>();
 	textV = std::vector<glm::vec2>();
 	indexV = std::vector<GLuint>();
@@ -23,7 +30,9 @@ Chunk::Chunk(int x, int y, int z)
 	{
 		blocks[j][i][k] = NULL;
 	}
-	generateTeren();
+	if(!loadGame())
+		generateTeren();
+	setFaceing();
 
 }
 
@@ -132,6 +141,103 @@ bool Chunk::isThisChunk(int x, int y, int z)
 	return x >= 0 && x < chunkW && y >= 0 && y < chunkH && z >= 0 && z < chunkT;
 }
 
+void Chunk::save()
+{
+	struct stat sb;
+	if (stat(path.c_str(), &sb) != 0)
+		_mkdir(path.c_str());
+	int times = 0;
+	int ID = 0;
+	int b = 0;
+	std::string pathFile = path + "chunk " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ".json";
+	std::ofstream save(pathFile);
+	if (!save.is_open())
+	{
+#ifdef DebugFailMode
+		printf("[Fail]: Cant Create file [%s]\n", pathFile.c_str());
+#endif
+		return;
+	}
+
+	nlohmann::json json;
+
+	forAllBlocks
+	{
+		int IdNow = -1;
+		if (blocks[j][i][k])
+			IdNow = blocks[j][i][k]->getID();
+
+		if (IdNow != ID)
+		{
+			if (times > 0)
+			{
+				json["Blocks"][b][0] = ID;
+				json["Blocks"][b][1] = times;
+				b++;
+			}
+			ID = IdNow;
+			times = 1;
+			continue;
+		}
+		else
+		{
+			times++;
+		}
+		
+	}
+	json["Blocks"][b][0] = ID;
+	json["Blocks"][b][1] = times;
+
+	save << json;
+	save.close();
+
+}
+bool Chunk::loadGame()
+{
+	int times = 0;
+	int ID = 0;
+	int b = 0;
+	std::string pathFile = path + "chunk " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ".json";
+	std::ifstream read(pathFile);
+	if (!read.is_open())
+	{
+		read.close();
+		return false;
+	}
+
+	nlohmann::json json;
+	read >> json;
+	read.close();
+	if (!json.contains("Blocks") || json["Blocks"].size() <= 0)
+		return false;
+	forAllBlocks
+	{
+		if (times <= 0)
+		{
+			if (json["Blocks"].size() <= b)
+				return true;
+			ID = json["Blocks"][b][0];
+			times = json["Blocks"][b][1];
+			b++;
+		}
+		times--;
+		if (ID < 0)
+		{
+			continue;
+		}
+		else
+		{
+			blocks[j][i][k] = createBlock(ID, i + x * chunkW, j + y * chunkH, k + z * chunkT);
+		}
+
+
+
+	}
+
+	return true;
+}
+
+
 void Chunk::genVerticesPos()
 {
 	vertV.clear();
@@ -198,31 +304,27 @@ void Chunk::generateTeren()
 		for (int k = 0; k < chunkT; k++)
 		{
 			int h = (terrain.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT) + 1) / 2 * height + minH - (this->y * chunkH);
+			if (h <= 2)
+				h = 2;
 			for (int j = 0; j < chunkH && j < h - dirtSize; j++)
 			{
-				blocks[j][i][k] = createBlock(2);
 				if (blocks[j][i][k])
-				{
-					//toAdd.push_back(blocks[j][i][k]);
-					blocks[j][i][k]->x = i + x * chunkW;
-					blocks[j][i][k]->y = j + y * chunkH;
-					blocks[j][i][k]->z = k + z * chunkT;
-				}
+					delete blocks[j][i][k];
+				blocks[j][i][k] = createBlock(2, i + x * chunkW, j + y * chunkH, k + z * chunkT);
 			}
 			for (int j = (h - dirtSize) < 0 ? 0 : h - dirtSize; j < h && j < chunkH; j++)
 			{
-				blocks[j][i][k] = createBlock(j == h - 1 ? 0 : 1);
-				if (blocks[j][i][k])
-				{
-					//toAdd.push_back(blocks[j][i][k]);
-					blocks[j][i][k]->x = i + x * chunkW;
-					blocks[j][i][k]->y = j + y * chunkH;
-					blocks[j][i][k]->z = k + z * chunkT;
-				}
+				blocks[j][i][k] = createBlock(j == h - 1 ? 0 : 1,  i + x * chunkW, j + y * chunkH, k + z * chunkT);
+
 			}
 
 
 		}
+	
+}
+
+void Chunk::setFaceing()
+{
 	forAllBlocks
 	{
 		if (j - 1 > 0 && blocks[j][i][k] && blocks[j - 1][i][k] &&

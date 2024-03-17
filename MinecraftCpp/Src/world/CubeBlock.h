@@ -10,7 +10,7 @@ class CubeBlock :
 	int textureFaces;
 	int textureX, textureY;
 public:
-	CubeBlock(int x, int y, int z,int textureX=0,int textureY=0, int textureFaces=1);
+	CubeBlock(int ID, int x, int y, int z, int textureX = 0, int textureY = 0, int textureFaces = 1);
 
 	~CubeBlock();
 

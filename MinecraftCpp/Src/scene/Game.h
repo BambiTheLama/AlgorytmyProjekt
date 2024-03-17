@@ -23,8 +23,11 @@ class Game :
     Camera *camera;
     GLFWwindow* window;
     Block* b = NULL;
-    std::vector<glm::vec3> posToGenChunk;
-    int range = 5;
+    std::vector<glm::vec2> posToGenChunk;
+    int rangeX = 3;
+    int rangeY = 3;
+    int rangeZ = 3;
+    int range = 8;
     VAO *vao;
     VBO *vboPos;
     VBO *vboTex;

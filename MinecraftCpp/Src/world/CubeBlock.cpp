@@ -1,7 +1,7 @@
 #include "CubeBlock.h"
 #include "../core/Engine.h"
 
-CubeBlock::CubeBlock(int x, int y, int z, int textureX, int textureY, int textureFaces) :Block(x,y,z)
+CubeBlock::CubeBlock(int ID, int x, int y, int z, int textureX, int textureY, int textureFaces) :Block(ID, x, y, z)
 {
 	cube = new Cube();
 	this->textureFaces = textureFaces;

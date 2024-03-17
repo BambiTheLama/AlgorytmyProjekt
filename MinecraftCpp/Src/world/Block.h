@@ -6,11 +6,11 @@
 class Texture;
 class Block
 {
-	
+	int ID;
 protected:
 	int x, y, z;
 public:
-	Block(int x,int y,int z);
+	Block(int ID, int x, int y, int z);
 
 	virtual ~Block(){}
 
@@ -29,6 +29,8 @@ public:
 	virtual char faceToSetUp() { return 0; }
 
 	virtual bool isTransparent() { return true; }
+
+	int getID()const { return ID; }
 
 	friend class Chunk;
 	friend class Game;

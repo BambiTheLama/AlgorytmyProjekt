@@ -75,6 +75,14 @@ void Camera::update(GLFWwindow* window, float deltaTime)
 	{
 		cameraPos += speed * deltaTime * -up;
 	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		speed = maxSpeed;
+	}
+	else
+	{
+		speed = minSpeed;
+	}
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{

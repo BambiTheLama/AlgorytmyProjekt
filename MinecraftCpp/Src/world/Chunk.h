@@ -1,11 +1,12 @@
 #pragma once
 #include "Block.h"
 #include <vector>
+#include <string>
 #define chunkW 16
-#define chunkH 64
+#define chunkH 256
 #define chunkT 16
-#define minH 2
-#define maxH 100
+#define minH 3
+#define maxH 256
 class Game;
 class VBO;
 class VAO;
@@ -26,6 +27,7 @@ class Chunk
 	std::vector<GLuint> indexV;
 	static Game* game;
 	bool genVertices = true;
+	static std::string path;
 public:
 	Chunk(int x, int y, int z);
 
@@ -41,7 +43,9 @@ public:
 
 	bool isThisChunk(int x, int y, int z);
 
-	void save(){}
+	void save();
+
+	bool loadGame();
 
 	glm::vec3 getPos() { return glm::vec3(x * chunkW + chunkW / 2, y * chunkH + chunkH / 2, z * chunkT + chunkT / 2); }
 
@@ -56,5 +60,6 @@ private:
 	void genVerticesTexture();
 	void genIndex();
 	void generateTeren();
+	void setFaceing();
 };
 
