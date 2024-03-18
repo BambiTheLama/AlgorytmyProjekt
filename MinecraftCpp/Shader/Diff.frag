@@ -6,10 +6,10 @@ uniform sampler2D tex0;
 uniform sampler2D texH;
 uniform sampler2D texN;
 in vec2 texCoord;
-in vec3 camPos;
 in vec3 currentPos;
 uniform bool debug;
 uniform vec3 lightColor;
+uniform vec3 camPos;
 
 vec4 direcLight()
 {
@@ -18,7 +18,7 @@ vec4 direcLight()
 
 	// diffuse lighting
 	vec3 normal = normalize(texture(texN, texCoord).xyz * 2.0f - 1.0f);
-	//vec3 normal=vec3(1);
+	//vec3 normal = vec3(1);
 	vec3 lightDirection = normalize(vec3(1.0f, 1.0f, 0.0f));
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 
@@ -42,6 +42,6 @@ void main()
 	if (texture(tex0, texCoord).a < 0.1)
 		discard;
 
-	FragColor = direcLight() * modelColor;
+	FragColor = vec4(vec3(direcLight() * modelColor),1.0f);
 	//FragColor = texture(tex0, texCoord) * modelColor;
 }

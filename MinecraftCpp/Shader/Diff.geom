@@ -3,14 +3,14 @@
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 
-out vec3 Normal;
-out vec3 color;
 out vec2 texCoord;
+out vec3 currentPos;
 uniform bool debug;
 
 in DATA
 {
 	vec2 texCoord;
+    vec3 currentPos;
 } data_in[];
 
 
@@ -18,14 +18,17 @@ void normalMode()
 {
     gl_Position = gl_in[0].gl_Position;
     texCoord = data_in[0].texCoord;
+    currentPos = data_in[0].currentPos;
     EmitVertex();
 
     gl_Position = gl_in[1].gl_Position;
     texCoord = data_in[1].texCoord;
+    currentPos = data_in[1].currentPos;
     EmitVertex();
 
     gl_Position = gl_in[2].gl_Position;
     texCoord = data_in[2].texCoord;
+    currentPos = data_in[2].currentPos;
     EmitVertex();
 
     EndPrimitive();

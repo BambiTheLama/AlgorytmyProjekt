@@ -58,7 +58,7 @@ Engine::Engine()
 
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
-	camera = new Camera(width, height, 0.1f, 300, 60, glm::vec3(0.0f, 100.0f, 0.0f));
+	camera = new Camera(width, height, 0.1f, 300, 60, glm::vec3(0.0f, 0.0f, 0.0f));
 	blocks = new Texture("Res/Blocks.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
 	blocksH = new Texture("Res/BlocksH.png", GL_TEXTURE_2D, 1, GL_RGB, GL_UNSIGNED_BYTE);
 	blocksN = new Texture("Res/BlocksN.png", GL_TEXTURE_2D, 2, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGB);
@@ -110,16 +110,18 @@ void Engine::start()
 		blocksH->bind();
 		blocksN->useTexture(*shader, "texN", 2);
 		blocksN->bind();
+		camera->useCamera(*shader, "camera");
 		shader->setUniformVec3(camera->getPos(), "camPos");
 		shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 1.0f), "lightColor");
 		shader->setUniformVec2(glm::vec2( 4, 5), "textSize");
+		glm::mat4 model(1.0f);
+		shader->setUniformMat4(model,"model");
 
 		if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
 			shader->setUniformI1(true, "debug");
 		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
 			shader->setUniformI1(false, "debug");
 		game->draw();		
-		camera->draw(*shader);
 		endShaderMode();
 		glfwSwapBuffers(window);
 

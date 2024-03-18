@@ -11,19 +11,20 @@ uniform mat4 model;
 uniform bool debug;
 
 out vec2 textPos;
-out vec3 currentPos;
 
 out DATA
 {
 	vec2 texCoord;
+	vec3 currentPos;
 } data_out;
 
 
 
 void main()
 {
-	currentPos = vec3(model * vec4(vPos, 1.0f));
+	vec3 currentPos = vec3(model * vec4(vPos, 1.0f));
 	gl_Position = camera * vec4(currentPos, 1.0f);
 	textPos = vTexture / textSize;
 	data_out.texCoord = textPos;
+	data_out.currentPos = currentPos;
 }

@@ -14,6 +14,7 @@ Game::Game(Camera* camera,GLFWwindow* window)
 	do {
 		genWorld();
 	} while (posToGenChunk.size() > 0);
+	update(0.0f);
 	this->window = window;
 	glm::vec3 pos = camera->getPos();
 	while (getBlockAt(pos.x,pos.y,pos.z))
