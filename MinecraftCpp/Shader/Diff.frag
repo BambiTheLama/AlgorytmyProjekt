@@ -7,24 +7,26 @@ uniform sampler2D texH;
 uniform sampler2D texN;
 in vec2 texCoord;
 in vec3 currentPos;
+in vec3 lightV;
+in vec3 cameraV;
 uniform bool debug;
 uniform vec3 lightColor;
-uniform vec3 camPos;
+
 
 vec4 direcLight()
 {
 	// ambient lighting
-	float ambient = 0.20f;
+	float ambient = 0.50f;
 
 	// diffuse lighting
 	vec3 normal = normalize(texture(texN, texCoord).xyz * 2.0f - 1.0f);
 	//vec3 normal = vec3(1);
-	vec3 lightDirection = normalize(vec3(1.0f, 1.0f, 0.0f));
+	vec3 lightDirection = normalize(vec3(0.0f, -1.0f, 1.0f));
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 
 	// specular lighting
-	float specularLight = 0.50f;
-	vec3 viewDirection = normalize(camPos - currentPos);
+	float specularLight = 0.30f;
+	vec3 viewDirection = normalize(cameraV - currentPos);
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
 	float specular = specAmount * specularLight;

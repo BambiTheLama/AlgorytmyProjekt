@@ -81,7 +81,11 @@ void Game::update(float deltaTime)
 	}
 	toAddMutex.lock();
 	for (auto a : toAdd)
+	{
+		a->start();
 		chunks.push_back(a);
+	}
+
 	toAdd.clear();
 	toAddMutex.unlock();
 	toDeleteMutex.lock();
@@ -152,13 +156,13 @@ Block* Game::getBlockAt(int x, int y, int z)
 		}
 	return NULL;
 }
+
 void Game::deleteBlock(Block* b)
 {
 	for (auto c : chunks)
 		if (c->isThisChunk(b->x, b->y, b->z))
 			c->deleteBlock(b);
 }
-
 
 void Game::setFaceing(int x, int y, int z, bool display, char face)
 {
@@ -184,6 +188,7 @@ void Game::setFaceing(int x, int y, int z, bool display, char face)
 
 	setGenVerticesFlagAt(x, y, z);
 }
+
 void Game::setFaceing(Block* b, bool display, char face)
 {
 	if (!b)
@@ -252,6 +257,7 @@ void Game::setFaceing(Block* b, bool display, char face)
 
 	setGenVerticesFlagAt(b->x, b->y, b->z);
 }
+
 void Game::setGenVerticesFlagAt(int x, int y, int z)
 {
 	for (auto c : chunks)
@@ -261,6 +267,7 @@ void Game::setGenVerticesFlagAt(int x, int y, int z)
 			return;
 		}
 }
+
 void Game::worldGenerateFun()
 {
 	glm::vec3 camPos = camera->getPos();
@@ -372,8 +379,6 @@ void Game::desWorld()
 	camPos.z /= chunkT;
 	for (auto c : toSave)
 	{
-		c->save();
-
 		glm::vec3 cPos = c->getLocation();
 		if (glm::distance(glm::vec2(camPos.x, camPos.z), glm::vec2(cPos.x, cPos.z)) > range * 1.1f)
 		{
@@ -386,7 +391,12 @@ void Game::desWorld()
 				}
 
 			if (addToDelete)
+			{
+				c->save();
+				c->clearBlocks();
 				toDelete.push_back(c);
+			}
+
 
 		}
 

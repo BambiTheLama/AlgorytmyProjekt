@@ -5,8 +5,8 @@ layout (location = 1) in vec2 vTexture;
 
 uniform sampler2D tex0;
 uniform vec2 textSize;
-uniform mat4 camera;
 uniform vec4 modelColor;
+uniform mat4 camera;
 uniform mat4 model;
 uniform bool debug;
 

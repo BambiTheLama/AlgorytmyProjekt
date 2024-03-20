@@ -33,16 +33,15 @@ Chunk::Chunk(int x, int y, int z)
 	if(!loadGame())
 		generateTeren();
 	setFaceing();
+	genIndex();
+	genVerticesPos();
+	genVerticesTexture();
 
 }
 
 Chunk::~Chunk()
 {
-	for (int j = 0; j < chunkH; j++)
-		for (int i = 0; i < chunkW; i++)
-			for (int k = 0; k < chunkT; k++)
-				if (blocks[j][i][k])
-					delete blocks[j][i][k];
+
 	if (vao)
 		delete vao;
 	if (index)
@@ -51,6 +50,33 @@ Chunk::~Chunk()
 		delete vboTexture;
 	if (vboVert)
 		delete vboVert;
+	if (wasCleared)
+		return;
+	forAllBlocks
+	if (blocks[j][i][k])
+	{
+		delete blocks[j][i][k];
+	}
+}
+
+void Chunk::start()
+{
+	if (!vao)
+		vao = new VAO();
+	if (!vboVert)
+		vboVert = new VBO(vertV);
+	if (!vboTexture)
+		vboTexture = new VBO(textV);
+	if (!index)
+		index = new EBO(indexV);
+	vao->bind();
+	index->setNewVertices(indexV);
+	vboTexture->setNewVertices(textV);
+	vboVert->setNewVertices(vertV);
+	vao->linkData(*vboVert, 0, 3, GL_FLOAT, sizeof(glm::vec3), (void*)0);
+	vao->linkData(*vboTexture, 1, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
+	index->bind();
+	vao->unbind();
 }
 
 void Chunk::update(float deltaTime)
@@ -74,23 +100,25 @@ void Chunk::update(float deltaTime)
 		}
 
 	}
-	if (genVertices||toAdd.size() > 0 || toDelete.size() > 0)
+	if (genVertices || toAdd.size() > 0 || toDelete.size() > 0)
 	{
 		genVertices = false;
-		if(!vao)
-			vao = new VAO();
-		if(!vboVert)
-			vboVert = new VBO(vertV);
-		if(!vboTexture)
-			vboTexture = new VBO(textV);
-		if(!index)
-			index = new EBO(indexV);
 		toDelete.clear();
 		toAdd.clear();
+		std::thread t1 = std::thread(&Chunk::genIndex, this);
+		std::thread t2 = std::thread(&Chunk::genVerticesPos, this);
+		std::thread t3 = std::thread(&Chunk::genVerticesTexture, this);
+
+		t1.join();
+		t2.join();
+		t3.join();
 		genIndex();
 		genVerticesPos();
 		genVerticesTexture();
 		vao->bind();
+		index->setNewVertices(indexV);
+		vboTexture->setNewVertices(textV);
+		vboVert->setNewVertices(vertV);
 		vao->linkData(*vboVert, 0, 3, GL_FLOAT, sizeof(glm::vec3), (void*)0);
 		vao->linkData(*vboTexture, 1, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
 		index->bind();
@@ -192,6 +220,7 @@ void Chunk::save()
 	save.close();
 
 }
+
 bool Chunk::loadGame()
 {
 	int times = 0;
@@ -237,6 +266,16 @@ bool Chunk::loadGame()
 	return true;
 }
 
+void Chunk::clearBlocks()
+{
+	forAllBlocks
+	if (blocks[j][i][k])
+	{
+		delete blocks[j][i][k];
+		blocks[j][i][k] = NULL;
+	}
+	wasCleared = true;
+}
 
 void Chunk::genVerticesPos()
 {
@@ -251,7 +290,7 @@ void Chunk::genVerticesPos()
 
 		vertV.insert(vertV.end(), vertTmp.begin(), vertTmp.end());
 	}
-	vboVert->setNewVertices(vertV);
+
 }
 
 void Chunk::genVerticesTexture()
@@ -266,7 +305,6 @@ void Chunk::genVerticesTexture()
 
 		textV.insert(textV.end(), textTmp.begin(), textTmp.end());
 	}
-	vboTexture->setNewVertices(textV);
 }
 
 void Chunk::genIndex()
@@ -285,7 +323,7 @@ void Chunk::genIndex()
 		}
 		lastIndex += blocks[j][i][k]->indexSize();
 	}
-	index->setNewVertices(indexV);
+
 }
 
 void Chunk::generateTeren()

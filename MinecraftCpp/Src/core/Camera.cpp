@@ -22,11 +22,15 @@ void Camera::useCamera(Shader& shader, const char* uniform)
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
 
-	view = glm::lookAt(cameraPos, cameraPos + cameraOrientation, up);
+
 	if (useProjection)
+	{
+		view = glm::lookAt(cameraPos, cameraPos + cameraOrientation, up);
 		projection = glm::perspective(glm::radians(cameraAngleDeg), cameraWidth / cameraHeight, nearest, farest);
+
+	}
 	else
-		projection = glm::ortho(0.0f, cameraWidth, 0.0f, cameraHeight);
+		projection = glm::ortho(0.0f, cameraWidth  , 0.0f, cameraHeight);
 	glUniformMatrix4fv(shader.getUniformLocation(uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
 
 }
