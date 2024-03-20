@@ -112,9 +112,6 @@ void Chunk::update(float deltaTime)
 		t1.join();
 		t2.join();
 		t3.join();
-		genIndex();
-		genVerticesPos();
-		genVerticesTexture();
 		vao->bind();
 		index->setNewVertices(indexV);
 		vboTexture->setNewVertices(textV);
@@ -336,12 +333,27 @@ void Chunk::generateTeren()
 	terrain.SetFractalGain(5.0f);
 	terrain.SetFractalLacunarity(1.529f);
 	terrain.SetFractalWeightedStrength(3.304f);
+
+	FastNoiseLite river(2137);
+	river.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	river.SetFrequency(0.003f);
+	river.SetFractalType(FastNoiseLite::FractalType_PingPong);
+	river.SetFractalOctaves(3);
+	river.SetFractalGain(0.5f);
+	river.SetFractalLacunarity(2.0f);
+	river.SetFractalWeightedStrength(0.0f);
+	river.SetFractalPingPongStrength(2.0f);
 	const int height = maxH - minH;
 	const int dirtSize = 5;
 	for (int i = 0; i < chunkW; i++)
 		for (int k = 0; k < chunkT; k++)
 		{
 			int h = (terrain.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT) + 1) / 2 * height + minH - (this->y * chunkH);
+			int v = abs(river.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT)) * 5;
+			int v2 = abs(river.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT)) * 2;
+			if (v > 0)
+				h -= v;
+
 			if (h <= 2)
 				h = 2;
 			for (int j = 0; j < chunkH && j < h - dirtSize; j++)
@@ -355,8 +367,30 @@ void Chunk::generateTeren()
 				blocks[j][i][k] = createBlock(j == h - 1 ? 0 : 1,  i + x * chunkW, j + y * chunkH, k + z * chunkT);
 
 			}
-
-
+			for (int j = 0; j < chunkH && j < h - dirtSize; j++)
+			{
+				if (blocks[j][i][k])
+					delete blocks[j][i][k];
+				blocks[j][i][k] = createBlock(2, i + x * chunkW, j + y * chunkH, k + z * chunkT);
+			}
+			int startPos1 = h - v;
+			int startPos2 = h - v2;
+			if (startPos1 < 0)
+				startPos1 = 0;
+			if (startPos2 < 0)
+				startPos2 = 0;
+			for (int j = startPos1; j < chunkH && j < startPos2; j++)
+			{
+				if (blocks[j][i][k])
+					delete blocks[j][i][k];
+				blocks[j][i][k] = createBlock(4, i + x * chunkW, j + y * chunkH, k + z * chunkT);
+			}
+			for (int j = startPos2; j < chunkH && j < h+ v2; j++)
+			{
+				if (blocks[j][i][k])
+					delete blocks[j][i][k];
+				blocks[j][i][k] = createBlock(5, i + x * chunkW, j + y * chunkH, k + z * chunkT);
+			}
 		}
 	
 }
@@ -406,7 +440,8 @@ void Chunk::setFaceing()
 		}
 		if ((i == 0 || i == chunkW - 1 || j == 0 || j == chunkH - 1 || k == 0 || k == chunkT - 1))
 		{
-			toAdd.push_back(blocks[j][i][k]);
+			if (blocks[j][i][k])
+				toAdd.push_back(blocks[j][i][k]);
 		}
 	}
 }
