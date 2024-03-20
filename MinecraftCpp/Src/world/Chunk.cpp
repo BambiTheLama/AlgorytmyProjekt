@@ -87,7 +87,7 @@ void Chunk::update(float deltaTime)
 		{
 			if (b->faceToSetUp() <= 0)
 				continue;
-			game->setFaceing(b, false, b->faceToSetUp());
+			game->setFaceing(b, b->isTransparent(), b->faceToSetUp());
 		}
 	}
 
@@ -365,43 +365,46 @@ void Chunk::setFaceing()
 {
 	forAllBlocks
 	{
-		if (j - 1 > 0 && blocks[j][i][k] && blocks[j - 1][i][k] &&
+		if (!blocks[j][i][k])
+			continue;
+		const bool isTransparent = blocks[j][i][k]->isTransparent();
+		if (j - 1 > 0  && blocks[j - 1][i][k] &&
 			!blocks[j][i][k]->isTransparent() && !blocks[j - 1][i][k]->isTransparent())
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Down, false);
-			blocks[j - 1][i][k]->setOneFace((int)Faces::Up, false);
+			blocks[j][i][k]->setOneFace((int)Faces::Down, isTransparent);
+			blocks[j - 1][i][k]->setOneFace((int)Faces::Up, isTransparent);
 		}
-		if (j + 1 < chunkH && blocks[j][i][k] && blocks[j + 1][i][k] &&
+		if (j + 1 < chunkH  && blocks[j + 1][i][k] &&
 			!blocks[j][i][k]->isTransparent() && !blocks[j + 1][i][k]->isTransparent())
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Up, false);
-			blocks[j + 1][i][k]->setOneFace((int)Faces::Down, false);
+			blocks[j][i][k]->setOneFace((int)Faces::Up, isTransparent);
+			blocks[j + 1][i][k]->setOneFace((int)Faces::Down, isTransparent);
 		}
-		if (i - 1 > 0 && blocks[j][i][k] && blocks[j][i - 1][k] &&
+		if (i - 1 > 0  && blocks[j][i - 1][k] &&
 			!blocks[j][i][k]->isTransparent() && !blocks[j][i - 1][k]->isTransparent())
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Left, false);
-			blocks[j][i - 1][k]->setOneFace((int)Faces::Right, false);
+			blocks[j][i][k]->setOneFace((int)Faces::Left, isTransparent);
+			blocks[j][i - 1][k]->setOneFace((int)Faces::Right, isTransparent);
 		}
-		if (i + 1 < chunkW && blocks[j][i][k] && blocks[j][i + 1][k] &&
+		if (i + 1 < chunkW  && blocks[j][i + 1][k] &&
 			!blocks[j][i][k]->isTransparent() && !blocks[j][i + 1][k]->isTransparent())
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Right, false);
-			blocks[j][i + 1][k]->setOneFace((int)Faces::Left, false);
+			blocks[j][i][k]->setOneFace((int)Faces::Right, isTransparent);
+			blocks[j][i + 1][k]->setOneFace((int)Faces::Left, isTransparent);
 		}
-		if (k - 1 > 0 && blocks[j][i][k] && blocks[j][i][k - 1] &&
+		if (k - 1 > 0  && blocks[j][i][k - 1] &&
 			!blocks[j][i][k]->isTransparent() && !blocks[j][i][k - 1]->isTransparent())
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Back, false);
-			blocks[j][i][k - 1]->setOneFace((int)Faces::Front, false);
+			blocks[j][i][k]->setOneFace((int)Faces::Back, isTransparent);
+			blocks[j][i][k - 1]->setOneFace((int)Faces::Front, isTransparent);
 		}
-		if (k + 1 < chunkT && blocks[j][i][k] && blocks[j][i][k + 1] &&
+		if (k + 1 < chunkT  && blocks[j][i][k + 1] &&
 			!blocks[j][i][k]->isTransparent() && !blocks[j][i][k + 1]->isTransparent())
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Front, false);
-			blocks[j][i][k + 1]->setOneFace((int)Faces::Back, false);
+			blocks[j][i][k]->setOneFace((int)Faces::Front, isTransparent);
+			blocks[j][i][k + 1]->setOneFace((int)Faces::Back, isTransparent);
 		}
-		if ((i == 0 || i == chunkW - 1 || j == 0 || j == chunkH - 1 || k == 0 || k == chunkT - 1) && blocks[j][i][k])
+		if ((i == 0 || i == chunkW - 1 || j == 0 || j == chunkH - 1 || k == 0 || k == chunkT - 1))
 		{
 			toAdd.push_back(blocks[j][i][k]);
 		}

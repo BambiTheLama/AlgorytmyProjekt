@@ -115,9 +115,8 @@ void Game::draw()
 	chunksMutex.lock();
 	for (auto c : chunks)
 	{
-		float dist =glm::distance(camera->getPos(), glm::vec3(c->x * chunkW, c->y * chunkH, c->z * chunkT));
-		if(dist<camera->getRange()*1.5f)
-			c->draw();
+
+		c->draw();
 	}
 
 	if (b)
