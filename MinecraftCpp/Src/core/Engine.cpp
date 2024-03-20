@@ -58,7 +58,7 @@ Engine::Engine()
 
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
-	camera = new Camera(width, height, 0.1f, 100, 60, glm::vec3(0.0f, 0.0f, 0.0f));
+	camera = new Camera(width, height, 0.1f, 300, 60, glm::vec3(0.0f, 0.0f, 0.0f));
 	blocks = new Texture("Res/Blocks.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
 	blocksH = new Texture("Res/BlocksH.png", GL_TEXTURE_2D, 1, GL_RGB, GL_UNSIGNED_BYTE);
 	blocksN = new Texture("Res/BlocksN.png", GL_TEXTURE_2D, 2, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGB);

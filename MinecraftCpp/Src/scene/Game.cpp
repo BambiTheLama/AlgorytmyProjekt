@@ -165,7 +165,7 @@ void Game::deleteBlock(Block* b)
 
 void Game::setFaceing(int x, int y, int z, bool display, char face)
 {
-#define setFaceingDef(CheckingFace,face,x1,y1,z1) \
+#define setFaceingDef(CheckingFace,x1,y1,z1) \
 	if (checkFace(CheckingFace, face))\
 	{\
 		block = getBlockAt(x1, y1, z1);\
@@ -178,12 +178,12 @@ void Game::setFaceing(int x, int y, int z, bool display, char face)
 					
 
 	Block* block;
-	setFaceingDef(Front, face, x, y, z - 1)
-	setFaceingDef(Back, face, x, y, z + 1)
-	setFaceingDef(Left, face, x + 1, y, z)
-	setFaceingDef(Right, face, x - 1, y, z)
-	setFaceingDef(Up, face, x, y - 1, z)
-	setFaceingDef(Down, face, x, y + 1, z)
+	setFaceingDef(Front, x, y, z - 1)
+	setFaceingDef(Back, x, y, z + 1)
+	setFaceingDef(Left, x + 1, y, z)
+	setFaceingDef(Right, x - 1, y, z)
+	setFaceingDef(Up, x, y - 1, z)
+	setFaceingDef(Down, x, y + 1, z)
 
 	setGenVerticesFlagAt(x, y, z);
 }
