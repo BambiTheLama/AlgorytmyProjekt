@@ -69,18 +69,8 @@ void Chunk::start()
 	
 	verticesV.clear();
 	verticesT.clear();
-	for (auto v : vertices)
-	{
-		verticesV.push_back(glm::vec3(
-			(int)v & 0b11111,
-			(int)v >> 5 & 0b11111,
-			(int)v >> 10 & 0b11111));
-		verticesT.push_back(glm::vec2(
-			(int)v >> 15 & 0b1111,
-			(int)v >> 19 & 0b1111));
-		verticesT;
-	}
-	vao->linkData(*vbo, 0, 1, GL_INT, sizeof(int), (void*)0);
+
+	vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(float), (void*)0);
 	vao->bind();
 	ebo->bind();
 	vao->unbind();
@@ -95,7 +85,7 @@ void Chunk::update(float deltaTime)
 	//	{
 	//		if (b->faceToSetUp() <= 0)
 	//			continue;
-	//		//game->setFaceing(b, b->isTransparent(), b->faceToSetUp());
+	//		game->setFaceing(b,x,y,z, b->isTransparent(), b->faceToSetUp());
 	//	}
 	//}
 
@@ -120,18 +110,8 @@ void Chunk::update(float deltaTime)
 		vbo->setNewVertices(vertices);
 		verticesV.clear();
 		verticesT.clear();
-		for (auto v : vertices)
-		{
-			verticesV.push_back(glm::vec3(
-				(int)v & 0b11111,
-				(int)v >> 5 & 0b11111,
-				(int)v >> 10 & 0b11111));
-			verticesT.push_back(glm::vec2(
-				(int)v >> 15 & 0b1111,
-				(int)v >> 19 & 0b1111));
-		}
 
-		vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(float), (void*)0);
+		vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(GLuint), (void*)0);
 
 		vao->unbind();
 
@@ -149,8 +129,10 @@ void Chunk::draw(Shader* s)
 		model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
 		s->setUniformMat4(model, "model");
 		vao->bind();
-		//ebo->bind();
+		ebo->bind();
 		glDrawElements(GL_TRIANGLES, indexV.size(), GL_UNSIGNED_INT, 0);
+		vao->unbind();
+		ebo->unbind();
 	}
 
 }
@@ -306,7 +288,7 @@ void Chunk::genVerticesPos()
 
 		std::vector<GLuint> indexTmp = blocks[j][i][k]->getIndex();
 
-		std::vector<int> vertTmp = blocks[j][i][k]->getVertex();
+		std::vector<GLuint> vertTmp = blocks[j][i][k]->getVertex();
 
 		for (auto ind : indexTmp)
 		{
@@ -315,9 +297,8 @@ void Chunk::genVerticesPos()
 
 		lastIndex += blocks[j][i][k]->indexSize();
 
-		//vertices.insert(vertices.end(), vertTmp.begin(), vertTmp.end());
-		for (auto o : vertTmp)
-			vertices.push_back(o);
+		vertices.insert(vertices.end(), vertTmp.begin(), vertTmp.end());
+
 	}
 
 }

@@ -35,7 +35,7 @@ public:
 
 	std::vector<glm::vec2> getVertexTexture(int textureSides);
 
-	std::vector<int> getVertex(int x, int y, int z, int textureSides, int textX, int textY);
+	std::vector<GLuint> getVertex(int x, int y, int z, int textureSides, int textX, int textY);
 
 	std::vector<GLuint> getIndex();
 

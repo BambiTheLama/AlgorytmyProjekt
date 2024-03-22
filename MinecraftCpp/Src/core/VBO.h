@@ -23,6 +23,8 @@ public:
 
 	void setNewVertices(std::vector<float>& vertices);
 
+	void setNewVertices(std::vector<GLuint>& vertices);
+
 	void bind();
 
 	void unbind();

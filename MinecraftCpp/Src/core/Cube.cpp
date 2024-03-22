@@ -195,11 +195,11 @@ std::vector<GLuint> Cube::getIndex()
 	return index;
 }
 
-std::vector<int> Cube::getVertex(int x, int y, int z, int textureSides, int textX, int textY)
+std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int textX, int textY)
 {
 	std::vector<glm::vec2> text = getVertexTexture(textureSides);
 	std::vector<glm::vec3> pos = getVertexPos();
-	std::vector<int> vertex;
+	std::vector<GLuint> vertex;
 	int n = text.size();
 	for (int i = 0; i < n; i++)
 	{

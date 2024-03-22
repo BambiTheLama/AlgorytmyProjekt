@@ -26,7 +26,7 @@ void CubeBlock::setOneFace(int face, bool state)
 	toSetUp -= (toSetUp & face);
 }
 
-std::vector<int> CubeBlock::getVertex()
+std::vector<GLuint> CubeBlock::getVertex()
 {
 	return cube->getVertex(x, y, z, textureFaces, textureX, textureY);
 }

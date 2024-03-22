@@ -2,9 +2,9 @@
 #include "Block.h"
 #include <vector>
 #include <string>
-#define chunkW 1
-#define chunkH 1
-#define chunkT 1
+#define chunkW 31
+#define chunkH 31
+#define chunkT 31
 #define minH 3
 #define maxH 32
 #define waterH 4
@@ -22,7 +22,7 @@ class Chunk
 	VAO* vao = NULL;
 	VBO *vbo = NULL;
 	EBO *ebo = NULL;
-	std::vector<int> vertices;
+	std::vector<GLuint> vertices;
 	std::vector<glm::vec3> verticesV;
 	std::vector<glm::vec2> verticesT;
 	std::vector<GLuint> indexV;

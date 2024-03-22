@@ -10,9 +10,9 @@ Game::Game(Camera* camera,GLFWwindow* window)
 
 	Chunk::game = this;
 	this->camera = camera;
-	//do {
+	do {
 		genWorld();
-	//} while (posToGenChunk.size() > 0);
+	} while (posToGenChunk.size() > 0);
 
 
 	this->window = window;
@@ -51,8 +51,8 @@ Game::~Game()
 void Game::start()
 {
 	gameRunning = true;
-	//worldGenerateT = std::thread(&Game::worldGenerateFun, this);
-	//worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
+	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
+	worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
 }
 
 void Game::update(float deltaTime)
@@ -169,69 +169,69 @@ void Game::setFaceing(int x, int y, int z, bool display, char face)
 	setGenVerticesFlagAt(x, y, z);
 }
 
-void Game::setFaceing(Block* b, bool display, char face)
+void Game::setFaceing(Block* b, int x, int y, int z, bool display, char face)
 {
 	if (!b)
 		return;
 	Block* block;
 	if (checkFace(Front, face))
 	{
-		block = getBlockAt(b->x, b->y, b->z + 1);
+		block = getBlockAt(b->x + x, b->y + y, b->z + 1 + z);
 		if (block)
 		{
 			b->setOneFace((int)Faces::Front, display);
 			block->setOneFace((int)Faces::Back, display);
-			setGenVerticesFlagAt(b->x, b->y, b->z + 1);
+			setGenVerticesFlagAt(b->x + x, b->y + y, b->z + 1 + z);
 		}
 	}
 	if (checkFace(Back, face))
 	{
-		block = getBlockAt(b->x, b->y, b->z - 1);
+		block = getBlockAt(b->x + x, b->y + y, b->z - 1 + z);
 		if (block)
 		{
 			block->setOneFace((int)Faces::Front, display);
 			b->setOneFace((int)Faces::Back, display);
-			setGenVerticesFlagAt(b->x, b->y, b->z - 1);
+			setGenVerticesFlagAt(b->x + x, b->y + y, b->z - 1 + z);
 		}
 	}
 	if (checkFace(Up, face))
 	{
-		block = getBlockAt(b->x, b->y + 1, b->z);
+		block = getBlockAt(b->x + x, b->y + y + 1, b->z  + z);
 		if (block)
 		{
 			b->setOneFace((int)Faces::Up, display);
 			block->setOneFace((int)Faces::Down, display);
-			setGenVerticesFlagAt(b->x, b->y + 1, b->z);
+			setGenVerticesFlagAt(b->x + x, b->y + y + 1, b->z + z);
 		}
 	}
 	if (checkFace(Down, face))
 	{
-		block = getBlockAt(b->x, b->y - 1, b->z);
+		block = getBlockAt(b->x + x, b->y + y - 1, b->z + z);
 		if (block)
 		{
 			block->setOneFace((int)Faces::Up, display);
 			b->setOneFace((int)Faces::Down, display);
-			setGenVerticesFlagAt(b->x, b->y - 1, b->z);
+			setGenVerticesFlagAt(b->x + x, b->y + y - 1, b->z + z);
 		}
 	}
 	if (checkFace(Left, face))
 	{
-		block = getBlockAt(b->x - 1, b->y, b->z);
+		block = getBlockAt(b->x + x - 1, b->y + y , b->z + z);
 		if (block)
 		{
 			b->setOneFace((int)Faces::Left, display);
 			block->setOneFace((int)Faces::Right, display);
-			setGenVerticesFlagAt(b->x - 1, b->y, b->z);
+			setGenVerticesFlagAt(b->x + x - 1, b->y + y, b->z + z);
 		}
 	}
 	if (checkFace(Right, face))
 	{
-		block = getBlockAt(b->x + 1, b->y, b->z);
+		block = getBlockAt(b->x + x + 1, b->y + y, b->z + z);
 		if (block)
 		{
 			block->setOneFace((int)Faces::Left, display);
 			b->setOneFace((int)Faces::Right, display);
-			setGenVerticesFlagAt(b->x + 1, b->y, b->z);
+			setGenVerticesFlagAt(b->x + x + 1, b->y + y, b->z + z);
 		}
 	}
 
