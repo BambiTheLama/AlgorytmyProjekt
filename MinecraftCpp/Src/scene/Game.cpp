@@ -10,11 +10,11 @@ Game::Game(Camera* camera,GLFWwindow* window)
 
 	Chunk::game = this;
 	this->camera = camera;
-
-	do {
+	//do {
 		genWorld();
-	} while (posToGenChunk.size() > 0);
-	update(0.0f);
+	//} while (posToGenChunk.size() > 0);
+
+
 	this->window = window;
 	glm::vec3 pos = camera->getPos();
 	while (getBlockAt(pos.x,pos.y,pos.z))
@@ -51,8 +51,8 @@ Game::~Game()
 void Game::start()
 {
 	gameRunning = true;
-	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
-	worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
+	//worldGenerateT = std::thread(&Game::worldGenerateFun, this);
+	//worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
 }
 
 void Game::update(float deltaTime)
@@ -110,37 +110,18 @@ void Game::update(float deltaTime)
 
 }
 
-void Game::draw()
+void Game::draw(Shader* s)
 {
 	chunksMutex.lock();
 	for (auto c : chunks)
 	{
 
-		c->draw();
+		c->draw(s);
 	}
 
 	if (b)
 	{
-		std::vector<GLuint> ind = b->getIndex();
-		if (ind.size() > 0)
-		{
-			vao->bind();
-			std::vector<glm::vec3> pos = b->getVertexPos();
-			std::vector<glm::vec2> tex = b->getVertexTexture();
-			vboPos->setNewVertices(pos);
-			vboTex->setNewVertices(tex);
-			ebo->setNewIndices(ind);
-			ebo->bind();
-
-			Shader& shader = getDiffoltShader();
-			glUniform1i(shader.getUniformLocation("tex0"), 0);
-			shader.setUniformVec2(glm::vec2(1, 1), "textSize");
-			shader.active();
-			selection->bind();
-			glDisable(GL_DEPTH_TEST);
-			glDrawElements(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, 0);
-			glEnable(GL_DEPTH_TEST);
-		}
+		
 	}
 	chunksMutex.unlock();
 

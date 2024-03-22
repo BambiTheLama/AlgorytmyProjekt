@@ -24,10 +24,10 @@ class Game :
     GLFWwindow* window;
     Block* b = NULL;
     std::vector<glm::vec2> posToGenChunk;
-    int rangeX = 5;
-    int rangeY = 5;
-    int rangeZ = 5;
-    int range = 8;
+    int rangeX = 1;
+    int rangeY = 1;
+    int rangeZ = 1;
+    int range = 1;
     VAO *vao;
     VBO *vboPos;
     VBO *vboTex;
@@ -42,7 +42,7 @@ public:
 
     void update(float deltaTime);
 
-    void draw();
+    void draw(Shader* s);
 
     Block* getBlockAt(int x, int y, int z);
 

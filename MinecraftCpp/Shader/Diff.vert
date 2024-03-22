@@ -1,7 +1,6 @@
 #version 330 core
 
-layout (location = 0) in vec3 vPos;
-layout (location = 1) in vec2 vTexture;
+layout (location = 0) in int data;
 
 uniform sampler2D tex0;
 uniform vec2 textSize;
@@ -11,6 +10,11 @@ uniform mat4 model;
 uniform bool debug;
 
 out vec2 textPos;
+
+struct getData{
+	vec3 pos;
+	vec2 text;
+};
 
 out DATA
 {
@@ -22,9 +26,16 @@ out DATA
 
 void main()
 {
-	vec3 currentPos = vec3(model * vec4(vPos, 1.0f));
+	getData d;
+	d.pos.x  = data       & 31;	/// 0b00000000000000000011111
+	d.pos.y  = data >> 5  & 31;	/// 0b00000000000001111100000
+	d.pos.z  = data >> 10 & 31;	/// 0b00000000111110000000000
+	d.text.x = data >> 15 & 15;	/// 0b00001111000000000000000
+	d.text.y = data >> 19 & 15;	/// 0b11110000000000000000000
+
+	vec3 currentPos = vec3(model * vec4(d.pos, 1.0f));
 	gl_Position = camera * vec4(currentPos, 1.0f);
-	textPos = vTexture / textSize;
-	data_out.texCoord = textPos;
+	textPos = d.text / textSize;
+	data_out.texCoord = d.text;
 	data_out.currentPos = currentPos;
 }

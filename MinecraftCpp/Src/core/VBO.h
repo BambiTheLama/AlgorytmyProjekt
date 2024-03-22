@@ -9,10 +9,6 @@ class VBO
 public:
 	VBO();
 
-	VBO(std::vector<glm::vec3>& vertices);
-
-	VBO(std::vector<glm::vec2>& vertices);
-
 	VBO(GLfloat* vertices, GLsizeiptr size, GLenum drawType = GL_STATIC_DRAW);
 
 	~VBO();
@@ -22,6 +18,10 @@ public:
 	void setNewVertices(std::vector<glm::vec3>& vertices);
 
 	void setNewVertices(std::vector<glm::vec2>& vertices);
+
+	void setNewVertices(std::vector<int>& vertices);
+
+	void setNewVertices(std::vector<float>& vertices);
 
 	void bind();
 

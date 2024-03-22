@@ -89,22 +89,9 @@ std::vector<glm::vec2> Cube::getVertexTexture(int textureSides)
 					textPos.push_back(glm::vec2(3, 0));\
 					textPos.push_back(glm::vec2(3, 1));
 	std::vector<glm::vec2> textPos;
-	if (face <= 0)
-		return textPos;
-
-	if (((int)Faces::Front & (int)face) == (int)Faces::Front)
-	{
-		if (textureSides < 2)
-		{
-			addTexture1
-		}
-		else
-		{
-			addTexture2
-		}
-
-	}
-	if (((int)Faces::Back & (int)face) == (int)Faces::Back)
+	//if (face <= 0)
+	//	return textPos;
+	if (checkFace(Front, face))
 	{
 		if (textureSides < 2)
 		{
@@ -115,7 +102,7 @@ std::vector<glm::vec2> Cube::getVertexTexture(int textureSides)
 			addTexture2
 		}
 	}
-	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
+	if (checkFace(Back, face))
 	{
 		if (textureSides < 2)
 		{
@@ -126,7 +113,7 @@ std::vector<glm::vec2> Cube::getVertexTexture(int textureSides)
 			addTexture2
 		}
 	}
-	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
+	if (checkFace(Left, face))
 	{
 		if (textureSides < 2)
 		{
@@ -137,11 +124,22 @@ std::vector<glm::vec2> Cube::getVertexTexture(int textureSides)
 			addTexture2
 		}
 	}
-	if (((int)Faces::Up & (int)face) == (int)Faces::Up)
+	if (checkFace(Right, face))
+	{
+		if (textureSides < 2)
+		{
+			addTexture1
+		}
+		else
+		{
+			addTexture2
+		}
+	}
+	if (checkFace(Up, face))
 	{
 		addTexture1
 	}
-	if (((int)Faces::Down & (int)face) == (int)Faces::Down)
+	if (checkFace(Down, face))
 	{
 		if (textureSides < 3)
 		{
@@ -170,31 +168,50 @@ std::vector<GLuint> Cube::getIndex()
 		return index;
 	int startIndex = 0;
 
-	if (((int)Faces::Front & (int)face) == (int)Faces::Front)
+	if (checkFace(Front, face))
 	{
 		addIndicesOrder1
 	}
-	if (((int)Faces::Back & (int)face) == (int)Faces::Back)
+	if (checkFace(Back, face))
 	{
 		addIndicesOrder2
 	}
-	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
+	if (checkFace(Left, face))
 	{
 		addIndicesOrder1
 	}
-	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
+	if (checkFace(Right, face))
 	{
 		addIndicesOrder2
 	}
-	if (((int)Faces::Up & (int)face) == (int)Faces::Up)
+	if (checkFace(Up, face))
 	{
 		addIndicesOrder2
 	}
-	if (((int)Faces::Down & (int)face) == (int)Faces::Down)
+	if (checkFace(Down, face))
 	{
 		addIndicesOrder1
 	}
 	return index;
+}
+
+std::vector<int> Cube::getVertex(int x, int y, int z, int textureSides, int textX, int textY)
+{
+	std::vector<glm::vec2> text = getVertexTexture(textureSides);
+	std::vector<glm::vec3> pos = getVertexPos();
+	std::vector<int> vertex;
+	int n = text.size();
+	for (int i = 0; i < n; i++)
+	{
+		vertex.push_back(
+			 (0b11111 & ((int)pos[i].x + x))             +
+			((0b11111 & ((int)pos[i].y + y))      << 5)  +
+			((0b11111 & ((int)pos[i].z + z))      << 10) +
+			((0b1111  & ((int)text[i].x + textX)) << 15) +
+			((0b1111  & ((int)text[i].y + textY)) << 19));
+	}
+
+	return vertex;
 }
 
 GLuint Cube::indexSize()

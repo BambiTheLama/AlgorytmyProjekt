@@ -18,9 +18,7 @@ public:
 
 	virtual void setOneFace(int face, bool state = true) = 0;
 
-	virtual std::vector<glm::vec3> getVertexPos() = 0;
-
-	virtual std::vector<glm::vec2> getVertexTexture() = 0;
+	virtual std::vector<int> getVertex() = 0;
 
 	virtual std::vector<GLuint> getIndex() = 0;
 

@@ -26,26 +26,9 @@ void CubeBlock::setOneFace(int face, bool state)
 	toSetUp -= (toSetUp & face);
 }
 
-std::vector<glm::vec3> CubeBlock::getVertexPos()
+std::vector<int> CubeBlock::getVertex()
 {
-	std::vector<glm::vec3> vert = cube->getVertexPos();
-	std::vector<glm::vec3> vert2;
-	for (auto v : vert)
-	{
-		vert2.push_back(glm::vec3(v.x + x, v.y + y, v.z + z));
-	}
-	return vert2;
-}
-
-std::vector<glm::vec2> CubeBlock::getVertexTexture()
-{
-	std::vector<glm::vec2> text = cube->getVertexTexture(textureFaces);
-	std::vector<glm::vec2> text2;
-	for (auto t : text)
-	{
-		text2.push_back(glm::vec2(textureX + t.x, textureY + t.y));
-	}
-	return text2;
+	return cube->getVertex(x, y, z, textureFaces, textureX, textureY);
 }
 
 std::vector<GLuint> CubeBlock::getIndex()

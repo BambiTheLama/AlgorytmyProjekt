@@ -2,11 +2,12 @@
 #include "Block.h"
 #include <vector>
 #include <string>
-#define chunkW 16
-#define chunkH 128
-#define chunkT 16
+#define chunkW 1
+#define chunkH 1
+#define chunkT 1
 #define minH 3
-#define maxH 128
+#define maxH 32
+#define waterH 4
 class Game;
 class VBO;
 class VAO;
@@ -19,11 +20,11 @@ class Chunk
 	std::vector<Block*> toAdd;
 	std::vector<Block*> toDraw;
 	VAO* vao = NULL;
-	VBO *vboVert = NULL;
-	VBO *vboTexture = NULL;
-	EBO *index = NULL;
-	std::vector<glm::vec3> vertV;
-	std::vector<glm::vec2> textV;
+	VBO *vbo = NULL;
+	EBO *ebo = NULL;
+	std::vector<int> vertices;
+	std::vector<glm::vec3> verticesV;
+	std::vector<glm::vec2> verticesT;
 	std::vector<GLuint> indexV;
 	static Game* game;
 	bool genVertices = false;
@@ -38,7 +39,7 @@ public:
 
 	void update(float deltaTime);
 
-	void draw();
+	void draw(Shader* s);
 
 	Block* getBlock(int x, int y, int z);
 
@@ -62,8 +63,6 @@ public:
 
 private:
 	void genVerticesPos();
-	void genVerticesTexture();
-	void genIndex();
 	void generateTeren();
 	void setFaceing();
 };

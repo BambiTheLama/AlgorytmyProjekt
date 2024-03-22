@@ -1,4 +1,5 @@
 #pragma once
+class Shader;
 class Scene
 {
 public:
@@ -6,6 +7,6 @@ public:
 
 	virtual void update(float deltaTime) = 0;
 
-	virtual void draw() = 0;
+	virtual void draw(Shader* s) = 0;
 };
 

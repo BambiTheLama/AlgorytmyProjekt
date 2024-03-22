@@ -29,6 +29,11 @@ Block* createBlock(int i,int x,int y,int z)
 		return new CubeBlock(i, x, y, z, 0, 4, 2);
 	case 10:
 		return new CubeBlock(i, x, y, z, 2, 4, 2);
+
+	case 11:
+		return new CubeBlock(i, x, y, z, 4, 0, 1);
+
+
 	default:
 		return NULL;
 	}

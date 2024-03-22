@@ -91,6 +91,7 @@ void Engine::start()
 	game->start();
 	while (!glfwWindowShouldClose(window))
 	{
+
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
 
@@ -121,7 +122,7 @@ void Engine::start()
 			shader->setUniformI1(true, "debug");
 		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
 			shader->setUniformI1(false, "debug");
-		game->draw();		
+		game->draw(shader);		
 		endShaderMode();
 		glfwSwapBuffers(window);
 

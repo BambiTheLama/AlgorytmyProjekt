@@ -10,6 +10,9 @@
 #include <fstream>
 #include "../Properties.h"
 #include <direct.h>
+#include "../core/Engine.h"
+#include "../core/Shader.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 #define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
 							for (int i = 0; i < chunkW; i++)\
@@ -19,10 +22,6 @@ std::string Chunk::path = "World/";
 
 Chunk::Chunk(int x, int y, int z)
 {
-
-	vertV = std::vector<glm::vec3>();
-	textV = std::vector<glm::vec2>();
-	indexV = std::vector<GLuint>();
 	this->x = x;
 	this->y = y;
 	this->z = z;
@@ -33,9 +32,9 @@ Chunk::Chunk(int x, int y, int z)
 	if(!loadGame())
 		generateTeren();
 	setFaceing();
-	genIndex();
 	genVerticesPos();
-	genVerticesTexture();
+
+	indexV = std::vector<GLuint>();
 
 }
 
@@ -44,12 +43,10 @@ Chunk::~Chunk()
 
 	if (vao)
 		delete vao;
-	if (index)
-		delete index;
-	if (vboTexture)
-		delete vboTexture;
-	if (vboVert)
-		delete vboVert;
+	if (ebo)
+		delete ebo;
+	if (vbo)
+		delete vbo;
 	if (wasCleared)
 		return;
 	forAllBlocks
@@ -63,33 +60,44 @@ void Chunk::start()
 {
 	if (!vao)
 		vao = new VAO();
-	if (!vboVert)
-		vboVert = new VBO(vertV);
-	if (!vboTexture)
-		vboTexture = new VBO(textV);
-	if (!index)
-		index = new EBO(indexV);
+	if (!vbo)
+		vbo = new VBO();
+
+	if (!ebo)
+		ebo = new EBO(indexV);
+
+	
+	verticesV.clear();
+	verticesT.clear();
+	for (auto v : vertices)
+	{
+		verticesV.push_back(glm::vec3(
+			(int)v & 0b11111,
+			(int)v >> 5 & 0b11111,
+			(int)v >> 10 & 0b11111));
+		verticesT.push_back(glm::vec2(
+			(int)v >> 15 & 0b1111,
+			(int)v >> 19 & 0b1111));
+		verticesT;
+	}
+	vao->linkData(*vbo, 0, 1, GL_INT, sizeof(int), (void*)0);
 	vao->bind();
-	index->setNewVertices(indexV);
-	vboTexture->setNewVertices(textV);
-	vboVert->setNewVertices(vertV);
-	vao->linkData(*vboVert, 0, 3, GL_FLOAT, sizeof(glm::vec3), (void*)0);
-	vao->linkData(*vboTexture, 1, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
-	index->bind();
+	ebo->bind();
 	vao->unbind();
+	ebo->unbind();
 }
 
 void Chunk::update(float deltaTime)
 {
-	for (auto b : toAdd)
-	{
-		if (b)
-		{
-			if (b->faceToSetUp() <= 0)
-				continue;
-			game->setFaceing(b, b->isTransparent(), b->faceToSetUp());
-		}
-	}
+	//for (auto b : toAdd)
+	//{
+	//	if (b)
+	//	{
+	//		if (b->faceToSetUp() <= 0)
+	//			continue;
+	//		//game->setFaceing(b, b->isTransparent(), b->faceToSetUp());
+	//	}
+	//}
 
 	for (auto b : toDelete)
 	{
@@ -105,32 +113,43 @@ void Chunk::update(float deltaTime)
 		genVertices = false;
 		toDelete.clear();
 		toAdd.clear();
-		std::thread t1 = std::thread(&Chunk::genIndex, this);
-		std::thread t2 = std::thread(&Chunk::genVerticesPos, this);
-		std::thread t3 = std::thread(&Chunk::genVerticesTexture, this);
-
-		t1.join();
-		t2.join();
-		t3.join();
+		genVerticesPos();
 		vao->bind();
-		index->setNewVertices(indexV);
-		vboTexture->setNewVertices(textV);
-		vboVert->setNewVertices(vertV);
-		vao->linkData(*vboVert, 0, 3, GL_FLOAT, sizeof(glm::vec3), (void*)0);
-		vao->linkData(*vboTexture, 1, 2, GL_FLOAT, sizeof(glm::vec2), (void*)0);
-		index->bind();
+		ebo->setNewVertices(indexV);
+		ebo->bind();
+		vbo->setNewVertices(vertices);
+		verticesV.clear();
+		verticesT.clear();
+		for (auto v : vertices)
+		{
+			verticesV.push_back(glm::vec3(
+				(int)v & 0b11111,
+				(int)v >> 5 & 0b11111,
+				(int)v >> 10 & 0b11111));
+			verticesT.push_back(glm::vec2(
+				(int)v >> 15 & 0b1111,
+				(int)v >> 19 & 0b1111));
+		}
+
+		vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(float), (void*)0);
+
 		vao->unbind();
+
 
 	}
 
 
 }
 
-void Chunk::draw()
+void Chunk::draw(Shader* s)
 {
 	if (indexV.size() > 0)
 	{
+		glm::mat4 model(1);
+		model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
+		s->setUniformMat4(model, "model");
 		vao->bind();
+		//ebo->bind();
 		glDrawElements(GL_TRIANGLES, indexV.size(), GL_UNSIGNED_INT, 0);
 	}
 
@@ -253,7 +272,7 @@ bool Chunk::loadGame()
 		}
 		else
 		{
-			blocks[j][i][k] = createBlock(ID, i + x * chunkW, j + y * chunkH, k + z * chunkT);
+			blocks[j][i][k] = createBlock(ID, i, j, k);
 		}
 
 
@@ -276,83 +295,60 @@ void Chunk::clearBlocks()
 
 void Chunk::genVerticesPos()
 {
-	vertV.clear();
-	GLuint lastIndex = 0;
-	forAllBlocks
-	if (blocks[j][i][k])
-	{
-		if (blocks[j][i][k]->indexSize() <= 0)
-			continue;
-		std::vector<glm::vec3> vertTmp = blocks[j][i][k]->getVertexPos();
-
-		vertV.insert(vertV.end(), vertTmp.begin(), vertTmp.end());
-	}
-
-}
-
-void Chunk::genVerticesTexture()
-{
-	textV.clear();
-	forAllBlocks
-	if (blocks[j][i][k])
-	{
-		if (blocks[j][i][k]->indexSize() <= 0)
-			continue;
-		std::vector<glm::vec2> textTmp = blocks[j][i][k]->getVertexTexture();
-
-		textV.insert(textV.end(), textTmp.begin(), textTmp.end());
-	}
-}
-
-void Chunk::genIndex()
-{
 	indexV.clear();
+	vertices.clear();
 	GLuint lastIndex = 0;
 	forAllBlocks
 	if (blocks[j][i][k])
 	{
 		if (blocks[j][i][k]->indexSize() <= 0)
 			continue;
+
 		std::vector<GLuint> indexTmp = blocks[j][i][k]->getIndex();
+
+		std::vector<int> vertTmp = blocks[j][i][k]->getVertex();
+
 		for (auto ind : indexTmp)
 		{
 			indexV.push_back(ind + lastIndex);
 		}
+
 		lastIndex += blocks[j][i][k]->indexSize();
+
+		//vertices.insert(vertices.end(), vertTmp.begin(), vertTmp.end());
+		for (auto o : vertTmp)
+			vertices.push_back(o);
 	}
 
 }
 
 void Chunk::generateTeren()
 {
-	FastNoiseLite terrain(2137);
+	FastNoiseLite terrain(666);
 	terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
-	terrain.SetFrequency(0.003f);
+	terrain.SetFrequency(0.004f);
 	terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
-	terrain.SetFractalOctaves(2);
-	terrain.SetFractalGain(5.0f);
+	terrain.SetFractalOctaves(3);
+	terrain.SetFractalGain(0.3f);
 	terrain.SetFractalLacunarity(1.529f);
 	terrain.SetFractalWeightedStrength(3.304f);
 
 	FastNoiseLite river(2137);
 	river.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	river.SetFrequency(0.003f);
+	river.SetFrequency(0.001f);
 	river.SetFractalType(FastNoiseLite::FractalType_PingPong);
 	river.SetFractalOctaves(3);
-	river.SetFractalGain(0.5f);
-	river.SetFractalLacunarity(2.0f);
-	river.SetFractalWeightedStrength(0.0f);
-	river.SetFractalPingPongStrength(2.0f);
+	river.SetFractalGain(0.11f);
+	river.SetFractalLacunarity(1.72f);
+	river.SetFractalWeightedStrength(2.02f);
+	river.SetFractalPingPongStrength(2.44f);
 	const int height = maxH - minH;
 	const int dirtSize = 5;
 	for (int i = 0; i < chunkW; i++)
 		for (int k = 0; k < chunkT; k++)
 		{
 			int h = (terrain.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT) + 1) / 2 * height + minH - (this->y * chunkH);
-			int v = abs(river.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT)) * 5;
-			int v2 = abs(river.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT)) * 2;
-			if (v > 0)
-				h -= v;
+
 
 			if (h <= 2)
 				h = 2;
@@ -360,37 +356,37 @@ void Chunk::generateTeren()
 			{
 				if (blocks[j][i][k])
 					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(2, i + x * chunkW, j + y * chunkH, k + z * chunkT);
+				blocks[j][i][k] = createBlock(2, i, j, k);
 			}
-			for (int j = (h - dirtSize) < 0 ? 0 : h - dirtSize; j < h && j < chunkH; j++)
+			int dirtStart = h - dirtSize;
+			if (dirtStart < 0)
+				dirtStart = 0;
+			int endPos = h;
+			if (endPos < waterH)
+				endPos--;
+
+			for (int j = dirtStart; j < endPos && j < chunkH; j++)
 			{
-				blocks[j][i][k] = createBlock(j == h - 1 ? 0 : 1,  i + x * chunkW, j + y * chunkH, k + z * chunkT);
+				if (blocks[j][i][k])
+					delete blocks[j][i][k];
+				blocks[j][i][k] = createBlock(j == h - 1 ? 0 : 1, i, j, k);
 
 			}
-			for (int j = 0; j < chunkH && j < h - dirtSize; j++)
+			for (int j = endPos; j < endPos + 3 && j <= waterH && j < chunkH; j++)
 			{
 				if (blocks[j][i][k])
 					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(2, i + x * chunkW, j + y * chunkH, k + z * chunkT);
+				blocks[j][i][k] = createBlock(4, i, j, k);
+
 			}
-			int startPos1 = h - v;
-			int startPos2 = h - v2;
-			if (startPos1 < 0)
-				startPos1 = 0;
-			if (startPos2 < 0)
-				startPos2 = 0;
-			for (int j = startPos1; j < chunkH && j < startPos2; j++)
+			for (int j = endPos + 3; j <= waterH && j < chunkH; j++)
 			{
 				if (blocks[j][i][k])
 					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(4, i + x * chunkW, j + y * chunkH, k + z * chunkT);
+				blocks[j][i][k] = createBlock(11, i, j, k);
+
 			}
-			for (int j = startPos2; j < chunkH && j < h+ v2; j++)
-			{
-				if (blocks[j][i][k])
-					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(5, i + x * chunkW, j + y * chunkH, k + z * chunkT);
-			}
+
 		}
 	
 }

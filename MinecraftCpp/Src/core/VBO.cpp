@@ -10,16 +10,6 @@ VBO::VBO()
 #endif
 }
 
-VBO::VBO(std::vector<glm::vec3>& vertices):VBO()
-{
-	glBindBuffer(GL_ARRAY_BUFFER, ID);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_DYNAMIC_DRAW);
-}
-VBO::VBO(std::vector<glm::vec2>& vertices) :VBO()
-{
-	glBindBuffer(GL_ARRAY_BUFFER, ID);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec2), vertices.data(), GL_DYNAMIC_DRAW);
-}
 VBO::VBO(GLfloat* vertices, GLsizeiptr size, GLenum drawType) :VBO()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
@@ -48,6 +38,16 @@ void VBO::setNewVertices(std::vector<glm::vec2>& vertices)
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec2), vertices.data(), GL_DYNAMIC_DRAW);
 }
 
+void VBO::setNewVertices(std::vector<int>& vertices)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, ID);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(int), vertices.data(), GL_DYNAMIC_DRAW);
+}
+void VBO::setNewVertices(std::vector<float>& vertices)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, ID);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_DYNAMIC_DRAW);
+}
 void VBO::bind()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, ID);

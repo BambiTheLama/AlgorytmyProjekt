@@ -36,11 +36,11 @@ vec4 direcLight()
 
 void main()
 {
-	if(debug)
-	{
-		FragColor = vec4(1.0f);
-		return;
-	}
+	//if(debug)
+	//{
+	//	FragColor = vec4(1.0f);
+	//	return;
+	//}
 	if (texture(tex0, texCoord).a < 0.1)
 		discard;
 

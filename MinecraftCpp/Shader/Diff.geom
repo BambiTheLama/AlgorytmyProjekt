@@ -86,10 +86,10 @@ void debugMode()
 
     EndPrimitive();
 
-    gl_Position =  p3;
+    gl_Position =  p2;
     EmitVertex();
 
-    gl_Position =  p2;
+    gl_Position =  p3;
     EmitVertex();
      
     gl_Position =  (p1/v + p2 + p3)/2;
@@ -97,10 +97,10 @@ void debugMode()
 
     EndPrimitive();
 
-    gl_Position =  p1;
+    gl_Position =  p3;
     EmitVertex();
 
-    gl_Position = p3;
+    gl_Position = p1;
     EmitVertex();
 
     gl_Position =  (p1 + p2/v + p3)/2;
@@ -114,8 +114,8 @@ void debugMode()
 void main()
 {
 
-    if(debug)
-        debugMode();
-    else
+    //if(debug)
+    //    debugMode();
+    //else
         normalMode();
 }
