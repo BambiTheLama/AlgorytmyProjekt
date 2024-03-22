@@ -2,12 +2,12 @@
 #include "Block.h"
 #include <vector>
 #include <string>
-#define chunkW 31
-#define chunkH 31
-#define chunkT 31
-#define minH 3
-#define maxH 32
-#define waterH 4
+#define chunkW 15
+#define chunkH 255
+#define chunkT 15
+#define minH 8
+#define maxH 225
+#define waterH 36
 class Game;
 class VBO;
 class VAO;

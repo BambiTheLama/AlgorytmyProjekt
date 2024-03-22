@@ -204,11 +204,11 @@ std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int t
 	for (int i = 0; i < n; i++)
 	{
 		vertex.push_back(
-			 (0b11111 & ((int)pos[i].x + x))             +
-			((0b11111 & ((int)pos[i].y + y))      << 5)  +
-			((0b11111 & ((int)pos[i].z + z))      << 10) +
-			((0b1111  & ((int)text[i].x + textX)) << 15) +
-			((0b1111  & ((int)text[i].y + textY)) << 19));
+			 (0b1111 & ((int)pos[i].x + x))             +
+			((0b11111111 & ((int)pos[i].y + y))   << 4)  +
+			((0b1111 & ((int)pos[i].z + z))       << 12) +
+			((0b1111  & ((int)text[i].x + textX)) << 16) +
+			((0b1111  & ((int)text[i].y + textY)) << 20));
 	}
 
 	return vertex;

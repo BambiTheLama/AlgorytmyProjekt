@@ -83,7 +83,9 @@ void Game::update(float deltaTime)
 	for (auto a : toAdd)
 	{
 		a->start();
+		a->update(0.0f);
 		chunks.push_back(a);
+
 	}
 
 	toAdd.clear();
@@ -284,8 +286,8 @@ void Game::genWorld()
 	if (posToGenChunk.size() <= 0)
 	{
 
-			for (int x = camPos.x - rangeX; x < camPos.x + rangeX; x++)
-				for (int z = camPos.z - rangeZ; z < camPos.z + rangeZ; z++)
+			for (int x = camPos.x - range; x < camPos.x + range; x++)
+				for (int z = camPos.z - range; z < camPos.z + range; z++)
 				{
 					bool breked = false;
 					toAddMutex.lock();
@@ -322,9 +324,8 @@ void Game::genWorld()
 		}
 	toAddMutex.unlock();
 	Chunk* c = NULL;
-	float dist = glm::distance(pos, glm::vec2(pos.x, pos.y));
 
-	if (dist <= range)
+	if (abs(pos.x - camPos.x) <= range && abs(pos.y - camPos.z) <= range)
 	{
 		c = new Chunk(pos.x, 0, pos.y);
 	}
@@ -346,7 +347,7 @@ void Game::desWorld()
 	for (auto c : chunks)
 	{
 		glm::vec3 cPos = c->getLocation();
-		if (glm::distance(glm::vec2(camPos.x, camPos.z), glm::vec2(cPos.x,cPos.z)) > range * 1.1f)
+		if (abs(cPos.x - camPos.x) > range * 1.5 || abs(cPos.y - camPos.z) > range * 1.5)
 		{
 			toSave.push_back(c);
 		}

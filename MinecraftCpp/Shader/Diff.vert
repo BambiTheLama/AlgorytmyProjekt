@@ -27,11 +27,11 @@ out DATA
 void main()
 {
 	getData d;
-	d.pos.x  = int(data)       & 31;	/// 0b00000000000000000011111
-	d.pos.y  = int(data) >> 5  & 31;	/// 0b00000000000001111100000
-	d.pos.z  = int(data) >> 10 & 31;	/// 0b00000000111110000000000
-	d.text.x = int(data) >> 15 & 15;	/// 0b00001111000000000000000
-	d.text.y = int(data) >> 19 & 15;	/// 0b11110000000000000000000
+	d.pos.x  = int(data)       & 15;	/// 0b0000000000000000000001111
+	d.pos.y  = int(data) >> 4  & 255;	/// 0b0000000000000111111110000
+	d.pos.z  = int(data) >> 12 & 15;	/// 0b0000000011110000000000000
+	d.text.x = int(data) >> 16 & 15;	/// 0b0000111100000000000000000
+	d.text.y = int(data) >> 20 & 15;	/// 0b1111000000000000000000000
 
 	vec3 currentPos = vec3(model * vec4(d.pos, 1.0f));
 	gl_Position = camera * vec4(currentPos, 1.0f);

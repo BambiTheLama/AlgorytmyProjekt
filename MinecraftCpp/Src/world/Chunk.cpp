@@ -31,9 +31,9 @@ Chunk::Chunk(int x, int y, int z)
 	}
 	if(!loadGame())
 		generateTeren();
-	setFaceing();
-	genVerticesPos();
 
+	genVerticesPos();
+	setFaceing();
 	indexV = std::vector<GLuint>();
 
 }
@@ -79,24 +79,19 @@ void Chunk::start()
 
 void Chunk::update(float deltaTime)
 {
-	//for (auto b : toAdd)
-	//{
-	//	if (b)
-	//	{
-	//		if (b->faceToSetUp() <= 0)
-	//			continue;
-	//		game->setFaceing(b,x,y,z, b->isTransparent(), b->faceToSetUp());
-	//	}
-	//}
+	for (auto b : toAdd)
+	{
+
+		if (b->faceToSetUp() <= 0)
+			continue;
+		game->setFaceing(b, x * chunkW, y * chunkH, z * chunkT, b->isTransparent(), b->faceToSetUp());
+
+	}
 
 	for (auto b : toDelete)
 	{
-		if (b)
-		{
-			game->setFaceing(b->x, b->y, b->z, true);
-			delete b;
-		}
-
+		game->setFaceing(b->x + x * chunkW, b->y + y * chunkH, b->z + z * chunkT, true);
+		delete b;
 	}
 	if (genVertices || toAdd.size() > 0 || toDelete.size() > 0)
 	{
