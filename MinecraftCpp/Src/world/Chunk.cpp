@@ -14,6 +14,9 @@
 #include "../core/Shader.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <math.h>
+#include <time.h>
+
+#define noSave
 #define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
 							for (int i = 0; i < chunkW; i++)\
 								for (int k = 0; k < chunkT; k++)
@@ -169,6 +172,10 @@ bool Chunk::isThisChunk(int x, int y, int z)
 
 void Chunk::save()
 {
+#ifdef noSave
+	return;
+#endif // noSave
+
 	struct stat sb;
 	if (stat(path.c_str(), &sb) != 0)
 		_mkdir(path.c_str());
@@ -302,48 +309,92 @@ void Chunk::genVerticesPos()
 	}
 
 }
-
-float getValueTerein(float v)
+float getValue(float v)
 {
 	if (v <= -1.0f)
 		return -log(-v) / 6.0f - 1;
 	if (v >= 1.0f)
 		return log(v) / 6.0f + 1;
-	return powf(v,3);
+	return powf(v, 3);
 }
 
 
+
+
+void genValues(float** tab)
+{
+	int w = chunkW - 1;
+	int t = chunkT - 1;
+	for (int x = 1; x < w; x++)
+	{
+		float v = (float)x / (float)chunkW;
+		tab[x][0] = (1.0f - v) * tab[0][0] + v * tab[w][0];
+		tab[x][t] = (1.0f - v) * tab[0][t] + v * tab[w][t];
+
+	}
+	for (int z = 1; z < t; z++)
+	{
+		float v = (float)z / (float)chunkT;
+		tab[0][z] = (1.0f - v) * tab[0][0] + v * tab[0][t];
+		tab[w][z] = (1.0f - v) * tab[w][0] + v * tab[w][t];
+	}
+	for (int x = 1; x < w; x++)
+		for (int z = 1; z < t; z++)
+		{
+			float vx = (float)x / (float)chunkW;
+			float vz = (float)z / (float)chunkT;
+			tab[x][z] = ((1.0f - vx) * tab[0][z] + vx * tab[w][z] + (1.0f - vz) * tab[x][0] + vz * tab[x][t]) / 2;
+		}
+}
+#define NoiseSizeW 500
+#define NoiseSizeH 500
+static float noise2D[NoiseSizeH][NoiseSizeW];
+
+void setNoiseSeed(int seed)
+{
+	srand(time(NULL));
+	for (int i = 0; i < NoiseSizeW; i++)
+		for (int j = 0; j < NoiseSizeH; j++)
+			noise2D[j][i] = (float)rand() / RAND_MAX;
+}
+const float frq = 0.2f;
+
+float getValueTerein(int x, int z)
+{
+	int Six = 0;
+	int Siz = 0;
+	int Eix = 0;
+	int Eiz = 0;
+	float v = 0.0f;
+
+	Six = (int)(frq * abs(x)) % NoiseSizeW;
+	Siz = (int)(frq * abs(z)) % NoiseSizeH;
+	Eix = (Six + 1) % NoiseSizeW;
+	Eiz = (Siz + 1) % NoiseSizeH;
+
+	float xp = frq * abs(-x);
+	xp -= (int)xp;
+	float zp = frq * abs(-z);
+	zp -= (int)zp;
+
+	float vd = noise2D[Siz][Six] * (1.0f - xp) + noise2D[Siz][Eix] * xp;
+	float vu = noise2D[Eiz][Six] * (1.0f - xp) + noise2D[Eiz][Eix] * xp;
+	v = vd * (1.0f - zp) + vu * zp;
+	return (v + 1) / 2;
+}
+
 void Chunk::generateTeren()
 {
-	FastNoiseLite terrain(666);
-	terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
-	terrain.SetFrequency(0.001f);
-	terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
-	terrain.SetFractalOctaves(3);
-	terrain.SetFractalLacunarity(2.0f);
-	terrain.SetFractalGain(2.177f);
-	terrain.SetFractalWeightedStrength(4.8f);
-
-	FastNoiseLite erosia(2137);
-	erosia.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	erosia.SetFrequency(0.01f);
-	erosia.SetFractalType(FastNoiseLite::FractalType_FBm);
-	erosia.SetFractalOctaves(3);
-	erosia.SetFractalLacunarity(0.91f);
-	erosia.SetFractalGain(1.34f);
-	erosia.SetFractalWeightedStrength(4.64f);
-
-	FastNoiseLite picksAndValies(80085);
-	picksAndValies.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	picksAndValies.SetFrequency(0.01f);
-	picksAndValies.SetFractalType(FastNoiseLite::FractalType_FBm);
-	picksAndValies.SetFractalOctaves(4);
-	picksAndValies.SetFractalLacunarity(3.3f);
-	picksAndValies.SetFractalGain(1.01f);
-	picksAndValies.SetFractalWeightedStrength(2.060f);
-
-
-
+	float **tab = new float*[chunkW];	
+	for (int i = 0; i < chunkW; i++)
+		tab[i] = new float[chunkT];
+	int w = this->x * chunkW;
+	int t = this->z * chunkT;
+	tab[0][0] = getValueTerein(x, z);
+	tab[chunkW - 1][0] = getValueTerein(x + 1, z);
+	tab[chunkW - 1][chunkT - 1] = getValueTerein(x + 1, z + 1);
+	tab[0][chunkT - 1] = getValueTerein(x, z + 1);
+	genValues(tab);
 	const int height = maxH - minH;
 	const int dirtSize = 5;
 	for (int i = 0; i < chunkW; i++)
@@ -351,10 +402,8 @@ void Chunk::generateTeren()
 		{
 			float x = i + this->x * chunkW;
 			float z = k + this->z * chunkT;
-			float t = getValueTerein(terrain.GetNoise(x, z))+1;
-			float e =  getValueTerein(erosia.GetNoise(x, z));
-			float pv =  getValueTerein(picksAndValies.GetNoise(x, z));
-			float tereinV = (t/2 + e/3 + pv/6);
+
+			float tereinV = tab[i][k];
 			int h = minH + tereinV * height;
 			if (h <= 2)
 				h = 2;
@@ -394,7 +443,10 @@ void Chunk::generateTeren()
 			}
 
 		}
-	
+
+	for (int i = 0; i < chunkW; i++)
+		delete tab[i];
+	delete tab;
 }
 
 void Chunk::setFaceing()

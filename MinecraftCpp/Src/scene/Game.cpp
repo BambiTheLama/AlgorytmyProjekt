@@ -7,7 +7,7 @@
 #include "../core/Shader.h"
 Game::Game(Camera* camera,GLFWwindow* window)
 {
-
+	setNoiseSeed(123693543);
 	Chunk::game = this;
 	this->camera = camera;
 

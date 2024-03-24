@@ -7,7 +7,8 @@
 #define chunkT 15
 #define minH 8
 #define maxH 165
-#define waterH 80
+#define waterH 0
+
 class Game;
 class VBO;
 class VAO;
@@ -66,4 +67,5 @@ private:
 	void generateTeren();
 	void setFaceing();
 };
+void setNoiseSeed(int seed);
 
