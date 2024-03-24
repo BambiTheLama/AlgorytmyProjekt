@@ -14,7 +14,7 @@
 #include "../core/Shader.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <math.h>
-#include <time.h>
+
 
 #define noSave
 #define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
@@ -352,12 +352,48 @@ static float noise2D[NoiseSizeH][NoiseSizeW];
 
 void setNoiseSeed(int seed)
 {
-	srand(time(NULL));
-	for (int i = 0; i < NoiseSizeW; i++)
-		for (int j = 0; j < NoiseSizeH; j++)
-			noise2D[j][i] = (float)rand() / RAND_MAX;
+	float noise2DTMP[NoiseSizeH][NoiseSizeW];
+	srand(seed);
+
+	for (int x = 0; x < NoiseSizeW; x++)
+		for (int y = 0; y < NoiseSizeH; y++)
+		{
+			noise2DTMP[y][x] = ((float)rand() / RAND_MAX);
+		}
+	int octaves = 5;
+	int bias = 2;
+	for (int x = 0; x < NoiseSizeW; x++)
+		for (int y = 0; y < NoiseSizeH; y++)
+		{
+			float fNoise = 0.0f;
+			float fScaleAcc = 0.0f;
+			float fScale = 1.0f;
+
+			for (int o = 0; o < octaves; o++)
+			{
+				int nPitch = NoiseSizeW >> o;
+				int nSampleX1 = (x / nPitch) * nPitch;
+				int nSampleY1 = (y / nPitch) * nPitch;
+
+				int nSampleX2 = (nSampleX1 + nPitch) % NoiseSizeW;
+				int nSampleY2 = (nSampleY1 + nPitch) % NoiseSizeW;
+
+				float fBlendX = (float)(x - nSampleX1) / (float)nPitch;
+				float fBlendY = (float)(y - nSampleY1) / (float)nPitch;
+
+				float fSampleT = (1.0f - fBlendX) * noise2DTMP[nSampleY1][nSampleX1] + fBlendX * noise2DTMP[nSampleY1][nSampleX2];
+				float fSampleB = (1.0f - fBlendX) * noise2DTMP[nSampleY2][nSampleX1] + fBlendX * noise2DTMP[nSampleY2][nSampleX2];
+
+				fScaleAcc += fScale;
+				fNoise += (fBlendY * (fSampleB - fSampleT) + fSampleT) * fScale;
+				fScale = fScale / bias;
+			}
+
+			// Scale to seed range
+			noise2D[y][x] = fNoise / fScaleAcc;
+		}
 }
-const float frq = 0.2f;
+const float frq = 1.0f;
 
 float getValueTerein(int x, int z)
 {
@@ -403,7 +439,7 @@ void Chunk::generateTeren()
 			float x = i + this->x * chunkW;
 			float z = k + this->z * chunkT;
 
-			float tereinV = tab[i][k];
+			float tereinV = getValueTerein(x, z);
 			int h = minH + tereinV * height;
 			if (h <= 2)
 				h = 2;
