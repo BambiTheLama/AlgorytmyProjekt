@@ -10,18 +10,11 @@ Game::Game(Camera* camera,GLFWwindow* window)
 
 	Chunk::game = this;
 	this->camera = camera;
-	do {
-		genWorld();
-	} while (posToGenChunk.size() > 0);
+
 
 
 	this->window = window;
-	glm::vec3 pos = camera->getPos();
-	while (getBlockAt(pos.x,pos.y,pos.z))
-	{
-		pos.y++;
-	}
-	camera->newPos(pos);
+
 	vao = new VAO();
 	vboPos = new VBO();
 	vboTex = new VBO();
@@ -74,7 +67,7 @@ void Game::update(float deltaTime)
 		if (b)
 		{
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-				deleteBlock(b);
+				deleteBlock(x,y,z);
 			break;
 		}
 		n++;
@@ -139,11 +132,11 @@ Block* Game::getBlockAt(int x, int y, int z)
 	return NULL;
 }
 
-void Game::deleteBlock(Block* b)
+void Game::deleteBlock(int x,int y,int z)
 {
 	for (auto c : chunks)
-		if (c->isThisChunk(b->x, b->y, b->z))
-			c->deleteBlock(b);
+		if (c->isThisChunk(x, y, z))
+			c->deleteBlock(x,y,z);
 }
 
 void Game::setFaceing(int x, int y, int z, bool display, char face)
@@ -255,7 +248,7 @@ void Game::worldGenerateFun()
 	glm::vec3 camPos = camera->getPos();
 	while (gameRunning)
 	{
-		if (camPos != camera->getPos()|| posToGenChunk.size()>0)
+		//if (camPos != camera->getPos()|| posToGenChunk.size()>0)
 		{
 			genWorld();
 		}

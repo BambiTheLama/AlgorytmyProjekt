@@ -13,7 +13,7 @@
 #include "../core/Engine.h"
 #include "../core/Shader.h"
 #include <glm/gtc/matrix_transform.hpp>
-
+#include <math.h>
 #define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
 							for (int i = 0; i < chunkW; i++)\
 								for (int k = 0; k < chunkT; k++)
@@ -90,6 +90,9 @@ void Chunk::update(float deltaTime)
 
 	for (auto b : toDelete)
 	{
+		if (!b)
+			continue;
+		blocks[b->y][b->x][b->z] = NULL;
 		game->setFaceing(b->x + x * chunkW, b->y + y * chunkH, b->z + z * chunkT, true);
 		delete b;
 	}
@@ -142,15 +145,17 @@ Block* Chunk::getBlock(int x, int y, int z)
 	return NULL;
 }
 
-void Chunk::deleteBlock(Block* b)
+void Chunk::deleteBlock(int x, int y, int z)
 {
-	int x = b->x - this->x * chunkW;
-	int y = b->y - this->y * chunkH;
-	int z = b->z - this->z * chunkT;
+	x -= this->x * chunkW;
+	y -= this->y * chunkH;
+	z -= this->z * chunkT;
 	if (x >= 0 && x < chunkW && y >= 0 && y < chunkH && z >= 0 && z < chunkT)
 	{
+		for (auto d : toDelete)
+			if (d == blocks[y][x][z])
+				return;
 		toDelete.push_back(blocks[y][x][z]);
-		blocks[y][x][z] = NULL;
 	}
 }
 
@@ -298,34 +303,59 @@ void Chunk::genVerticesPos()
 
 }
 
+float getValueTerein(float v)
+{
+	if (v <= -1.0f)
+		return -log(-v) / 6.0f - 1;
+	if (v >= 1.0f)
+		return log(v) / 6.0f + 1;
+	return powf(v,3);
+}
+
+
 void Chunk::generateTeren()
 {
 	FastNoiseLite terrain(666);
 	terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
-	terrain.SetFrequency(0.004f);
+	terrain.SetFrequency(0.001f);
 	terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
 	terrain.SetFractalOctaves(3);
-	terrain.SetFractalGain(0.3f);
-	terrain.SetFractalLacunarity(1.529f);
-	terrain.SetFractalWeightedStrength(3.304f);
+	terrain.SetFractalLacunarity(2.0f);
+	terrain.SetFractalGain(2.177f);
+	terrain.SetFractalWeightedStrength(4.8f);
 
-	FastNoiseLite river(2137);
-	river.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	river.SetFrequency(0.001f);
-	river.SetFractalType(FastNoiseLite::FractalType_PingPong);
-	river.SetFractalOctaves(3);
-	river.SetFractalGain(0.11f);
-	river.SetFractalLacunarity(1.72f);
-	river.SetFractalWeightedStrength(2.02f);
-	river.SetFractalPingPongStrength(2.44f);
+	FastNoiseLite erosia(2137);
+	erosia.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	erosia.SetFrequency(0.01f);
+	erosia.SetFractalType(FastNoiseLite::FractalType_FBm);
+	erosia.SetFractalOctaves(3);
+	erosia.SetFractalLacunarity(0.91f);
+	erosia.SetFractalGain(1.34f);
+	erosia.SetFractalWeightedStrength(4.64f);
+
+	FastNoiseLite picksAndValies(80085);
+	picksAndValies.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	picksAndValies.SetFrequency(0.01f);
+	picksAndValies.SetFractalType(FastNoiseLite::FractalType_FBm);
+	picksAndValies.SetFractalOctaves(4);
+	picksAndValies.SetFractalLacunarity(3.3f);
+	picksAndValies.SetFractalGain(1.01f);
+	picksAndValies.SetFractalWeightedStrength(2.060f);
+
+
+
 	const int height = maxH - minH;
 	const int dirtSize = 5;
 	for (int i = 0; i < chunkW; i++)
 		for (int k = 0; k < chunkT; k++)
 		{
-			int h = (terrain.GetNoise((float)i + this->x * chunkW, (float)k + this->z * chunkT) + 1) / 2 * height + minH - (this->y * chunkH);
-
-
+			float x = i + this->x * chunkW;
+			float z = k + this->z * chunkT;
+			float t = getValueTerein(terrain.GetNoise(x, z))+1;
+			float e =  getValueTerein(erosia.GetNoise(x, z));
+			float pv =  getValueTerein(picksAndValies.GetNoise(x, z));
+			float tereinV = (t/2 + e/3 + pv/6);
+			int h = minH + tereinV * height;
 			if (h <= 2)
 				h = 2;
 			for (int j = 0; j < chunkH && j < h - dirtSize; j++)

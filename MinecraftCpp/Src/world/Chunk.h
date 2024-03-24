@@ -3,11 +3,11 @@
 #include <vector>
 #include <string>
 #define chunkW 15
-#define chunkH 255
+#define chunkH 200
 #define chunkT 15
 #define minH 8
-#define maxH 225
-#define waterH 36
+#define maxH 165
+#define waterH 80
 class Game;
 class VBO;
 class VAO;
@@ -43,7 +43,7 @@ public:
 
 	Block* getBlock(int x, int y, int z);
 
-	void deleteBlock(Block* b);
+	void deleteBlock(int x, int y, int z);
 
 	bool isThisChunk(int x, int y, int z);
 
