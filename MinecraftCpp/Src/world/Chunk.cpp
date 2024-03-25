@@ -22,7 +22,7 @@
 								for (int k = 0; k < chunkT; k++)
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
-
+PerlinNoice Chunk::noise = PerlinNoice(65465462);
 Chunk::Chunk(int x, int y, int z)
 {
 	this->x = x;
@@ -439,7 +439,7 @@ void Chunk::generateTeren()
 			float x = i + this->x * chunkW;
 			float z = k + this->z * chunkT;
 
-			float tereinV = getValueTerein(x, z);
+			float tereinV = noise.getNoise(x, z);
 			int h = minH + tereinV * height;
 			if (h <= 2)
 				h = 2;

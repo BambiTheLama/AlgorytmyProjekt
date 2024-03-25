@@ -179,6 +179,7 @@
     <ClCompile Include="Src\world\BlocksCreator.cpp" />
     <ClCompile Include="Src\world\Chunk.cpp" />
     <ClCompile Include="Src\world\CubeBlock.cpp" />
+    <ClCompile Include="Src\world\PerlinNoise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Diff.frag" />
@@ -205,6 +206,7 @@
     <ClInclude Include="Src\world\BlocksCreator.h" />
     <ClInclude Include="Src\world\Chunk.h" />
     <ClInclude Include="Src\world\CubeBlock.h" />
+    <ClInclude Include="Src\world\PerlinNoise.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
