@@ -9,7 +9,7 @@
 #define minH 8
 #define maxH 200
 #define waterH 69
-//#define Laby
+#define Laby
 
 class Game;
 class VBO;
@@ -20,6 +20,7 @@ class Chunk
 #ifdef Laby
 	static PerlinNoice noise;
 	static PerlinNoice noise2;
+	static PerlinNoice noiseRiver;
 #endif // Laby
 	int x, y, z;
 	Block* blocks[chunkH][chunkW][chunkT];

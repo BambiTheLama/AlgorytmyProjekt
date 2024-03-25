@@ -25,6 +25,7 @@ std::string Chunk::path = "World/";
 #ifdef Laby
 PerlinNoice Chunk::noise = PerlinNoice(5000, 5000, 5, 1, 0.3);
 PerlinNoice Chunk::noise2 = PerlinNoice(5000, 5000, 8, 2, 0.69, 75631);
+PerlinNoice Chunk::noiseRiver = PerlinNoice(6000, 6000, 5, 1, 0.5, 213241);
 #endif
 Chunk::Chunk(int x, int y, int z)
 {
@@ -470,21 +471,37 @@ void Chunk::generateTeren()
 		{
 			float x = i + this->x * chunkW;
 			float z = k + this->z * chunkT;
-
+			bool river = false;
+			int rivDeep;
 #ifdef Laby
 			float tereinV = (noise.getNoise(x, z) + noise2.getNoise(x, z) / 4) * 4.0f / 5.0f;
+			float v = noiseRiver.getNoise(x, z);
+			river = 0.238f < v&& 0.268f > v;
+			rivDeep = 4 - (abs(0.25f - v) * 400);
+			if (rivDeep >= 3)
+				rivDeep = 3;
+			int h = minH + tereinV * height;
+			if ( river)
+			{
+				h = waterH - rivDeep - 3 +(h-waterH)/1.3f;
+			}
+			else
+			{
+				river = false;
+			}
 #endif // Laby
 #ifndef Laby
 			float t = getValueTerein(terrain.GetNoise(x, z)) + 1;
 			float e = getValueTerein(erosia.GetNoise(x, z));
 			float pv = getValueTerein(picksAndValies.GetNoise(x, z));
 			float tereinV = (t / 2 + e / 3 + pv / 18);
+			int h = minH + tereinV * height;
 #endif // !Laby
 
 
 
 
-			int h = minH + tereinV * height;
+
 			if (h <= 2)
 				h = 2;
 			for (int j = 0; j < chunkH && j < h - dirtSize; j++)
@@ -521,7 +538,26 @@ void Chunk::generateTeren()
 				blocks[j][i][k] = createBlock(11, i, j, k);
 
 			}
+			if (river)
+			{
+				int start = h - rivDeep-3;
+				if (start < 0)
+					start = 0;
+				for (int j = start; j < h-rivDeep && j < chunkH; j++)
+				{
+					if (blocks[j][i][k])
+						delete blocks[j][i][k];
+					blocks[j][i][k] = createBlock(4, i, j, k);
 
+				}
+				for (int j = h-rivDeep; j < h && j < chunkH; j++)
+				{
+					if (blocks[j][i][k])
+						delete blocks[j][i][k];
+					blocks[j][i][k] = createBlock(11, i, j, k);
+
+				}
+			}
 		}
 
 }
