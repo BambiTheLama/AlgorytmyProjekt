@@ -17,9 +17,11 @@ PerlinNoice::PerlinNoice(int seed)
 	generateNoice2D();
 }
 
-PerlinNoice::PerlinNoice(int w, int h, int seed)
+PerlinNoice::PerlinNoice(int w, int h, int octavies, float scall, float frq, int seed)
 {
-
+	this->scalling = scall;
+	this->octavies = octavies;
+	this->frq = frq;
 	this->h = h;
 	this->w = w;
 
@@ -98,8 +100,8 @@ float PerlinNoice::getNoise(int x, int y)
 	int sy = (int)(frq * abs(y)) % h;
 	int ex = (sx + 1) % w;
 	int ey = (sy + 1) % h;
-	float pX = (frq * abs(x)) - (int)(frq * abs(x));
-	float pY = (frq * abs(y)) - (int)(frq * abs(y));
+	float pX = powf((frq * abs(x)) - (int)(frq * abs(x)), 2);
+	float pY = powf((frq * abs(y)) - (int)(frq * abs(y)), 2);
 	float downV = noise[sy][sx] * (1.0f - pX) + noise[sy][ex] * (pX);
 	float upV = noise[ey][sx] * (1.0f - pX) + noise[ey][ex] * (pX);
 

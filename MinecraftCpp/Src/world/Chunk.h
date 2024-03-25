@@ -4,11 +4,12 @@
 #include <string>
 #include "PerlinNoise.h"
 #define chunkW 15
-#define chunkH 200
+#define chunkH 255
 #define chunkT 15
 #define minH 8
-#define maxH 165
-#define waterH 50
+#define maxH 200
+#define waterH 69
+#define Laby
 
 class Game;
 class VBO;
@@ -17,6 +18,7 @@ class EBO;
 class Chunk
 {
 	static PerlinNoice noise;
+	static PerlinNoice noise2;
 	int x, y, z;
 	Block* blocks[chunkH][chunkW][chunkT];
 	std::vector<Block*> toDelete;

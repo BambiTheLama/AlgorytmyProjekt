@@ -22,7 +22,8 @@
 								for (int k = 0; k < chunkT; k++)
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
-PerlinNoice Chunk::noise = PerlinNoice(65465462);
+PerlinNoice Chunk::noise = PerlinNoice(5000, 5000, 5, 1, 0.3);
+PerlinNoice Chunk::noise2 = PerlinNoice(5000, 5000, 8, 2, 0.69, 75631);
 Chunk::Chunk(int x, int y, int z)
 {
 	this->x = x;
@@ -421,16 +422,34 @@ float getValueTerein(int x, int z)
 
 void Chunk::generateTeren()
 {
-	float **tab = new float*[chunkW];	
-	for (int i = 0; i < chunkW; i++)
-		tab[i] = new float[chunkT];
-	int w = this->x * chunkW;
-	int t = this->z * chunkT;
-	tab[0][0] = getValueTerein(x, z);
-	tab[chunkW - 1][0] = getValueTerein(x + 1, z);
-	tab[chunkW - 1][chunkT - 1] = getValueTerein(x + 1, z + 1);
-	tab[0][chunkT - 1] = getValueTerein(x, z + 1);
-	genValues(tab);
+#ifndef Laby
+	FastNoiseLite terrain(666);
+	terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+	terrain.SetFrequency(0.001f);
+	terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
+	terrain.SetFractalOctaves(3);
+	terrain.SetFractalLacunarity(2.0f);
+	terrain.SetFractalGain(2.177f);
+	terrain.SetFractalWeightedStrength(4.8f);
+
+	FastNoiseLite erosia(2137);
+	erosia.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	erosia.SetFrequency(0.01f);
+	erosia.SetFractalType(FastNoiseLite::FractalType_FBm);
+	erosia.SetFractalOctaves(3);
+	erosia.SetFractalLacunarity(0.91f);
+	erosia.SetFractalGain(1.34f);
+	erosia.SetFractalWeightedStrength(4.64f);
+
+	FastNoiseLite picksAndValies(80085);
+	picksAndValies.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	picksAndValies.SetFrequency(0.01f);
+	picksAndValies.SetFractalType(FastNoiseLite::FractalType_FBm);
+	picksAndValies.SetFractalOctaves(4);
+	picksAndValies.SetFractalLacunarity(3.3f);
+	picksAndValies.SetFractalGain(1.01f);
+	picksAndValies.SetFractalWeightedStrength(2.060f);
+#endif
 	const int height = maxH - minH;
 	const int dirtSize = 5;
 	for (int i = 0; i < chunkW; i++)
@@ -439,7 +458,19 @@ void Chunk::generateTeren()
 			float x = i + this->x * chunkW;
 			float z = k + this->z * chunkT;
 
-			float tereinV = noise.getNoise(x, z);
+#ifdef Laby
+			float tereinV = (noise.getNoise(x, z) + noise2.getNoise(x, z) / 4) * 4.0f / 5.0f;
+#endif // Laby
+#ifndef Laby
+			float t = getValueTerein(terrain.GetNoise(x, z)) + 1;
+			float e = getValueTerein(erosia.GetNoise(x, z));
+			float pv = getValueTerein(picksAndValies.GetNoise(x, z));
+			float tereinV = (t / 2 + e / 3 + pv / 6);
+#endif // !Laby
+
+
+
+
 			int h = minH + tereinV * height;
 			if (h <= 2)
 				h = 2;
@@ -480,9 +511,6 @@ void Chunk::generateTeren()
 
 		}
 
-	for (int i = 0; i < chunkW; i++)
-		delete tab[i];
-	delete tab;
 }
 
 void Chunk::setFaceing()

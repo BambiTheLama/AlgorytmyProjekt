@@ -5,22 +5,21 @@
 class PerlinNoice
 {
 	int h, w;
-	float scalling = 1.0f;
+	float scalling = 2.0f;
 	float** seed2D;
 	float** noise;
 	float frq=0.3f;
 	int octavies = 8;
+
+	void newSeed(int seed);
+	void generateNoice2D();
 public:
 
 	PerlinNoice(int seed=2137);
 
-	PerlinNoice(int w, int h, int seed = 2137);
-
-	void newSeed(int seed);
+	PerlinNoice(int w, int h,int octavies,float scall,float frq, int seed = 2137);
 
 	~PerlinNoice();
-
-	void generateNoice2D();
 
 	float** getNoice2D() { return noise; }
 
