@@ -22,8 +22,10 @@
 								for (int k = 0; k < chunkT; k++)
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
+#ifdef Laby
 PerlinNoice Chunk::noise = PerlinNoice(5000, 5000, 5, 1, 0.3);
 PerlinNoice Chunk::noise2 = PerlinNoice(5000, 5000, 8, 2, 0.69, 75631);
+#endif
 Chunk::Chunk(int x, int y, int z)
 {
 	this->x = x;
@@ -395,7 +397,7 @@ void setNoiseSeed(int seed)
 		}
 }
 const float frq = 1.0f;
-
+#ifdef Laby
 float getValueTerein(int x, int z)
 {
 	int Six = 0;
@@ -419,6 +421,17 @@ float getValueTerein(int x, int z)
 	v = vd * (1.0f - zp) + vu * zp;
 	return (v + 1) / 2;
 }
+#endif
+#ifndef Laby
+float getValueTerein(float v)
+{
+	if (v <= -1.0f)
+		return -log(-v) / 6.0f - 1;
+	if (v >= 1.0f)
+		return log(v) / 6.0f + 1;
+	return powf(v, 3);
+}
+#endif
 
 void Chunk::generateTeren()
 {
@@ -465,7 +478,7 @@ void Chunk::generateTeren()
 			float t = getValueTerein(terrain.GetNoise(x, z)) + 1;
 			float e = getValueTerein(erosia.GetNoise(x, z));
 			float pv = getValueTerein(picksAndValies.GetNoise(x, z));
-			float tereinV = (t / 2 + e / 3 + pv / 6);
+			float tereinV = (t / 2 + e / 3 + pv / 18);
 #endif // !Laby
 
 

@@ -9,7 +9,7 @@
 #define minH 8
 #define maxH 200
 #define waterH 69
-#define Laby
+//#define Laby
 
 class Game;
 class VBO;
@@ -17,8 +17,10 @@ class VAO;
 class EBO;
 class Chunk
 {
+#ifdef Laby
 	static PerlinNoice noise;
 	static PerlinNoice noise2;
+#endif // Laby
 	int x, y, z;
 	Block* blocks[chunkH][chunkW][chunkT];
 	std::vector<Block*> toDelete;
