@@ -24,8 +24,8 @@ Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
 #ifdef Laby
 PerlinNoice Chunk::noise = PerlinNoice(5000, 5000, 5, 1, 0.3);
-PerlinNoice Chunk::noise2 = PerlinNoice(5000, 5000, 8, 2, 0.69, 75631);
-PerlinNoice Chunk::noiseRiver = PerlinNoice(6000, 6000, 5, 1, 0.5, 213241);
+PerlinNoice Chunk::noise2 = PerlinNoice(6200, 6200, 8, 2, 0.69, 75631);
+PerlinNoice Chunk::noiseRiver = PerlinNoice(6000, 6000, 6, 1, 0.51, 213769241);
 #endif
 Chunk::Chunk(int x, int y, int z)
 {
@@ -433,7 +433,24 @@ float getValueTerrain(float v)
 	return powf(v, 3);
 }
 #endif
+#ifdef Laby
+float Chunk::getNoiseValue(int x,int z)
+{
+	return  (noise.getNoise(x, z) + noise2.getNoise(x, z) / 4) * 4.0f / 5.0f;
+}
+int getTerrainHeight(float noise)
+{
+	return minH + noise * (maxH - minH);
+}
+bool isThisPointAtVec(glm::vec2 p, std::vector<glm::vec2> &points)
+{
+	for (auto po : points)
+		if (po.x == p.x && po.y == p.y)
+			return true;
+	return false;
+}
 
+#endif
 void Chunk::generateTeren()
 {
 #ifndef Laby
@@ -472,26 +489,24 @@ void Chunk::generateTeren()
 			float x = i + this->x * chunkW;
 			float z = k + this->z * chunkT;
 			bool river = false;
+			bool lake = false;
+			int lakeDeep = waterH;
 			int rivDeep;
 #ifdef Laby
-			float terrainV = (noise.getNoise(x, z) + noise2.getNoise(x, z) / 4) * 4.0f / 5.0f;
+			int h = getTerrainHeight(getNoiseValue(x, z));
+			///RIVER
 			float v = noiseRiver.getNoise(x, z);
 			river = 0.2385f < v&& 0.2675f > v;
-
 
 			rivDeep = 4 - (abs(0.25f - v) * 400);
 			if (rivDeep >= 3)
 				rivDeep = 3;
-			int h = minH + terrainV * height;
+
 			if (v > 0.18f && v < 0.32f && !river && h >= waterH)
 			{
-
 				h -= pow((7 - abs(0.25f - v) * 100) / 7.0f, 2) * (h - waterH) * 1.69f;
 				if (h < waterH-1)
 					h = waterH-1;
-
-				
-
 			}
 			if (river &&h>=waterH-1)
 			{
@@ -503,6 +518,52 @@ void Chunk::generateTeren()
 			{
 				river = false;
 			}
+
+			///LAKE
+			static const float lakeNoiseV = 0.90085f;
+			lake = lakeNoiseV < noiseRiver.getNoise(x, z);
+			if (lake && !river)
+			{
+				int minLakeH = h;
+				int pixels = 0;
+				std::vector<glm::vec2> posToCheck;
+				std::vector<glm::vec2> posChecked;
+				posToCheck.push_back(glm::vec2(x, z));
+				posChecked.push_back(glm::vec2(x, z));
+
+
+#define ifCorrectPointAdd(dx,dz)\
+					if (lakeNoiseV < noiseRiver.getNoise(p.x+dx, p.y+dz))\
+					{\
+						if (!isThisPointAtVec(glm::vec2(p.x + dx,p.y+dz), posChecked))\
+						{\
+							posToCheck.push_back(glm::vec2(p.x + dx, p.y+dz));\
+							posChecked.push_back(glm::vec2(p.x + dx, p.y+dz));\
+						}\
+					}\
+
+				while (posToCheck.size() > 0)
+				{
+					glm::vec2 p = posToCheck.back(); 
+					if (minLakeH > getTerrainHeight(getNoiseValue(p.x, p.y)))
+						minLakeH = getTerrainHeight(getNoiseValue(p.x, p.y));
+					posToCheck.pop_back();
+
+					ifCorrectPointAdd(1, 0);
+					ifCorrectPointAdd(-1, 0);
+					ifCorrectPointAdd(0, 1);
+					ifCorrectPointAdd(0, -1);
+				}
+
+				h = minLakeH - 1;
+				if (h < 0)
+					h = 0;
+				lakeDeep = h - abs((lakeNoiseV - noiseRiver.getNoise(x, z)) * 125.0f);
+				if (lakeDeep < 0)
+					lakeDeep = 0;
+			}
+
+
 #endif // Laby
 #ifndef Laby
 			float t = getValueTerrain(terrain.GetNoise(x, z)) + 1;
@@ -571,6 +632,16 @@ void Chunk::generateTeren()
 					blocks[j][i][k] = createBlock(11, i, j, k);
 
 				}
+			}
+			if (lake)
+			{
+				for (int j = lakeDeep; j <= h && j < chunkH; j++)
+				{
+					if (blocks[j][i][k])
+						delete blocks[j][i][k];
+					blocks[j][i][k] = createBlock(11, i, j, k);
+				}
+
 			}
 		}
 

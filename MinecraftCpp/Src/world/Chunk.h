@@ -70,6 +70,9 @@ public:
 	friend class Game;
 
 private:
+#ifdef Laby
+	float getNoiseValue(int x, int z);
+#endif
 	void genVerticesPos();
 	void generateTeren();
 	void setFaceing();
