@@ -483,17 +483,17 @@ void Chunk::generateTeren()
 			if (rivDeep >= 3)
 				rivDeep = 3;
 			int h = minH + terrainV * height;
-			if (v > 0.18f && v < 0.32f && !river)
+			if (v > 0.18f && v < 0.32f && !river && h >= waterH)
 			{
-				if (h > waterH)
-				{
-					h -= pow((7 - abs(0.25f - v) * 100) / 7.0f, 2) * (h - waterH)*1.69f;
-					if (h < waterH)
-						h = waterH;
-				}
+
+				h -= pow((7 - abs(0.25f - v) * 100) / 7.0f, 2) * (h - waterH) * 1.69f;
+				if (h < waterH-1)
+					h = waterH-1;
+
+				
 
 			}
-			if (river)
+			if (river &&h>=waterH-1)
 			{
 				h = waterH - rivDeep - 3; +(h - waterH) / 2.f;
 				if (h < 0)
