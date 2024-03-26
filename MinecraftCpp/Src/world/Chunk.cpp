@@ -399,7 +399,7 @@ void setNoiseSeed(int seed)
 }
 const float frq = 1.0f;
 #ifdef Laby
-float getValueTerein(int x, int z)
+float getValueTerrain(int x, int z)
 {
 	int Six = 0;
 	int Siz = 0;
@@ -424,7 +424,7 @@ float getValueTerein(int x, int z)
 }
 #endif
 #ifndef Laby
-float getValueTerein(float v)
+float getValueTerrain(float v)
 {
 	if (v <= -1.0f)
 		return -log(-v) / 6.0f - 1;
@@ -474,16 +474,30 @@ void Chunk::generateTeren()
 			bool river = false;
 			int rivDeep;
 #ifdef Laby
-			float tereinV = (noise.getNoise(x, z) + noise2.getNoise(x, z) / 4) * 4.0f / 5.0f;
+			float terrainV = (noise.getNoise(x, z) + noise2.getNoise(x, z) / 4) * 4.0f / 5.0f;
 			float v = noiseRiver.getNoise(x, z);
-			river = 0.238f < v&& 0.268f > v;
+			river = 0.2385f < v&& 0.2675f > v;
+
+
 			rivDeep = 4 - (abs(0.25f - v) * 400);
 			if (rivDeep >= 3)
 				rivDeep = 3;
-			int h = minH + tereinV * height;
-			if ( river)
+			int h = minH + terrainV * height;
+			if (v > 0.18f && v < 0.32f && !river)
 			{
-				h = waterH - rivDeep - 3 +(h-waterH)/1.3f;
+				if (h > waterH)
+				{
+					h -= pow((7 - abs(0.25f - v) * 100) / 7.0f, 2) * (h - waterH)*1.69f;
+					if (h < waterH)
+						h = waterH;
+				}
+
+			}
+			if (river)
+			{
+				h = waterH - rivDeep - 3; +(h - waterH) / 2.f;
+				if (h < 0)
+					h = 0;
 			}
 			else
 			{
@@ -491,11 +505,11 @@ void Chunk::generateTeren()
 			}
 #endif // Laby
 #ifndef Laby
-			float t = getValueTerein(terrain.GetNoise(x, z)) + 1;
-			float e = getValueTerein(erosia.GetNoise(x, z));
-			float pv = getValueTerein(picksAndValies.GetNoise(x, z));
-			float tereinV = (t / 2 + e / 3 + pv / 18);
-			int h = minH + tereinV * height;
+			float t = getValueTerrain(terrain.GetNoise(x, z)) + 1;
+			float e = getValueTerrain(erosia.GetNoise(x, z));
+			float pv = getValueTerrain(picksAndValies.GetNoise(x, z));
+			float terrainV = (t / 2 + e / 3 + pv / 18);
+			int h = minH + terrainV * height;
 #endif // !Laby
 
 
@@ -538,7 +552,7 @@ void Chunk::generateTeren()
 				blocks[j][i][k] = createBlock(11, i, j, k);
 
 			}
-			if (river)
+			if (river && h>waterH-1)
 			{
 				int start = h - rivDeep-3;
 				if (start < 0)

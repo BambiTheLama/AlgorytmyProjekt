@@ -1,6 +1,6 @@
 #version 330 core
 
-layout (location = 0) in uint data;
+layout (location = 0) in int data;
 
 uniform sampler2D tex0;
 uniform vec2 textSize;
