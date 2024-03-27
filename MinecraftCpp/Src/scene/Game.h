@@ -20,6 +20,7 @@ class Game :
     std::vector<Chunk*> toAdd;
     std::vector<Chunk*> toDelete;
     std::vector<Chunk*> toSave;
+    std::vector<Chunk*> toDraw;
     Camera *camera;
     GLFWwindow* window;
     Block* b = NULL;

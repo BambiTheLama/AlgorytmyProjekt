@@ -101,6 +101,23 @@ void Game::update(float deltaTime)
 	}
 	toDelete.clear();
 	toDeleteMutex.unlock();
+	toDraw.clear();
+	for (auto c : chunks)
+	{
+		toDraw.push_back(c);
+	}
+	for (int i = 0; i < toDraw.size(); i++)
+	{
+		for (int j = i; j < toDraw.size(); j++)
+		{
+			if (glm::distance(toDraw[i]->getPos(), camera->getPos()) < glm::distance(toDraw[j]->getPos(), camera->getPos()))
+			{
+				Chunk* c = toDraw[i];
+				toDraw[i] = toDraw[j];
+				toDraw[j] = c;
+			}
+		}
+	}
 	chunksMutex.unlock();
 
 }
@@ -108,15 +125,9 @@ void Game::update(float deltaTime)
 void Game::draw(Shader* s)
 {
 	chunksMutex.lock();
-	for (auto c : chunks)
+	for (auto c : toDraw)
 	{
-
 		c->draw(s);
-	}
-
-	if (b)
-	{
-		
 	}
 	chunksMutex.unlock();
 
