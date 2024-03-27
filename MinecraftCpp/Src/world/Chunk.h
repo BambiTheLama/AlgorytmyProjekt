@@ -9,7 +9,8 @@
 #define minH 8
 #define maxH 200
 #define waterH 69
-#define Laby
+//#define Laby
+#define noSave
 
 class Game;
 class VBO;
@@ -27,13 +28,16 @@ class Chunk
 	std::vector<Block*> toDelete;
 	std::vector<Block*> toAdd;
 	std::vector<Block*> toDraw;
-	VAO* vao = NULL;
-	VBO *vbo = NULL;
-	EBO *ebo = NULL;
-	std::vector<GLuint> vertices;
-	std::vector<glm::vec3> verticesV;
-	std::vector<glm::vec2> verticesT;
-	std::vector<GLuint> indexV;
+	VAO* vaoS = NULL;
+	VBO* vboS = NULL;
+	EBO* eboS = NULL;
+	VAO* vaoT = NULL;
+	VBO* vboT = NULL;
+	EBO* eboT = NULL;
+	std::vector<GLuint> verticesSolid;
+	std::vector<GLuint> indicesSolid;
+	std::vector<GLuint> verticesTrans;
+	std::vector<GLuint> indicesTrans;
 	static Game* game;
 	bool genVertices = false;
 	bool wasCleared = false;

@@ -9,8 +9,9 @@ class CubeBlock :
 	Cube* cube;
 	int textureFaces;
 	int textureX, textureY;
+	bool transparent;
 public:
-	CubeBlock(int ID, int x, int y, int z, int textureX = 0, int textureY = 0, int textureFaces = 1);
+	CubeBlock(int ID, int x, int y, int z, int textureX = 0, int textureY = 0, int textureFaces = 1, bool transparent = false);
 
 	~CubeBlock();
 
@@ -26,6 +27,6 @@ public:
 
 	virtual char faceToSetUp() { return toSetUp; }
 
-	virtual bool isTransparent() { return false; }
+	virtual bool isTransparent() { return transparent; }
 };
 

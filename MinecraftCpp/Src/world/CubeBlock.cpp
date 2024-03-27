@@ -1,12 +1,13 @@
 #include "CubeBlock.h"
 #include "../core/Engine.h"
 
-CubeBlock::CubeBlock(int ID, int x, int y, int z, int textureX, int textureY, int textureFaces) :Block(ID, x, y, z)
+CubeBlock::CubeBlock(int ID, int x, int y, int z, int textureX, int textureY, int textureFaces, bool transparent) :Block(ID, x, y, z)
 {
 	cube = new Cube();
 	this->textureFaces = textureFaces;
 	this->textureX = textureX;
 	this->textureY = textureY;
+	this->transparent = transparent;
 }
 
 CubeBlock::~CubeBlock()
@@ -33,7 +34,7 @@ std::vector<GLuint> CubeBlock::getVertex()
 
 std::vector<GLuint> CubeBlock::getIndex()
 {
-	return cube->getIndex();
+	return cube->getIndex(transparent);
 }
 GLuint CubeBlock::indexSize()
 {

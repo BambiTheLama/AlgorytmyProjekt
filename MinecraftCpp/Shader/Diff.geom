@@ -114,8 +114,8 @@ void debugMode()
 void main()
 {
 
-    //if(debug)
-    //    debugMode();
-    //else
+    if(debug)
+        debugMode();
+    else
         normalMode();
 }

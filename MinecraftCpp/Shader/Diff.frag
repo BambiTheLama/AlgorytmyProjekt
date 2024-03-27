@@ -13,7 +13,7 @@ uniform bool debug;
 uniform vec3 lightColor;
 
 
-vec4 direcLight()
+vec4 directLight()
 {
 	// ambient lighting
 	float ambient = 0.50f;
@@ -36,14 +36,15 @@ vec4 direcLight()
 
 void main()
 {
-	//if(debug)
-	//{
-	//	FragColor = vec4(1.0f);
-	//	return;
-	//}
+	if(debug)
+	{
+		FragColor = vec4(1.0f);
+		return;
+	}
 	if (texture(tex0, texCoord).a < 0.1)
 		discard;
 
-	FragColor = vec4(vec3(direcLight() * modelColor),1.0f);
+	//FragColor = vec4(vec3(direcLight() * modelColor),1.0f);
+	FragColor = vec4(vec3(directLight()),texture(tex0, texCoord).a);
 	//FragColor = texture(tex0, texCoord) * modelColor;
 }

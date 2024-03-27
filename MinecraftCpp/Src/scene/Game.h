@@ -24,7 +24,7 @@ class Game :
     GLFWwindow* window;
     Block* b = NULL;
     std::vector<glm::vec2> posToGenChunk;
-    int range = 10;
+    int range = 8;
     VAO *vao;
     VBO *vboPos;
     VBO *vboTex;
@@ -47,7 +47,7 @@ public:
 
     void setFaceing(int x,int y,int z,bool display, char face = 0b111111);
 
-    void setFaceing(Block* b,int x,int y,int z, bool display, char face = 0b111111);
+    void setFaceing(Block* b,int x,int y,int z, char face = 0b111111);
 
     void setGenVerticesFlagAt(int x, int y, int z);
 

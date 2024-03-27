@@ -16,7 +16,7 @@
 #include <math.h>
 
 
-#define noSave
+
 #define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
 							for (int i = 0; i < chunkW; i++)\
 								for (int k = 0; k < chunkT; k++)
@@ -41,19 +41,25 @@ Chunk::Chunk(int x, int y, int z)
 
 	genVerticesPos();
 	setFaceing();
-	indexV = std::vector<GLuint>();
+	indicesSolid = std::vector<GLuint>();
 
 }
 
 Chunk::~Chunk()
 {
 
-	if (vao)
-		delete vao;
-	if (ebo)
-		delete ebo;
-	if (vbo)
-		delete vbo;
+	if (vaoS)
+		delete vaoS;
+	if (eboS)
+		delete eboS;
+	if (vboS)
+		delete vboS;
+	if (vaoT)
+		delete vaoT;
+	if (eboT)
+		delete eboT;
+	if (vboT)
+		delete vboT;
 	if (wasCleared)
 		return;
 	forAllBlocks
@@ -65,23 +71,29 @@ Chunk::~Chunk()
 
 void Chunk::start()
 {
-	if (!vao)
-		vao = new VAO();
-	if (!vbo)
-		vbo = new VBO();
+	if (!vaoT)
+		vaoT = new VAO();
+	if (!vboT)
+		vboT = new VBO();
+	if (!eboT)
+		eboT = new EBO(indicesTrans);
+	if (!vaoS)
+		vaoS = new VAO();
+	if (!vboS)
+		vboS = new VBO();
+	if (!eboS)
+		eboS = new EBO(indicesSolid);
 
-	if (!ebo)
-		ebo = new EBO(indexV);
-
-	
-	verticesV.clear();
-	verticesT.clear();
-
-	vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(float), (void*)0);
-	vao->bind();
-	ebo->bind();
-	vao->unbind();
-	ebo->unbind();
+	vaoS->linkData(*vboS, 0, 1, GL_FLOAT, sizeof(float), (void*)0);
+	vaoS->bind();
+	eboS->bind();
+	vaoS->unbind();
+	eboS->unbind();
+	vaoT->linkData(*vboT, 0, 1, GL_FLOAT, sizeof(float), (void*)0);
+	vaoT->bind();
+	eboT->bind();
+	vaoT->unbind();
+	eboT->unbind();
 }
 
 void Chunk::update(float deltaTime)
@@ -91,7 +103,7 @@ void Chunk::update(float deltaTime)
 
 		if (b->faceToSetUp() <= 0)
 			continue;
-		game->setFaceing(b, x * chunkW, y * chunkH, z * chunkT, b->isTransparent(), b->faceToSetUp());
+		game->setFaceing(b, x * chunkW, y * chunkH, z * chunkT, b->faceToSetUp());
 
 	}
 
@@ -109,16 +121,19 @@ void Chunk::update(float deltaTime)
 		toDelete.clear();
 		toAdd.clear();
 		genVerticesPos();
-		vao->bind();
-		ebo->setNewVertices(indexV);
-		ebo->bind();
-		vbo->setNewVertices(vertices);
-		verticesV.clear();
-		verticesT.clear();
+		vaoS->bind();
+		eboS->setNewVertices(indicesSolid);
+		eboS->bind();
+		vboS->setNewVertices(verticesSolid);
+		vaoS->linkData(*vboS, 0, 1, GL_FLOAT, sizeof(GLuint), (void*)0);
+		vaoS->unbind();
 
-		vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(GLuint), (void*)0);
-
-		vao->unbind();
+		vaoT->bind();
+		eboT->setNewVertices(indicesTrans);
+		eboT->bind();
+		vboT->setNewVertices(verticesTrans);
+		vaoT->linkData(*vboT, 0, 1, GL_FLOAT, sizeof(GLuint), (void*)0);
+		vaoT->unbind();
 
 
 	}
@@ -128,18 +143,23 @@ void Chunk::update(float deltaTime)
 
 void Chunk::draw(Shader* s)
 {
-	if (indexV.size() > 0)
+	glm::mat4 model(1);
+	model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
+	s->setUniformMat4(model, "model");
+	if (indicesSolid.size() > 0)
 	{
-		glm::mat4 model(1);
-		model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
-		s->setUniformMat4(model, "model");
-		vao->bind();
-		ebo->bind();
-		glDrawElements(GL_TRIANGLES, indexV.size(), GL_UNSIGNED_INT, 0);
-		vao->unbind();
-		ebo->unbind();
+		vaoS->bind();
+		glDrawElements(GL_TRIANGLES, indicesSolid.size(), GL_UNSIGNED_INT, 0);
+		vaoS->unbind();
 	}
-
+	if (indicesTrans.size() > 0)
+	{
+		glDisable(GL_DEPTH_TEST);
+		vaoT->bind();
+		glDrawElements(GL_TRIANGLES, indicesTrans.size(), GL_UNSIGNED_INT, 0);
+		vaoT->unbind();
+		glEnable(GL_DEPTH_TEST);
+	}
 }
 
 Block* Chunk::getBlock(int x, int y, int z)
@@ -288,27 +308,38 @@ void Chunk::clearBlocks()
 
 void Chunk::genVerticesPos()
 {
-	indexV.clear();
-	vertices.clear();
-	GLuint lastIndex = 0;
+
+#define addVertices(indces,ver,lastIndex)  std::vector<GLuint> indexTmp = blocks[j][i][k]->getIndex();\
+	std::vector<GLuint> vertTmp = blocks[j][i][k]->getVertex();\
+	for (auto ind : indexTmp)\
+	{\
+		indces.push_back(ind + lastIndex);\
+	}\
+	lastIndex += blocks[j][i][k]->indexSize();\
+	ver.insert(ver.end(), vertTmp.begin(), vertTmp.end());
+
+
+	indicesSolid.clear();
+	indicesTrans.clear();
+	verticesSolid.clear();
+	verticesTrans.clear();
+
+	GLuint lastIndexSolid = 0;
+	GLuint lastIndexTrans = 0;
 	forAllBlocks
 	if (blocks[j][i][k])
 	{
 		if (blocks[j][i][k]->indexSize() <= 0)
 			continue;
-
-		std::vector<GLuint> indexTmp = blocks[j][i][k]->getIndex();
-
-		std::vector<GLuint> vertTmp = blocks[j][i][k]->getVertex();
-
-		for (auto ind : indexTmp)
+		if (blocks[j][i][k]->isTransparent())
 		{
-			indexV.push_back(ind + lastIndex);
+			addVertices(indicesTrans,verticesTrans,lastIndexTrans)
+		}
+		else
+		{
+			addVertices(indicesSolid, verticesSolid, lastIndexSolid)
 		}
 
-		lastIndex += blocks[j][i][k]->indexSize();
-
-		vertices.insert(vertices.end(), vertTmp.begin(), vertTmp.end());
 
 	}
 
@@ -491,7 +522,7 @@ void Chunk::generateTeren()
 			bool river = false;
 			bool lake = false;
 			int lakeDeep = waterH;
-			int rivDeep;
+			int rivDeep = 0;
 #ifdef Laby
 			int h = getTerrainHeight(getNoiseValue(x, z));
 			///RIVER
@@ -522,7 +553,7 @@ void Chunk::generateTeren()
 			///LAKE
 			static const float lakeNoiseV = 0.90085f;
 			lake = lakeNoiseV < noiseRiver.getNoise(x, z);
-			if (lake && !river)
+			if (lake && !river && h>=waterH)
 			{
 				int minLakeH = h;
 				int pixels = 0;
@@ -566,10 +597,10 @@ void Chunk::generateTeren()
 
 #endif // Laby
 #ifndef Laby
-			float t = getValueTerrain(terrain.GetNoise(x, z)) + 1;
+			float t = (getValueTerrain(terrain.GetNoise(x, z)) + 1)/2;
 			float e = getValueTerrain(erosia.GetNoise(x, z));
 			float pv = getValueTerrain(picksAndValies.GetNoise(x, z));
-			float terrainV = (t / 2 + e / 3 + pv / 18);
+			float terrainV = (t + e / 3 + pv / 18) * 18.0f / 25.0f;
 			int h = minH + terrainV * height;
 #endif // !Laby
 
@@ -649,46 +680,48 @@ void Chunk::generateTeren()
 
 void Chunk::setFaceing()
 {
+
 	forAllBlocks
 	{
 		if (!blocks[j][i][k])
 			continue;
 		const bool isTransparent = blocks[j][i][k]->isTransparent();
-		if (j - 1 > 0  && blocks[j - 1][i][k] &&
-			!blocks[j][i][k]->isTransparent() && !blocks[j - 1][i][k]->isTransparent())
+		bool trans;
+		if (j - 1 > 0  && blocks[j - 1][i][k])
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Down, isTransparent);
-			blocks[j - 1][i][k]->setOneFace((int)Faces::Up, isTransparent);
+			trans = blocks[j - 1][i][k]->isTransparent() != isTransparent;
+			blocks[j][i][k]->setOneFace((int)Faces::Down, trans); 
+			blocks[j - 1][i][k]->setOneFace((int)Faces::Up, trans);
 		}
-		if (j + 1 < chunkH  && blocks[j + 1][i][k] &&
-			!blocks[j][i][k]->isTransparent() && !blocks[j + 1][i][k]->isTransparent())
+		if (j + 1 < chunkH  && blocks[j + 1][i][k])
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Up, isTransparent);
-			blocks[j + 1][i][k]->setOneFace((int)Faces::Down, isTransparent);
+			trans = blocks[j + 1][i][k]->isTransparent() != isTransparent;
+			blocks[j][i][k]->setOneFace((int)Faces::Up, trans);
+			blocks[j + 1][i][k]->setOneFace((int)Faces::Down, trans);
 		}
-		if (i - 1 > 0  && blocks[j][i - 1][k] &&
-			!blocks[j][i][k]->isTransparent() && !blocks[j][i - 1][k]->isTransparent())
+		if (i - 1 > 0  && blocks[j][i - 1][k])
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Left, isTransparent);
-			blocks[j][i - 1][k]->setOneFace((int)Faces::Right, isTransparent);
+			trans = blocks[j][i - 1][k]->isTransparent() != isTransparent;
+			blocks[j][i][k]->setOneFace((int)Faces::Left, trans);
+			blocks[j][i - 1][k]->setOneFace((int)Faces::Right, trans);
 		}
-		if (i + 1 < chunkW  && blocks[j][i + 1][k] &&
-			!blocks[j][i][k]->isTransparent() && !blocks[j][i + 1][k]->isTransparent())
+		if (i + 1 < chunkW  && blocks[j][i + 1][k])
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Right, isTransparent);
-			blocks[j][i + 1][k]->setOneFace((int)Faces::Left, isTransparent);
+			trans = blocks[j][i + 1][k]->isTransparent() != isTransparent;
+			blocks[j][i][k]->setOneFace((int)Faces::Right, trans);
+			blocks[j][i + 1][k]->setOneFace((int)Faces::Left, trans);
 		}
-		if (k - 1 > 0  && blocks[j][i][k - 1] &&
-			!blocks[j][i][k]->isTransparent() && !blocks[j][i][k - 1]->isTransparent())
+		if (k - 1 > 0  && blocks[j][i][k - 1])
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Back, isTransparent);
-			blocks[j][i][k - 1]->setOneFace((int)Faces::Front, isTransparent);
+			trans = blocks[j][i][k - 1]->isTransparent() != isTransparent;
+			blocks[j][i][k]->setOneFace((int)Faces::Back, trans);
+			blocks[j][i][k - 1]->setOneFace((int)Faces::Front, trans);
 		}
-		if (k + 1 < chunkT  && blocks[j][i][k + 1] &&
-			!blocks[j][i][k]->isTransparent() && !blocks[j][i][k + 1]->isTransparent())
+		if (k + 1 < chunkT  && blocks[j][i][k + 1])
 		{
-			blocks[j][i][k]->setOneFace((int)Faces::Front, isTransparent);
-			blocks[j][i][k + 1]->setOneFace((int)Faces::Back, isTransparent);
+			trans = blocks[j][i][k + 1]->isTransparent() != isTransparent;
+			blocks[j][i][k]->setOneFace((int)Faces::Front, trans);
+			blocks[j][i][k + 1]->setOneFace((int)Faces::Back, trans);
 		}
 		if ((i == 0 || i == chunkW - 1 || j == 0 || j == chunkH - 1 || k == 0 || k == chunkT - 1))
 		{

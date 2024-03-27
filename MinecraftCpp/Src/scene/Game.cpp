@@ -164,16 +164,18 @@ void Game::setFaceing(int x, int y, int z, bool display, char face)
 	setGenVerticesFlagAt(x, y, z);
 }
 
-void Game::setFaceing(Block* b, int x, int y, int z, bool display, char face)
+void Game::setFaceing(Block* b, int x, int y, int z, char face)
 {
 	if (!b)
 		return;
 	Block* block;
+	bool display;
 	if (checkFace(Front, face))
 	{
 		block = getBlockAt(b->x + x, b->y + y, b->z + 1 + z);
 		if (block)
 		{
+			display = b->isTransparent() != block->isTransparent();
 			b->setOneFace((int)Faces::Front, display);
 			block->setOneFace((int)Faces::Back, display);
 			setGenVerticesFlagAt(b->x + x, b->y + y, b->z + 1 + z);
@@ -184,6 +186,7 @@ void Game::setFaceing(Block* b, int x, int y, int z, bool display, char face)
 		block = getBlockAt(b->x + x, b->y + y, b->z - 1 + z);
 		if (block)
 		{
+			display = b->isTransparent() != block->isTransparent();
 			block->setOneFace((int)Faces::Front, display);
 			b->setOneFace((int)Faces::Back, display);
 			setGenVerticesFlagAt(b->x + x, b->y + y, b->z - 1 + z);
@@ -194,6 +197,7 @@ void Game::setFaceing(Block* b, int x, int y, int z, bool display, char face)
 		block = getBlockAt(b->x + x, b->y + y + 1, b->z  + z);
 		if (block)
 		{
+			display = b->isTransparent() != block->isTransparent();
 			b->setOneFace((int)Faces::Up, display);
 			block->setOneFace((int)Faces::Down, display);
 			setGenVerticesFlagAt(b->x + x, b->y + y + 1, b->z + z);
@@ -204,6 +208,7 @@ void Game::setFaceing(Block* b, int x, int y, int z, bool display, char face)
 		block = getBlockAt(b->x + x, b->y + y - 1, b->z + z);
 		if (block)
 		{
+			display = b->isTransparent() != block->isTransparent();
 			block->setOneFace((int)Faces::Up, display);
 			b->setOneFace((int)Faces::Down, display);
 			setGenVerticesFlagAt(b->x + x, b->y + y - 1, b->z + z);
@@ -214,6 +219,7 @@ void Game::setFaceing(Block* b, int x, int y, int z, bool display, char face)
 		block = getBlockAt(b->x + x - 1, b->y + y , b->z + z);
 		if (block)
 		{
+			display = b->isTransparent() != block->isTransparent();
 			b->setOneFace((int)Faces::Left, display);
 			block->setOneFace((int)Faces::Right, display);
 			setGenVerticesFlagAt(b->x + x - 1, b->y + y, b->z + z);
@@ -224,6 +230,7 @@ void Game::setFaceing(Block* b, int x, int y, int z, bool display, char face)
 		block = getBlockAt(b->x + x + 1, b->y + y, b->z + z);
 		if (block)
 		{
+			display = b->isTransparent() != block->isTransparent();
 			block->setOneFace((int)Faces::Left, display);
 			b->setOneFace((int)Faces::Right, display);
 			setGenVerticesFlagAt(b->x + x + 1, b->y + y, b->z + z);
@@ -245,14 +252,15 @@ void Game::setGenVerticesFlagAt(int x, int y, int z)
 
 void Game::worldGenerateFun()
 {
-	glm::vec3 camPos = camera->getPos();
+	glm::vec3 camPos = glm::vec3(0.0f);
 	while (gameRunning)
 	{
-		//if (camPos != camera->getPos()|| posToGenChunk.size()>0)
+		if (camPos != camera->getPos()|| posToGenChunk.size()>0)
 		{
+			camPos = camera->getPos();
 			genWorld();
 		}
-		camPos = camera->getPos();
+
 
 	}
 }
@@ -354,7 +362,7 @@ void Game::desWorld()
 	for (auto c : toSave)
 	{
 		glm::vec3 cPos = c->getLocation();
-		if (glm::distance(glm::vec2(camPos.x, camPos.z), glm::vec2(cPos.x, cPos.z)) > range * 1.1f)
+		if (glm::distance(glm::vec2(camPos.x, camPos.z), glm::vec2(cPos.x, cPos.z)) > range * 1.25f)
 		{
 			bool addToDelete = true;
 			for (auto d : toDelete)

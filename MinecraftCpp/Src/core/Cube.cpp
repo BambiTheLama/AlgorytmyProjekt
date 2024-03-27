@@ -154,14 +154,14 @@ std::vector<glm::vec2> Cube::getVertexTexture(int textureSides)
 	return textPos;
 }
 
-std::vector<GLuint> Cube::getIndex()
+std::vector<GLuint> Cube::getIndex(bool doubleSides)
 {
 #define addIndicesOrder1 index.push_back(startIndex + 0);index.push_back(startIndex + 2);\
 						 index.push_back(startIndex + 1);index.push_back(startIndex + 1);\
-						 index.push_back(startIndex + 2);index.push_back(startIndex + 3);startIndex += 4;
+						 index.push_back(startIndex + 2);index.push_back(startIndex + 3);
 #define addIndicesOrder2 index.push_back(startIndex + 0);index.push_back(startIndex + 1);\
 						 index.push_back(startIndex + 2);index.push_back(startIndex + 1);\
-						 index.push_back(startIndex + 3);index.push_back(startIndex + 2);startIndex += 4;
+						 index.push_back(startIndex + 3);index.push_back(startIndex + 2);
 
 	std::vector<GLuint> index;
 	if (face <= 0)
@@ -170,32 +170,63 @@ std::vector<GLuint> Cube::getIndex()
 
 	if (checkFace(Front, face))
 	{
+		if (doubleSides)
+		{
+			addIndicesOrder2
+		}
 		addIndicesOrder1
+		startIndex += 4;
 	}
 	if (checkFace(Back, face))
 	{
+		if (doubleSides)
+		{
+			addIndicesOrder1
+		}
 		addIndicesOrder2
+		startIndex += 4;
 	}
 	if (checkFace(Left, face))
 	{
+		if (doubleSides)
+		{
+			addIndicesOrder2
+		}
 		addIndicesOrder1
+
+		startIndex += 4;
 	}
 	if (checkFace(Right, face))
 	{
+		if (doubleSides)
+		{
+			addIndicesOrder1
+		}
 		addIndicesOrder2
+		startIndex += 4;
 	}
 	if (checkFace(Up, face))
 	{
+		if (doubleSides)
+		{
+			addIndicesOrder1
+		}
 		addIndicesOrder2
+		startIndex += 4;
 	}
 	if (checkFace(Down, face))
 	{
+		if (doubleSides)
+		{
+			addIndicesOrder2
+		}
 		addIndicesOrder1
+		startIndex += 4;
 	}
 	return index;
 }
 
-std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int textX, int textY)
+std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int textX, int textY, bool doubleSides)
 {
 	std::vector<glm::vec2> text = getVertexTexture(textureSides);
 	std::vector<glm::vec3> pos = getVertexPos();

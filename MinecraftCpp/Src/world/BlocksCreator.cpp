@@ -30,8 +30,8 @@ Block* createBlock(int i,int x,int y,int z)
 	case 10:
 		return new CubeBlock(i, x, y, z, 2, 4, 2);
 
-	case 11:
-		return new CubeBlock(i, x, y, z, 4, 0, 1);
+	case 11:///WATER
+		return new CubeBlock(i, x, y, z, 4, 0, 1,true);
 
 
 	default:
