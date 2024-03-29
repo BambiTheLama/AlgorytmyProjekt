@@ -22,15 +22,19 @@ void Camera::useCamera(Shader& shader, const char* uniform)
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
 
-
+	view = glm::lookAt(cameraPos, cameraPos + cameraOrientation, up);
 	if (useProjection)
 	{
-		view = glm::lookAt(cameraPos, cameraPos + cameraOrientation, up);
+
 		projection = glm::perspective(glm::radians(cameraAngleDeg), cameraWidth / cameraHeight, nearest, farest);
 
 	}
 	else
-		projection = glm::ortho(0.0f, cameraWidth, 0.0f, cameraHeight, nearest, farest);
+	{
+		const float div = 6;
+		projection = glm::ortho(-cameraWidth / div, cameraWidth / div, -cameraHeight / div, cameraHeight / div, -farest*2, farest*2);
+	}
+
 	shader.setUniformMat4(projection * view, uniform);
 }
 
@@ -87,7 +91,7 @@ void Camera::update(GLFWwindow* window, float deltaTime)
 		speed = minSpeed;
 	}
 
-	useProjection = glfwGetKey(window, GLFW_KEY_TAB) != GLFW_PRESS;
+	useProjection = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) != GLFW_PRESS;
 
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
