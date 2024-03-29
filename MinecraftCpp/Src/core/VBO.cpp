@@ -37,6 +37,11 @@ void VBO::setNewVertices(std::vector<glm::vec2>& vertices)
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec2), vertices.data(), GL_DYNAMIC_DRAW);
 }
+void VBO::setNewVertices(std::vector<glm::vec4>& vertices)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, ID);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec4), vertices.data(), GL_DYNAMIC_DRAW);
+}
 
 void VBO::setNewVertices(std::vector<int>& vertices)
 {

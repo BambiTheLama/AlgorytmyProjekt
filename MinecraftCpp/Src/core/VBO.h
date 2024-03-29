@@ -15,6 +15,8 @@ public:
 
 	void setNewVertices(GLfloat* vertices, GLsizeiptr size);
 
+	void setNewVertices(std::vector<glm::vec4>& vertices);
+
 	void setNewVertices(std::vector<glm::vec3>& vertices);
 
 	void setNewVertices(std::vector<glm::vec2>& vertices);

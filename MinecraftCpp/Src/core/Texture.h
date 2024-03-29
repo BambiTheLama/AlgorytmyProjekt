@@ -42,5 +42,7 @@ private:
 
 	void copyData(Texture& texture);
 
+
+
 };
 

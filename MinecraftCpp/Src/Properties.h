@@ -1,4 +1,4 @@
 #pragma once
 //#define DebugInfoMode
-//#define DebugFailMode
-//#define DebugErrorMode
+#define DebugFailMode
+#define DebugErrorMode

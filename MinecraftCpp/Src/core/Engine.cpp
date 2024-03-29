@@ -22,6 +22,12 @@ static Texture* blocks = NULL;
 static Texture* blocksH = NULL;
 static Texture* blocksN = NULL;
 
+void reside(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+
+}
+
 Engine::Engine()
 {
 	height = 900;
@@ -44,7 +50,7 @@ Engine::Engine()
 	}
 
 	glfwMakeContextCurrent(window);
-
+	glfwSetFramebufferSizeCallback(window, reside);
 	gladLoadGL();
 	glViewport(0, 0, width, height);
 
@@ -63,6 +69,7 @@ Engine::Engine()
 	blocksH = new Texture("Res/BlocksH.png", GL_TEXTURE_2D, 1, GL_RGB, GL_UNSIGNED_BYTE);
 	blocksN = new Texture("Res/BlocksN.png", GL_TEXTURE_2D, 2, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGB);
 	Font::setUpFonts();
+	Font::setScreanSize(width, height);
 	shader->active();
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	shader->setUniformMat4(modelMat, "model");
@@ -72,6 +79,7 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+	Font::freeFonts();
 	Texture::clearAllTextures();
 	delete camera;
 	delete shader;
@@ -85,9 +93,10 @@ Engine::~Engine()
 void Engine::start()
 {
 	float lastTime = glfwGetTime();	
-	
+	Font f("Res/ComicStans.ttf");
 	Game* game = new Game(camera,window);
-
+	std::string fps;
+	float changeText = 0.0;
 	game->start();
 	while (!glfwWindowShouldClose(window))
 	{
@@ -99,7 +108,13 @@ void Engine::start()
 		float currentTime = glfwGetTime();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
-		glfwSetWindowTitle(window, std::string(title + " :" + std::to_string(1.0f / deltaTime)+" FPS").c_str());
+		changeText -= deltaTime;
+		if (changeText <= 0)
+		{
+			fps = std::string(std::to_string((int)(1.0f / deltaTime)) + " FPS");
+			changeText = 0.05f;
+		}
+
 		camera->update(window, deltaTime);
 		game->update(deltaTime);
 		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
@@ -124,8 +139,12 @@ void Engine::start()
 			shader->setUniformI1(false, "debug");
 		game->draw(shader);		
 		endShaderMode();
+		Font::setScreanSize(width, height);
+		glDisable(GL_DEPTH_TEST);
+		glCullFace(GL_FRONT);
+		f.drawText(fps, 0, 0, 1, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		glEnable(GL_DEPTH_TEST);
 		glfwSwapBuffers(window);
-
 		glfwPollEvents();
 
 	}

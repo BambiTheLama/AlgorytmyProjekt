@@ -5,6 +5,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #include "../Properties.h"
+#include "glm/gtc/matrix_transform.hpp"
 
 std::vector<Texture*> Texture::textures;
 
@@ -140,3 +141,6 @@ void Texture::deleteTexture()
 	}
 	textures.erase(textures.begin() + i);
 }
+
+
+
