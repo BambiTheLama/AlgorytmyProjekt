@@ -30,9 +30,8 @@ void Camera::useCamera(Shader& shader, const char* uniform)
 
 	}
 	else
-		projection = glm::ortho(0.0f, cameraWidth  , 0.0f, cameraHeight);
-	glUniformMatrix4fv(shader.getUniformLocation(uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
-
+		projection = glm::ortho(0.0f, cameraWidth, 0.0f, cameraHeight, nearest, farest);
+	shader.setUniformMat4(projection * view, uniform);
 }
 
 void Camera::updatePos(glm::vec3 pos)
@@ -87,6 +86,9 @@ void Camera::update(GLFWwindow* window, float deltaTime)
 	{
 		speed = minSpeed;
 	}
+
+	useProjection = glfwGetKey(window, GLFW_KEY_TAB) != GLFW_PRESS;
+
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{

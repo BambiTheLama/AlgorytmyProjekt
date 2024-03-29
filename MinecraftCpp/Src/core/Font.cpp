@@ -99,23 +99,100 @@ Font::~Font()
 
 }
 
-
+int getValueFromText(std::string text, int begin, int end)
+{
+    int v = 0;
+    for (int i = begin; i < end && i < text.size(); i++)
+    {
+        if (text[i] >= '0' && text[i] <= '9')
+        {
+            v = v * 10 + text[i] - '0';
+        }
+        if (text[i] == ',' || text[i] == '.' || text[i] == ' ' || text[i] == '}')
+            return v;
+    }
+    return v;
+}
+int getValueStartPos(std::string text, int begin, int end)
+{
+    for (int i = begin; i < end && i < text.size(); i++)
+    {
+        if (text[i] >= '0' && text[i] <= '9')
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+int getSeparatorStartPos(std::string text, int begin, int end)
+{
+    for (int i = begin; i < end && i < text.size(); i++)
+    {
+        if (text[i] == ',' || text[i] == '.')
+        {
+            return i;
+        }
+    }
+    return -1;
+}
 void Font::drawText(std::string text, int x, int y,int size, glm::vec4 color)
 {
     shader->active();
     shader->setUniformMat4(projection, "projection");
-    shader->setUniformVec3(glm::vec3(color), "textColor");
+    shader->setUniformVec4(color, "textColor");
 
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
+    int dx = x;
 
-    // iterate through all characters
-    std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++)
+    for (int i = 0; i < text.size(); i++)
     {
-        Character ch = Characters[*c];
 
-        float xpos = x + ch.Bearing.x * size;
+        Character ch = Characters[text[i]];
+        if (text[i] == '\n')
+        {
+            dx = x;
+            y -= ch.Size.y * size * 1.5f;
+            continue;
+        }
+        if (text[i] == '{')
+        {
+            int end = -1;
+            for (int j = i + 1; j < text.size(); j++)
+            {
+                if (text[j] == '}')
+                {
+                    end = j;
+                    break;
+                }
+            }
+            if (text[i + 1] == 'c')
+            {
+                int startPos = getValueStartPos(text, i, end);
+                int seperatorPos = getSeparatorStartPos(text, i, end);
+                int r = getValueFromText(text, startPos, end);
+                startPos = getValueStartPos(text, seperatorPos, end);
+                seperatorPos = getSeparatorStartPos(text, startPos, end);
+                int g = getValueFromText(text, startPos, end);
+                startPos = getValueStartPos(text, seperatorPos, end);
+                seperatorPos = getSeparatorStartPos(text, startPos, end);
+                int b = getValueFromText(text, startPos, end);
+                startPos = getValueStartPos(text, seperatorPos, end);
+                seperatorPos = getSeparatorStartPos(text, startPos, end);
+                int a = getValueFromText(text, startPos, end);
+                if (a <= 0)
+                    a = 255;
+                color.r = r / 255.f;
+                color.g = g / 255.f;
+                color.b = b / 255.f;
+                color.a = a / 255.0f;
+                shader->setUniformVec4(color, "textColor");
+                i = end;
+                continue;
+            }
+        }
+
+        float xpos = dx + ch.Bearing.x * size;
         float ypos = y - (ch.Size.y - ch.Bearing.y) * size;
 
         float w = ch.Size.x * size;
@@ -140,7 +217,7 @@ void Font::drawText(std::string text, int x, int y,int size, glm::vec4 color)
         // render quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
         // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x += (ch.Advance >> 6) * size; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+        dx += (ch.Advance >> 6) * size; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -174,5 +251,5 @@ void Font::setScreanSize(float w, float h)
 {
     if (!shader)
         return;
-    projection = glm::ortho(0.0f, w, 0.0f, h);
+    projection = glm::ortho(0.0f, w, 0.0f, h, -1.0f, 1.0f);
 }
