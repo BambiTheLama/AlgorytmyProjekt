@@ -152,7 +152,7 @@ void Font::drawText(std::string text, int x, int y,int size, glm::vec4 color)
         if (text[i] == '\n')
         {
             dx = x;
-            y -= ch.Size.y * size * 1.5f;
+            y += ch.Size.y * size * 1.5f;
             continue;
         }
         if (text[i] == '{')
@@ -193,19 +193,21 @@ void Font::drawText(std::string text, int x, int y,int size, glm::vec4 color)
         }
 
         float xpos = dx + ch.Bearing.x * size;
-        float ypos = y - (ch.Size.y - ch.Bearing.y) * size;
+        float ypos = y + (ch.Size.y - ch.Bearing.y) * size;
 
         float w = ch.Size.x * size;
         float h = ch.Size.y * size;
         // update VBO for each character
         float vertices[6][4] = {
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos,     ypos,       0.0f, 1.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos,     ypos + h,   0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 0.0f },
+            { xpos,     ypos,       0.0f, 0.0f },
 
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-            { xpos + w, ypos + h,   1.0f, 0.0f }
+
+            { xpos,     ypos + h,   0.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 0.0f },
+
         };
         // render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
@@ -251,5 +253,5 @@ void Font::setScreanSize(float w, float h)
 {
     if (!shader)
         return;
-    projection = glm::ortho(0.0f, w, 0.0f, h, -1.0f, 1.0f);
+    projection = glm::ortho(0.0f, w,  h, 0.0f, -1.0f, 1.0f);
 }

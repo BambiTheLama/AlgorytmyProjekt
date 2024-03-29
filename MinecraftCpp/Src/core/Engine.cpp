@@ -117,7 +117,7 @@ void Engine::start()
 			for (auto t : times)
 				dt += t;
 			dt /= times.size();
-			fps = std::string(std::to_string((int)(1.0f / dt)) + " FPS");
+			fps = std::string(std::to_string((int)(1.0f / dt)) + " FPS\nFPS");
 			changeText = 0.2137f;
 			times.clear();
 		}
@@ -149,8 +149,7 @@ void Engine::start()
 		Font::setScreanSize(width, height);
 		glDisable(GL_DEPTH_TEST);
 		glCullFace(GL_FRONT);
-		f.drawText(fps, 0, 200, 1, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-
+		f.drawText(fps, 0, 0, 1, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		glEnable(GL_DEPTH_TEST);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
