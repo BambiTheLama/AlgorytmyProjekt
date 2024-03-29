@@ -96,6 +96,7 @@ void Engine::start()
 	Font f("Res/ComicStans.ttf");
 	Game* game = new Game(camera,window);
 	std::string fps;
+	std::vector<float> times;
 	float changeText = 0.0;
 	game->start();
 	while (!glfwWindowShouldClose(window))
@@ -109,10 +110,16 @@ void Engine::start()
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 		changeText -= deltaTime;
+		times.push_back(deltaTime);
 		if (changeText <= 0)
 		{
-			fps = std::string(std::to_string((int)(1.0f / deltaTime)) + " FPS");
-			changeText = 0.05f;
+			float dt = 0;
+			for (auto t : times)
+				dt += t;
+			dt /= times.size();
+			fps = std::string(std::to_string((int)(1.0f / dt)) + " FPS");
+			changeText = 0.2137f;
+			times.clear();
 		}
 
 		camera->update(window, deltaTime);
