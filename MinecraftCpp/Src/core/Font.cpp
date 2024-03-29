@@ -14,13 +14,13 @@ static glm::mat4 projection;
 static Shader* shader = NULL;
 static unsigned int VAO, VBO;
 
-Font::Font():Font("Res/ComicStans.ttf")
+Font::Font():Font("Res/ComicStans.ttf",32)
 {
 
 
 }
 
-Font::Font(const char* path)
+Font::Font(const char* path, int size)
 {
     FT_Library ft;
     // All functions return a value different than 0 whenever an error occurred
@@ -40,7 +40,7 @@ Font::Font(const char* path)
     }
     else {
         // set size to load glyphs as
-        FT_Set_Pixel_Sizes(face, 0, 64);
+        FT_Set_Pixel_Sizes(face, 0, size);
 
         // disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -89,6 +89,7 @@ Font::Font(const char* path)
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 }
+
 Font::~Font()
 {
 
@@ -98,6 +99,9 @@ Font::~Font()
     }
 
 }
+
+
+
 
 int getValueFromText(std::string text, int begin, int end)
 {
@@ -225,6 +229,54 @@ void Font::drawText(std::string text, int x, int y,int size, glm::vec4 color)
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+glm::vec2 Font::textSize(std::string text, int size)
+{
+    int maxX = 0;
+    int maxY = 0;
+    int x = 0;
+    int y = 0;
+    for (int i = 0; i < text.size(); i++)
+    {
+
+        Character ch = Characters[text[i]];
+        if (text[i] == '\n')
+        {
+            x = 0;
+            y += ch.Size.y * size * 1.5f;
+            continue;
+        }
+        if (text[i] == '{')
+        {
+            int end = -1;
+            for (int j = i + 1; j < text.size(); j++)
+            {
+                if (text[j] == '}')
+                {
+                    end = j;
+                    break;
+                }
+            }
+            if (text[i + 1] == 'c')
+            {
+                i = end;
+                continue;
+            }
+        }
+
+        float xpos = x + ch.Bearing.x * size;
+        float ypos = y + (ch.Size.y - ch.Bearing.y) * size;
+
+        float w = ch.Size.x * size;
+        float h = ch.Size.y * size;
+        if (x + w > maxX)
+            maxX = x + w;
+        if (y + h > maxY)
+            maxY = y + h;
+
+        x += (ch.Advance >> 6) * size;
+    }
+    return glm::vec2(maxX, maxY);
+}
 
 void Font::freeFonts()
 {

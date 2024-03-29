@@ -24,11 +24,13 @@ class Font
 public:
 	Font();
 
-	Font(const char* path);
+	Font(const char* path, int size = 32);
 
 	~Font();
 
 	void drawText(std::string text, int x, int y, int size, glm::vec4 color);
+
+	glm::vec2 textSize(std::string text, int size);
 
 	friend class Engine;
 

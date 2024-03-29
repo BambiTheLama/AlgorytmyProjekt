@@ -150,6 +150,8 @@ void Engine::start()
 		glDisable(GL_DEPTH_TEST);
 		glCullFace(GL_FRONT);
 		f.drawText(fps, 0, 0, 1, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		glm::vec2 pos = f.textSize(fps, 1);
+		f.drawText(fps, pos.x, pos.y, 1, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
 		glEnable(GL_DEPTH_TEST);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
