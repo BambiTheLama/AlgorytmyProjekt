@@ -9,7 +9,6 @@ in vec2 texCoord;
 in vec3 currentPos;
 in vec3 lightV;
 in vec3 cameraV;
-uniform bool debug;
 uniform vec3 lightColor;
 
 
@@ -36,11 +35,7 @@ vec4 directLight()
 
 void main()
 {
-	if(debug)
-	{
-		FragColor = vec4(1.0f);
-		return;
-	}
+
 	if (texture(tex0, texCoord).a < 0.1)
 		discard;
 

@@ -7,7 +7,6 @@ uniform vec2 textSize;
 uniform vec4 modelColor;
 uniform mat4 camera;
 uniform mat4 model;
-uniform bool debug;
 
 out vec2 textPos;
 

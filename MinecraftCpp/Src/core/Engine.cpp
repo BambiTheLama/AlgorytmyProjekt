@@ -141,9 +141,9 @@ void Engine::start()
 		shader->setUniformMat4(model,"model");
 
 		if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
-			shader->setUniformI1(true, "debug");
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
-			shader->setUniformI1(false, "debug");
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		game->draw(shader);		
 		endShaderMode();
 		Font::setScreanSize(width, height);
