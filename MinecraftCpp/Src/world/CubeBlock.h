@@ -19,9 +19,9 @@ public:
 
 	virtual void setOneFace(int face, bool state = true);
 
-	std::vector<GLuint> getVertex();
+	virtual std::vector<GLuint> getVertex();
 
-	std::vector<GLuint> getIndex();
+	virtual std::vector<GLuint> getIndex();
 
 	GLuint indexSize();
 

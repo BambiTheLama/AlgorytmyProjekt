@@ -154,11 +154,17 @@ void Chunk::draw(Shader* s)
 	}
 	if (indicesTrans.size() > 0)
 	{
-		glDisable(GL_DEPTH_TEST);
+		glDepthFunc(GL_EQUAL);
+
+		s->setUniformMat4(model, "model");
+		//glDisable(GL_DEPTH_TEST);
 		vaoT->bind();
 		glDrawElements(GL_TRIANGLES, indicesTrans.size(), GL_UNSIGNED_INT, 0);
+
+		//glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+		glDrawElements(GL_TRIANGLES, indicesTrans.size(), GL_UNSIGNED_INT, 0);
 		vaoT->unbind();
-		glEnable(GL_DEPTH_TEST);
 	}
 }
 
@@ -511,6 +517,15 @@ void Chunk::generateTeren()
 	picksAndValies.SetFractalLacunarity(3.3f);
 	picksAndValies.SetFractalGain(1.01f);
 	picksAndValies.SetFractalWeightedStrength(2.060f);
+
+	FastNoiseLite riverNoise(80085);
+	riverNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	riverNoise.SetFrequency(0.001f);
+	riverNoise.SetFractalType(FastNoiseLite::FractalType_Ridged);
+	riverNoise.SetFractalOctaves(1);
+	riverNoise.SetFractalLacunarity(1.7f);
+	riverNoise.SetFractalGain(0.53f);
+	riverNoise.SetFractalWeightedStrength(0.000f);
 #endif
 	const int height = maxH - minH;
 	const int dirtSize = 5;
@@ -602,6 +617,33 @@ void Chunk::generateTeren()
 			float pv = getValueTerrain(picksAndValies.GetNoise(x, z));
 			float terrainV = (t + e / 3 + pv / 18) * 18.0f / 25.0f;
 			int h = minH + terrainV * height;
+
+
+			///RIVER
+			float v = riverNoise.GetNoise(x, z);
+			river = 0.90f < v;
+			///RIVER WATER
+			rivDeep = (abs(0.90f - v) * 10.0f) * 6;
+			if (rivDeep >= 6)
+				rivDeep = 6;
+			///RIVER SAND
+			if (v > 0.70f && !river && h >= waterH)
+			{
+				h = pow(1.0f-abs(0.70f - v) * 5, 2) * (h - waterH)+waterH;
+				if (h <= waterH-1)
+					h = waterH ;
+			}
+			///RIVER WATER LEVEL
+			if (river && h > waterH)
+			{
+				h = waterH - rivDeep;
+				if (h < 0)
+					h = 0;
+			}
+			else
+			{
+				river = false;
+			}
 #endif // !Laby
 
 
@@ -644,12 +686,12 @@ void Chunk::generateTeren()
 				blocks[j][i][k] = createBlock(11, i, j, k);
 
 			}
-			if (river && h>waterH-1)
+			if (river && h>waterH)
 			{
 				int start = h - rivDeep-3;
 				if (start < 0)
 					start = 0;
-				for (int j = start; j < h-rivDeep && j < chunkH; j++)
+				for (int j = start; j < h - rivDeep && j < chunkH; j++)
 				{
 					if (blocks[j][i][k])
 						delete blocks[j][i][k];

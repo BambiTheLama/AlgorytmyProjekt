@@ -266,11 +266,12 @@ void Game::worldGenerateFun()
 	glm::vec3 camPos = glm::vec3(0.0f);
 	while (gameRunning)
 	{
-		if (camPos != camera->getPos()|| posToGenChunk.size()>0)
+		if (camPos != camera->getPos() || posToGenChunk.size() > 0)
 		{
-			camPos = camera->getPos();
 			genWorld();
 		}
+		else if (posToGenChunk.size() <= 0)
+			camPos = camera->getPos();
 
 
 	}
@@ -373,7 +374,7 @@ void Game::desWorld()
 	for (auto c : toSave)
 	{
 		glm::vec3 cPos = c->getLocation();
-		if (glm::distance(glm::vec2(camPos.x, camPos.z), glm::vec2(cPos.x, cPos.z)) > range * 1.25f)
+		if (glm::distance(glm::vec2(camPos.x, camPos.z), glm::vec2(cPos.x, cPos.z)) > range * 1.5f)
 		{
 			bool addToDelete = true;
 			for (auto d : toDelete)

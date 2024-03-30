@@ -7,7 +7,7 @@
 #define chunkH 255
 #define chunkT 15
 #define minH 8
-#define maxH 200
+#define maxH 255
 #define waterH 69
 //#define Laby
 #define noSave
