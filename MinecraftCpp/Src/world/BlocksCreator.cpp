@@ -1,5 +1,6 @@
 #include "BlocksCreator.h"
 #include "CubeBlock.h"
+#include "Plant.h"
 
 Block* createBlock(int i,int x,int y,int z)
 {
@@ -20,18 +21,24 @@ Block* createBlock(int i,int x,int y,int z)
 	case 5:///Wood 1
 		return new CubeBlock(i, x, y, z, 0, 2, 2);
 	case 6:
-		return new CubeBlock(i, x, y, z, 2, 2, 2);
+		return new CubeBlock(i, x, y, z, 2, 2, 1, true);
 	case 7:///Wood 2
 		return new CubeBlock(i, x, y, z, 0, 3, 2);
 	case 8:
-		return new CubeBlock(i, x, y, z, 2, 3, 2);
+		return new CubeBlock(i, x, y, z, 2, 3, 1, true);
 	case 9:///Wood 3
 		return new CubeBlock(i, x, y, z, 0, 4, 2);
 	case 10:
-		return new CubeBlock(i, x, y, z, 2, 4, 2);
+		return new CubeBlock(i, x, y, z, 2, 4, 1, true);
 
 	case 11:///WATER
-		return new CubeBlock(i, x, y, z, 4, 0, 1,true);
+		return new CubeBlock(i, x, y, z, 4, 0, 1, true);
+	case 12:///Sapling 1
+		return new Plant(i, x, y, z, 3, 2);
+	case 13:///Sapling 2
+		return new Plant(i, x, y, z, 3, 3);
+	case 14:///Sapling 3
+		return new Plant(i, x, y, z, 3, 4);
 
 
 	default:

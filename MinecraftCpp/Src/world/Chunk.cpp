@@ -723,13 +723,13 @@ void Chunk::generateTeren()
 				if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 666 == 0)
 				{
 					if(temperatue<-0.3)
-						blocks[j][i][k] = createBlock(9, i, j, k);
+						blocks[j][i][k] = createBlock(14, i, j, k);
 					else if (temperatue < 0.3)
 					{
 						if((int)(picksAndValies.GetNoise(x, z) * 10000) % 10 >= 6)
-							blocks[j][i][k] = createBlock(5, i, j, k);
+							blocks[j][i][k] = createBlock(12, i, j, k);
 						else
-							blocks[j][i][k] = createBlock(7, i, j, k);
+							blocks[j][i][k] = createBlock(13, i, j, k);
 					}
 
 
