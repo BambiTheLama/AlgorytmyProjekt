@@ -165,10 +165,10 @@ void Game::draw(Shader* s)
 		printf("%lf %lf %lf\n", chunkPos.x, 0, chunkPos.z);
 
 		glDisable(GL_DEPTH_TEST);
-		s->setUniformVec4(glm::vec4(10, 0, 10, 0.6f), "modelColor");
+		s->setUniformVec4(glm::vec4(100, 0, 100, 0.6f), "modelColor");
 		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		s->setUniformVec4(glm::vec4(10, 10, 10, 1), "modelColor");
+		s->setUniformVec4(glm::vec4(100, 100, 100, 1), "modelColor");
 		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_DEPTH_TEST);

@@ -22,6 +22,8 @@ public:
 
 	virtual std::vector<GLuint> getIndex();
 
+	virtual char faceToSetUp() { return cube->getFaces(); }
+
 	GLuint indexSize();
 
 	virtual bool isTransparent() { return transparent; }
