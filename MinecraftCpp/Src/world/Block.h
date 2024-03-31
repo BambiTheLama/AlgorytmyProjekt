@@ -30,6 +30,8 @@ public:
 
 	int getID()const { return ID; }
 
+	virtual char getFaces()const { return 0; }
+
 	friend class Chunk;
 	friend class Game;
 };

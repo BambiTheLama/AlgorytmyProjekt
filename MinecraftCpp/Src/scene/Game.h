@@ -27,10 +27,13 @@ class Game :
     std::vector<glm::vec2> posToGenChunk;
     int range = 10;
     VAO *vao;
-    VBO *vboPos;
-    VBO *vboTex;
+    VBO *vbo;
     EBO *ebo;
     Texture* selection;
+    glm::vec3 chunkPos;
+    std::vector<GLuint> index;
+    std::vector<GLuint> vertices;
+    Cube* cube;
 public:
     Game(Camera *camera, GLFWwindow* window);
 
@@ -43,6 +46,8 @@ public:
     void draw(Shader* s);
 
     Block* getBlockAt(int x, int y, int z);
+
+    glm::vec3 getChunkPos(int x, int y, int z);
 
     void deleteBlock(int x, int y, int z);
 

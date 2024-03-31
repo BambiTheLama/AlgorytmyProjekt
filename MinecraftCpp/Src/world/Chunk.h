@@ -80,6 +80,7 @@ private:
 	void genVerticesPos();
 	void generateTeren();
 	void setFaceing();
+	void genBiom(int x, int z, int startY, int endY,float temperature);
 };
 void setNoiseSeed(int seed);
 

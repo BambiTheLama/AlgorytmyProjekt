@@ -7,7 +7,7 @@
 class Shader;
 class Engine;
 
-enum class Faces :int
+enum class Faces :char
 {
 	Up    = 0b000001,
 	Down  = 0b000010,
@@ -25,8 +25,6 @@ public:
 
 	Cube();
 
-	void draw(float x, float y, float z);
-
 	void setFaceing(char faces);
 
 	void setOneFace(char face, bool state = true);
@@ -38,6 +36,8 @@ public:
 	std::vector<GLuint> getVertex(int x, int y, int z, int textureSides, int textX, int textY,bool doubleSides=false);
 
 	std::vector<GLuint> getIndex(bool doubleSides = false);
+
+	char getFaces()const { return face; }
 
 	GLuint indexSize();
 

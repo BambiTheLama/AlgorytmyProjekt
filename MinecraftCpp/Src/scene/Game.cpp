@@ -5,19 +5,20 @@
 #include "../core/Texture.h"
 #include "../core/Engine.h"
 #include "../core/Shader.h"
+#include <glm/gtc/matrix_transform.hpp>
 Game::Game(Camera* camera,GLFWwindow* window)
 {
 	setNoiseSeed(123693543);
 	Chunk::game = this;
 	this->camera = camera;
+	cube = new Cube();
 
 
 
 	this->window = window;
 
 	vao = new VAO();
-	vboPos = new VBO();
-	vboTex = new VBO();
+	vbo = new VBO();
 	ebo = new EBO();
 	selection = new Texture("Res/Selected.jpg");
 }
@@ -63,11 +64,35 @@ void Game::update(float deltaTime)
 		int x = pos.x + n * dir.x;
 		int y = pos.y + n * dir.y;
 		int z = pos.z + n * dir.z;
-		b = getBlockAt(x, y, z);
-		if (b)
+		Block* b2 = getBlockAt(x, y, z);
+		if (b2 && b == b2)
 		{
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-				deleteBlock(x,y,z);
+			{
+				deleteBlock(x, y, z);
+				b = NULL;
+
+			}
+			break;
+		}
+
+		if (b2 && b != b2)
+		{
+			b = b2;
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+			{
+				deleteBlock(x, y, z);
+				b = NULL;
+				break;
+			}
+			chunkPos = getChunkPos(x, y, z);
+			cube->setFaceing(b->getFaces());
+			vertices = cube->getVertex(x % chunkW, y % chunkH, z % chunkT, 1, 0, 0);
+			index = cube->getIndex();
+			vao->bind();
+			ebo->setNewVertices(index);
+			vbo->setNewVertices(vertices);
+			vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(int), (void*)0);
 			break;
 		}
 		n++;
@@ -127,7 +152,27 @@ void Game::draw(Shader* s)
 	chunksMutex.lock();
 	for (auto c : toDraw)
 	{
+		s->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
 		c->draw(s);
+	}
+	if (b)
+	{
+		vao->bind();
+		glm::mat4 model(1.0f);
+		model = glm::translate(model, glm::vec3(chunkPos.x,0, chunkPos.z));
+		s->setUniformMat4(model, "model");
+
+		printf("%lf %lf %lf\n", chunkPos.x, 0, chunkPos.z);
+
+		glDisable(GL_DEPTH_TEST);
+		s->setUniformVec4(glm::vec4(10, 0, 10, 0.6f), "modelColor");
+		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		s->setUniformVec4(glm::vec4(10, 10, 10, 1), "modelColor");
+		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_DEPTH_TEST);
+
 	}
 	chunksMutex.unlock();
 
@@ -141,6 +186,17 @@ Block* Game::getBlockAt(int x, int y, int z)
 			return c->getBlock(x, y, z);
 		}
 	return NULL;
+}
+
+glm::vec3 Game::getChunkPos(int x, int y, int z)
+{
+	for (auto c : chunks)
+		if (c->isThisChunk(x, y, z))
+		{
+			glm::vec3 pos = c->getLocation();
+			return glm::vec3(pos.x * chunkW, pos.y * chunkH, pos.z * chunkT);
+		}
+	return glm::vec3(0, 0, 0);
 }
 
 void Game::deleteBlock(int x,int y,int z)

@@ -28,5 +28,7 @@ public:
 	virtual char faceToSetUp() { return toSetUp; }
 
 	virtual bool isTransparent() { return transparent; }
+
+	virtual char getFaces()const { return cube->getFaces(); }
 };
 

@@ -155,13 +155,9 @@ void Chunk::draw(Shader* s)
 	if (indicesTrans.size() > 0)
 	{
 		glDepthFunc(GL_EQUAL);
-
-		s->setUniformMat4(model, "model");
-		//glDisable(GL_DEPTH_TEST);
 		vaoT->bind();
 		glDrawElements(GL_TRIANGLES, indicesTrans.size(), GL_UNSIGNED_INT, 0);
-
-		//glEnable(GL_DEPTH_TEST);
+		s->setUniformMat4(model, "model");
 		glDepthFunc(GL_LESS);
 		glDrawElements(GL_TRIANGLES, indicesTrans.size(), GL_UNSIGNED_INT, 0);
 		vaoT->unbind();
@@ -511,12 +507,12 @@ void Chunk::generateTeren()
 
 	FastNoiseLite picksAndValies(80085);
 	picksAndValies.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	picksAndValies.SetFrequency(0.01f);
+	picksAndValies.SetFrequency(0.001f);
 	picksAndValies.SetFractalType(FastNoiseLite::FractalType_FBm);
-	picksAndValies.SetFractalOctaves(4);
-	picksAndValies.SetFractalLacunarity(3.3f);
+	picksAndValies.SetFractalOctaves(5);
+	picksAndValies.SetFractalLacunarity(2.9f);
 	picksAndValies.SetFractalGain(1.01f);
-	picksAndValies.SetFractalWeightedStrength(2.060f);
+	picksAndValies.SetFractalWeightedStrength(2.560f);
 
 	FastNoiseLite riverNoise(80085);
 	riverNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
@@ -526,9 +522,18 @@ void Chunk::generateTeren()
 	riverNoise.SetFractalLacunarity(1.7f);
 	riverNoise.SetFractalGain(0.53f);
 	riverNoise.SetFractalWeightedStrength(0.000f);
+
+	FastNoiseLite temperatureNoise(80085);
+	temperatureNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	temperatureNoise.SetFrequency(0.001f);
+	temperatureNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
+	temperatureNoise.SetFractalOctaves(3);
+	temperatureNoise.SetFractalLacunarity(1.3f);
+	temperatureNoise.SetFractalGain(0.32f);
+	temperatureNoise.SetFractalWeightedStrength(6.16f);
 #endif
 	const int height = maxH - minH;
-	const int dirtSize = 5;
+	const int dirtSize = 8;
 	for (int i = 0; i < chunkW; i++)
 		for (int k = 0; k < chunkT; k++)
 		{
@@ -646,10 +651,6 @@ void Chunk::generateTeren()
 			}
 #endif // !Laby
 
-
-
-
-
 			if (h <= 2)
 				h = 2;
 			for (int j = 0; j < chunkH && j < h - dirtSize; j++)
@@ -664,14 +665,11 @@ void Chunk::generateTeren()
 			int endPos = h;
 			if (endPos < waterH)
 				endPos--;
+			float temperatue = temperatureNoise.GetNoise(x, z);
+			if (h > maxH * 0.57f)
+				temperatue -= (float)h / maxH * 0.4;
+			genBiom(i, k, dirtStart, endPos, temperatue);
 
-			for (int j = dirtStart; j < endPos && j < chunkH; j++)
-			{
-				if (blocks[j][i][k])
-					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(j == h - 1 ? 0 : 1, i, j, k);
-
-			}
 			for (int j = endPos; j < endPos + 3 && j <= waterH && j < chunkH; j++)
 			{
 				if (blocks[j][i][k])
@@ -716,8 +714,55 @@ void Chunk::generateTeren()
 				}
 
 			}
+
+			if (!lake && !river && h > waterH)
+			{
+				int j = h;
+				if (blocks[j][i][k])
+					delete blocks[j][i][k];
+				if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 666 == 0)
+				{
+					if(temperatue<-0.3)
+						blocks[j][i][k] = createBlock(9, i, j, k);
+					else if (temperatue < 0.3)
+					{
+						if((int)(picksAndValies.GetNoise(x, z) * 10000) % 10 >= 6)
+							blocks[j][i][k] = createBlock(5, i, j, k);
+						else
+							blocks[j][i][k] = createBlock(7, i, j, k);
+					}
+
+
+				}
+
+			}
+
 		}
 
+}
+
+void Chunk::genBiom(int x, int z, int startY, int endY, float temperature)
+{
+	int blockID = 1;
+	int blockSurfaceID = 0;
+	if (temperature >= 0.3)
+	{
+		blockSurfaceID = 4;
+		blockID = 4;
+	}
+	else if (temperature <= -0.3)
+	{
+		blockSurfaceID = 3;
+	}
+
+	
+	for (int j = startY; j < endY && j < chunkH; j++)
+	{
+		if (blocks[j][x][z])
+			delete blocks[j][x][z];
+		blocks[j][x][z] = createBlock(j == endY - 1 ? blockSurfaceID : blockID, x, j, z);
+
+	}
 }
 
 void Chunk::setFaceing()

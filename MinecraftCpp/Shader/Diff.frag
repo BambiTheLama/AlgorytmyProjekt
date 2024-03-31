@@ -5,7 +5,9 @@ uniform vec4 modelColor;
 uniform sampler2D tex0;
 uniform sampler2D texH;
 uniform sampler2D texN;
+
 in vec2 texCoord;
+in vec3 pos;
 in vec3 currentPos;
 in vec3 lightV;
 in vec3 cameraV;
@@ -40,6 +42,7 @@ void main()
 		discard;
 
 	//FragColor = vec4(vec3(direcLight() * modelColor),1.0f);
-	FragColor = vec4(vec3(directLight()),texture(tex0, texCoord).a);
+	FragColor = vec4(vec3(directLight()),texture(tex0, texCoord).a)* modelColor;
 	//FragColor = texture(tex0, texCoord) * modelColor;
+
 }

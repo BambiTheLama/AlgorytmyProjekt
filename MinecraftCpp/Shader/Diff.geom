@@ -2,8 +2,8 @@
 
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
-
 out vec2 texCoord;
+out vec3 pos;
 out vec3 currentPos;
 out vec3 lightV;
 out vec3 cameraV;
@@ -49,6 +49,7 @@ void normalMode()
     currentPos = TBN * gl_in[0].gl_Position.xyz;
     lightV = TBN * lightPos;
     cameraV = TBN * camPos;
+    pos = gl_in[0].gl_Position.xyz;
     EmitVertex();
 
     gl_Position = gl_in[1].gl_Position;
@@ -56,6 +57,7 @@ void normalMode()
     currentPos = TBN * gl_in[1].gl_Position.xyz;
     lightV = TBN * lightPos;
     cameraV = TBN * camPos;
+    pos = gl_in[1].gl_Position.xyz;
     EmitVertex();
 
     gl_Position = gl_in[2].gl_Position;
@@ -63,6 +65,7 @@ void normalMode()
     currentPos = TBN * gl_in[2].gl_Position.xyz;
     lightV = TBN * lightPos;
     cameraV = TBN * camPos;
+    pos = gl_in[2].gl_Position.xyz;
     EmitVertex();
 
     EndPrimitive();
