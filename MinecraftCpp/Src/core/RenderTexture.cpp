@@ -12,12 +12,12 @@ static Shader* shader = NULL;
 
 static std::vector<glm::vec4> vertices{
     glm::vec4(1,1,1,1),
-    glm::vec4(-1,1,0,1),
-    glm::vec4(1,-1,1,0),
+    glm::vec4(0,1,0,1),
+    glm::vec4(1,0,1,0),
 
-    glm::vec4(1,-1,1,0),
-    glm::vec4(-1,1,0,1),
-    glm::vec4(-1,-1,0,0)
+    glm::vec4(1,0,1,0),
+    glm::vec4(0,1,0,1),
+    glm::vec4(0,0,0,0)
 
 };
 
@@ -86,6 +86,9 @@ RenderTexture::~RenderTexture()
 void RenderTexture::startUse()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void RenderTexture::endUse()
@@ -107,6 +110,7 @@ void RenderTexture::use(Shader& s, const char* uniform)
 void RenderTexture::draw()
 {
     shader->active();
+    shader->setUniformVec3(glm::vec3(0.0f, 0.1f, 0.1f), "backGroundColor");
     vao->bind();
     use(*shader, "text0");
 

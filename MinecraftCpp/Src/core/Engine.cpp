@@ -157,11 +157,13 @@ void Engine::start()
 		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		rt->startUse();
-		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		camera->setUseProjection(false);
+		camera->useCamera(*shader, "camera");
 		game->draw(shader);		
 		rt->endUse();
-
+		camera->setUseProjection(true);
+		camera->useCamera(*shader, "camera");
 		game->draw(shader);
 
 		rt->draw();
