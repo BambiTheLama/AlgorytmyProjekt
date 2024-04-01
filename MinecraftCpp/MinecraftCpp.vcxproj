@@ -113,6 +113,7 @@
       <StringPooling>false</StringPooling>
       <AdditionalIncludeDirectories>..\Include;..\Include</AdditionalIncludeDirectories>
       <LanguageStandard>Default</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,6 +151,7 @@
       <StringPooling>false</StringPooling>
       <AdditionalIncludeDirectories>..\Include;..\Include</AdditionalIncludeDirectories>
       <LanguageStandard>Default</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -167,6 +169,7 @@
     <ClCompile Include="Src\core\Engine.cpp" />
     <ClCompile Include="Src\core\Font.cpp" />
     <ClCompile Include="Src\core\Rectangle.cpp" />
+    <ClCompile Include="Src\core\RenderTexture.cpp" />
     <ClCompile Include="Src\core\Shader.cpp" />
     <ClCompile Include="Src\core\Texture.cpp" />
     <ClCompile Include="Src\core\VAO.cpp" />
@@ -188,6 +191,8 @@
     <None Include="Shader\Diff.vert" />
     <None Include="Shader\text.frag" />
     <None Include="Shader\text.vert" />
+    <None Include="Shader\texture.frag" />
+    <None Include="Shader\texture.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\core\Camera.h" />
@@ -196,6 +201,7 @@
     <ClInclude Include="Src\core\Engine.h" />
     <ClInclude Include="Src\core\Font.h" />
     <ClInclude Include="Src\core\Rectangle.h" />
+    <ClInclude Include="Src\core\RenderTexture.h" />
     <ClInclude Include="Src\core\Shader.h" />
     <ClInclude Include="Src\core\Texture.h" />
     <ClInclude Include="Src\core\VAO.h" />

@@ -7,9 +7,10 @@
 #include "../Properties.h"
 #include "glm/gtc/matrix_transform.hpp"
 
+GLuint Texture::textureSlot = 0;
 std::vector<Texture*> Texture::textures;
 
-Texture::Texture(const char* path, GLenum textureType, GLenum slot, GLenum format, GLenum pixelType,GLenum genFormat)
+Texture::Texture(const char* path, GLenum textureType, GLenum format, GLenum pixelType,GLenum genFormat)
 {
 	for (auto t : textures)
 	{
@@ -29,8 +30,9 @@ Texture::Texture(const char* path, GLenum textureType, GLenum slot, GLenum forma
 	int numColCh;
 	unsigned char* bytes = stbi_load(path, &w, &h, &numColCh, 0);
 	glGenTextures(1, &ID);
+	slot = textureSlot++;
 	glActiveTexture(GL_TEXTURE0 + slot);
-	this->slot = slot;
+
 	glBindTexture(type, ID);
 
 	glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
@@ -86,16 +88,16 @@ void Texture::unbind()
 	glBindTexture(type, 0);
 }
 
-void Texture::useTexture(Shader& shader, const char* uniform, GLuint unit)
+void Texture::useTexture(Shader& shader, const char* uniform)
 {
 	shader.active();
-	glUniform1i(shader.getUniformLocation(uniform), unit);
+	glUniform1i(shader.getUniformLocation(uniform), slot);
 }
-void Texture::useTexture(const char* uniform, GLuint unit)
+void Texture::useTexture(const char* uniform)
 {
 	Shader& s = getDiffoltShader();
 	//s.active();
-	glUniform1i(s.getUniformLocation(uniform), unit);
+	glUniform1i(s.getUniformLocation(uniform), slot);
 }
 
 void Texture::clearAllTextures()

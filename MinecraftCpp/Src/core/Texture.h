@@ -5,6 +5,7 @@ class Shader;
 
 class Texture
 {
+	static GLuint textureSlot;
 	GLuint ID;
 	GLenum type;
 	int w, h;
@@ -13,7 +14,7 @@ class Texture
 	static std::vector<Texture*> textures;
 public:
 
-	Texture(const char* path, GLenum textureType = GL_TEXTURE_2D, GLenum slot = GL_TEXTURE0,
+	Texture(const char* path, GLenum textureType = GL_TEXTURE_2D,
 		GLenum format = GL_RGBA, GLenum pixelType = GL_UNSIGNED_BYTE, GLenum genFormat = GL_RGBA);
 
 	Texture(Texture& texture);
@@ -24,9 +25,9 @@ public:
 
 	void unbind();
 
-	void useTexture(Shader& shader, const char* uniform, GLuint unit);
+	void useTexture(Shader& shader, const char* uniform);
 
-	void useTexture(const char* uniform, GLuint unit);
+	void useTexture(const char* uniform);
 
 	void setTextureSize(const char* uniform);
 
@@ -37,6 +38,7 @@ public:
 	void deleteTexture();
 
 	friend class Engine;
+	friend class RenderTexture;
 private:
 	static void clearAllTextures();
 

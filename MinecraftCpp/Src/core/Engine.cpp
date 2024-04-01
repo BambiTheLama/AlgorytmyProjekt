@@ -14,11 +14,13 @@
 #include "../World/Chunk.h"
 #include "../scene/Game.h"
 #include "Font.h"
+#include "RenderTexture.h"
 
 static Shader* shader = NULL;
 static Shader* textShader = NULL;
 static Camera* camera = NULL;
 static Texture* blocks = NULL;
+static Texture* blocksA = NULL;
 static Texture* blocksH = NULL;
 static Texture* blocksN = NULL;
 
@@ -65,20 +67,24 @@ Engine::Engine()
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
 	camera = new Camera(width, height, 0.1f, 1000, 60, glm::vec3(3000.0f, 100.0f, 9000.0f));
-	blocks = new Texture("Res/BlocksA.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
-	blocksH = new Texture("Res/BlocksH.png", GL_TEXTURE_2D, 1, GL_RGB, GL_UNSIGNED_BYTE);
-	blocksN = new Texture("Res/BlocksN.png", GL_TEXTURE_2D, 2, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGB);
+	blocks = new Texture("Res/Blocks.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
+	blocksA = new Texture("Res/BlocksA.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
+	blocksH = new Texture("Res/BlocksH.png", GL_TEXTURE_2D, GL_RGB, GL_UNSIGNED_BYTE);
+	blocksN = new Texture("Res/BlocksN.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGB);
 	Font::setUpFonts();
 	Font::setScreanSize(width, height);
 	shader->active();
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	shader->setUniformMat4(modelMat, "model");
 	shader->setUniformVec4(glm::vec4(1.0f,1.0f,1.0f, 1.0f), "modelColor");
+	RenderTexture::setUpRenderTextures();
+
 	
 }
 
 Engine::~Engine()
 {
+	RenderTexture::endRenderTexture();
 	Font::freeFonts();
 	Texture::clearAllTextures();
 	delete camera;
@@ -88,10 +94,12 @@ Engine::~Engine()
 	delete blocksN;
 	glfwDestroyWindow(window);
 	glfwTerminate();
+
 }
 
 void Engine::start()
 {
+
 	float lastTime = glfwGetTime();	
 	Font f("Res/ComicStans.ttf");
 	Game* game = new Game(camera,window);
@@ -99,6 +107,8 @@ void Engine::start()
 	std::vector<float> times;
 	float changeText = 0.0;
 	game->start();
+	RenderTexture* rt = new RenderTexture(width, height);
+
 	while (!glfwWindowShouldClose(window))
 	{
 
@@ -117,7 +127,7 @@ void Engine::start()
 			for (auto t : times)
 				dt += t;
 			dt /= times.size();
-			fps = std::string(std::to_string((int)(1.0f / dt)) + " FPS\nFPS");
+			fps = std::string(std::to_string((int)(1.0f / dt)) + " ³ó¿FPS\n{c:255,0,0}F{c:0,255,0}P{c:0,0,255}S");
 			changeText = 0.2137f;
 			times.clear();
 		}
@@ -127,11 +137,13 @@ void Engine::start()
 		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		startShaderMode(*shader);
-		blocks->useTexture(*shader, "tex0", 0);
+		blocks->useTexture(*shader, "tex0");
 		blocks->bind();
-		blocksH->useTexture(*shader, "texH", 1);
+		blocksA->useTexture(*shader, "tex0");
+		blocksA->bind();
+		blocksH->useTexture(*shader, "texH");
 		blocksH->bind();
-		blocksN->useTexture(*shader, "texN", 2);
+		blocksN->useTexture(*shader, "texN");
 		blocksN->bind();
 		camera->useCamera(*shader, "camera");
 		shader->setUniformVec3(camera->getPos(), "camPos");
@@ -144,7 +156,15 @@ void Engine::start()
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		rt->startUse();
+		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		game->draw(shader);		
+		rt->endUse();
+
+		game->draw(shader);
+
+		rt->draw();
 		endShaderMode();
 		Font::setScreanSize(width, height);
 		glDisable(GL_DEPTH_TEST);
@@ -152,7 +172,7 @@ void Engine::start()
 		glFrontFace(GL_CW);
 		f.drawText(fps, 0, 0, 1, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		glm::vec2 pos = f.textSize(fps, 1);
-		f.drawText(fps, pos.x, pos.y, 1, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
+		f.drawText(fps, pos.x, pos.y, 1, glm::vec4(1.0f, 0.79f, 0.2137f, 1.0f));
 		glEnable(GL_DEPTH_TEST);
 		glfwSwapBuffers(window);
 		glfwPollEvents();

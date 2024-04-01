@@ -162,8 +162,6 @@ void Game::draw(Shader* s)
 		model = glm::translate(model, glm::vec3(chunkPos.x,0, chunkPos.z));
 		s->setUniformMat4(model, "model");
 
-		printf("%lf %lf %lf\n", chunkPos.x, 0, chunkPos.z);
-
 		glDisable(GL_DEPTH_TEST);
 		s->setUniformVec4(glm::vec4(100, 0, 100, 0.6f), "modelColor");
 		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
