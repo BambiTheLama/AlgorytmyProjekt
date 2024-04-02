@@ -154,9 +154,9 @@ void Chunk::draw(Shader* s)
 	}
 	if (indicesTrans.size() > 0)
 	{
-		glDepthFunc(GL_EQUAL);
+		//glDepthFunc(GL_EQUAL);
 		vaoT->bind();
-		glDrawElements(GL_TRIANGLES, indicesTrans.size(), GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, indicesTrans.size(), GL_UNSIGNED_INT, 0);
 		s->setUniformMat4(model, "model");
 		glDepthFunc(GL_LESS);
 		glDrawElements(GL_TRIANGLES, indicesTrans.size(), GL_UNSIGNED_INT, 0);

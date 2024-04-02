@@ -189,6 +189,8 @@
     <None Include="Shader\Diff.frag" />
     <None Include="Shader\Diff.geom" />
     <None Include="Shader\Diff.vert" />
+    <None Include="Shader\Shadow.frag" />
+    <None Include="Shader\Shadow.vert" />
     <None Include="Shader\text.frag" />
     <None Include="Shader\text.vert" />
     <None Include="Shader\texture.frag" />

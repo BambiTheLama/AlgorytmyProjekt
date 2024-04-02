@@ -152,8 +152,10 @@ void Game::draw(Shader* s)
 	chunksMutex.lock();
 	for (auto c : toDraw)
 	{
+		glEnable(GL_DEPTH_TEST);
 		s->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
 		c->draw(s);
+		glDisable(GL_DEPTH_TEST);
 	}
 	if (b)
 	{
@@ -317,15 +319,12 @@ void Game::setGenVerticesFlagAt(int x, int y, int z)
 
 void Game::worldGenerateFun()
 {
-	glm::vec3 camPos = glm::vec3(0.0f);
+
 	while (gameRunning)
 	{
-		if (camPos != camera->getPos() || posToGenChunk.size() > 0)
-		{
-			genWorld();
-		}
-		else if (posToGenChunk.size() <= 0)
-			camPos = camera->getPos();
+
+		genWorld();
+
 
 
 	}
@@ -333,14 +332,12 @@ void Game::worldGenerateFun()
 
 void Game::worldDestroyFun()
 {
-	glm::vec3 camPos = camera->getPos();
+
 	while (gameRunning)
 	{
-		if (camPos != camera->getPos() || posToGenChunk.size() > 0)
-		{
-			desWorld();
-		}
-		camPos = camera->getPos();
+
+		desWorld();
+
 
 	}
 }
@@ -428,7 +425,7 @@ void Game::desWorld()
 	for (auto c : toSave)
 	{
 		glm::vec3 cPos = c->getLocation();
-		if (glm::distance(glm::vec2(camPos.x, camPos.z), glm::vec2(cPos.x, cPos.z)) > range * 1.5f)
+		if (abs(camPos.x - cPos.x) > range || abs(camPos.z - cPos.z) > range)
 		{
 			bool addToDelete = true;
 			for (auto d : toDelete)

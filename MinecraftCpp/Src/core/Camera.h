@@ -42,5 +42,7 @@ public:
 
 	float getRange() const { return farest; }
 
+	void setDir(glm::vec3 dir) { cameraOrientation = dir; }
+
 };
 

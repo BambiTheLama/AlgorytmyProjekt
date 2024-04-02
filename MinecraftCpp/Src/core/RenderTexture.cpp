@@ -5,6 +5,7 @@
 #include "VAO.h"
 #include "Texture.h"
 #include "../Properties.h"
+#include "Engine.h"
 
 static VAO *vao = NULL;
 static VBO *vbo = NULL;
@@ -86,6 +87,7 @@ RenderTexture::~RenderTexture()
 void RenderTexture::startUse()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glViewport(0, 0, w, h);
     glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -94,6 +96,7 @@ void RenderTexture::startUse()
 void RenderTexture::endUse()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    diffViewport();
 }
 
 void RenderTexture::use(Shader& s, const char* uniform)

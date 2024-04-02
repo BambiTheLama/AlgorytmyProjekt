@@ -1,12 +1,15 @@
 #version 330 core
 
 layout (triangles) in;
-layout (triangle_strip, max_vertices = 3) out;
+layout (triangle_strip, max_vertices = 4) out;
+
 out vec2 texCoord;
 out vec3 pos;
 out vec3 currentPos;
 out vec3 lightV;
 out vec3 cameraV;
+out vec4 fragPosLight;
+
 uniform mat4 camera;
 uniform mat4 model;
 uniform vec3 camPos;
@@ -15,7 +18,8 @@ uniform vec3 lightPos;
 in DATA
 {
 	vec2 texCoord;
-    vec3 currentPos;
+	vec3 currentPos;
+	vec4 fragPosLight;
 } data_in[];
 
 
@@ -50,6 +54,7 @@ void normalMode()
     lightV = TBN * lightPos;
     cameraV = TBN * camPos;
     pos = gl_in[0].gl_Position.xyz;
+    fragPosLight = data_in[0].fragPosLight;
     EmitVertex();
 
     gl_Position = gl_in[1].gl_Position;
@@ -58,6 +63,7 @@ void normalMode()
     lightV = TBN * lightPos;
     cameraV = TBN * camPos;
     pos = gl_in[1].gl_Position.xyz;
+    fragPosLight = data_in[1].fragPosLight;
     EmitVertex();
 
     gl_Position = gl_in[2].gl_Position;
@@ -66,6 +72,7 @@ void normalMode()
     lightV = TBN * lightPos;
     cameraV = TBN * camPos;
     pos = gl_in[2].gl_Position.xyz;
+    fragPosLight = data_in[2].fragPosLight;
     EmitVertex();
 
     EndPrimitive();

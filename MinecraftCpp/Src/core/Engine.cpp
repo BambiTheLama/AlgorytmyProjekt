@@ -17,17 +17,20 @@
 #include "RenderTexture.h"
 
 static Shader* shader = NULL;
+static Shader* shaderShadow = NULL;
 static Shader* textShader = NULL;
 static Camera* camera = NULL;
 static Texture* blocks = NULL;
-static Texture* blocksA = NULL;
 static Texture* blocksH = NULL;
 static Texture* blocksN = NULL;
+static Engine* e;
 
 void reside(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
-
+	e->height = height;
+	e->width = width;
+	
 }
 
 Engine::Engine()
@@ -66,11 +69,12 @@ Engine::Engine()
 
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
+
+	shaderShadow = new Shader("Shader/Shadow.vert", "Shader/Shadow.frag");
 	camera = new Camera(width, height, 0.1f, 1000, 60, glm::vec3(3000.0f, 100.0f, 9000.0f));
-	blocks = new Texture("Res/Blocks.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
-	blocksA = new Texture("Res/BlocksA.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
-	blocksH = new Texture("Res/BlocksH.png", GL_TEXTURE_2D, GL_RGB, GL_UNSIGNED_BYTE);
-	blocksN = new Texture("Res/BlocksN.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGB);
+	blocks = new Texture("Res/Blocks64.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
+	blocksH = new Texture("Res/Blocks64H.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
+	blocksN = new Texture("Res/Blocks64N.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGB);
 	Font::setUpFonts();
 	Font::setScreanSize(width, height);
 	shader->active();
@@ -79,7 +83,18 @@ Engine::Engine()
 	shader->setUniformVec4(glm::vec4(1.0f,1.0f,1.0f, 1.0f), "modelColor");
 	RenderTexture::setUpRenderTextures();
 
-	
+	shader->active();
+	blocks->useTexture(*shader, "tex0");
+	blocksH->useTexture(*shader, "texH");
+	blocksN->useTexture(*shader, "texN");
+
+
+
+
+
+	e = this;
+
+
 }
 
 Engine::~Engine()
@@ -92,9 +107,15 @@ Engine::~Engine()
 	delete blocks;
 	delete blocksH;
 	delete blocksN;
+	delete shaderShadow;
 	glfwDestroyWindow(window);
 	glfwTerminate();
+	e = NULL;
+}
 
+void diffViewport()
+{
+	glViewport(0, 0, e->width, e->height);
 }
 
 void Engine::start()
@@ -107,8 +128,10 @@ void Engine::start()
 	std::vector<float> times;
 	float changeText = 0.0;
 	game->start();
-	RenderTexture* rt = new RenderTexture(width, height);
-
+	RenderTexture* rt = new RenderTexture(2048*2, 2048*2);
+	rt->use(*shader, "texShadow");
+	glm::vec3 cameraDir = camera->getDir();
+	float time=0;
 	while (!glfwWindowShouldClose(window))
 	{
 
@@ -118,6 +141,7 @@ void Engine::start()
 
 		float currentTime = glfwGetTime();
 		deltaTime = currentTime - lastTime;
+		time += deltaTime;
 		lastTime = currentTime;
 		changeText -= deltaTime;
 		times.push_back(deltaTime);
@@ -132,23 +156,20 @@ void Engine::start()
 			times.clear();
 		}
 
+
 		camera->update(window, deltaTime);
+
 		game->update(deltaTime);
 		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		startShaderMode(*shader);
-		blocks->useTexture(*shader, "tex0");
 		blocks->bind();
-		blocksA->useTexture(*shader, "tex0");
-		blocksA->bind();
-		blocksH->useTexture(*shader, "texH");
 		blocksH->bind();
-		blocksN->useTexture(*shader, "texN");
 		blocksN->bind();
 		camera->useCamera(*shader, "camera");
 		shader->setUniformVec3(camera->getPos(), "camPos");
 		shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 1.0f), "lightColor");
-		shader->setUniformVec2(glm::vec2(blocks->w / 512, blocks->h / 512), "textSize");
+		shader->setUniformVec2(glm::vec2(blocks->w / 64, blocks->h / 64), "textSize");
 		glm::mat4 model(1.0f);
 		shader->setUniformMat4(model,"model");
 
@@ -158,10 +179,24 @@ void Engine::start()
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		rt->startUse();
 
+		cameraDir = camera->getDir();
+		glm::vec3 lightDir = glm::vec3(0.0f, -1.0f,-0.5f);
+		camera->setDir(lightDir);
+
 		camera->setUseProjection(false);
-		camera->useCamera(*shader, "camera");
-		game->draw(shader);		
+		camera->updatePos(glm::vec3(0, 200, 0));
+
+		shaderShadow->active();
+		camera->useCamera(*shaderShadow, "camera");
+		game->draw(shaderShadow);
 		rt->endUse();
+		shader->active();
+		camera->useCamera(*shader, "lightProjection");
+		shader->setUniformVec3(lightDir, "lightDir");
+		rt->use(*shader, "texShadow");
+		
+		camera->setDir(cameraDir);
+		camera->updatePos(glm::vec3(0, -200, 0));
 		camera->setUseProjection(true);
 		camera->useCamera(*shader, "camera");
 		game->draw(shader);

@@ -25,10 +25,16 @@ public:
 
 	float getDeltaTime()const { return deltaTime; }
 
+	void diffViewport();
+
+	friend void reside(GLFWwindow* window, int width, int height);
+
+	friend void diffViewport();
 
 };
 
 
+void diffViewport();
 
 void startShaderMode(Shader& s);
 
