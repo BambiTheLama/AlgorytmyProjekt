@@ -34,11 +34,12 @@ std::vector<GLuint> Plant::getVertex()
 	for (int i = 0; i < pos.size(); i++)
 	{
 		vertices.push_back(
-			(0b1111 & ((int)pos[i].x)) +
-			((0b11111111 & ((int)pos[i].y)) << 4) +
-			((0b1111 & ((int)pos[i].z)) << 12) +
-			((0b1111 & ((int)text[i].x)) << 16) +
-			((0b1111 & ((int)text[i].y)) << 20));
+			(0b1111		 & ((int)pos[i].x))			+
+			((0b11111111 & ((int)pos[i].y)) << 4)	+
+			((0b1111     & ((int)pos[i].z)) << 12)	+
+			((0b1111     & ((int)text[i].x)) << 16) +
+			((0b1111     & ((int)text[i].y)) << 20) +
+			  (0b11111111 << 24));
 	}
 
 

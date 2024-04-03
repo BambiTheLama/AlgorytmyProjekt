@@ -31,7 +31,7 @@ void Camera::useCamera(Shader& shader, const char* uniform)
 	}
 	else
 	{ 
-		const float div =3;
+		const float div =1;
 		projection = glm::ortho(-cameraWidth / div, cameraWidth / div, -cameraHeight / div, cameraHeight / div, -farest, farest);
 	}
 

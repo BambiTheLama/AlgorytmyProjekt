@@ -84,9 +84,7 @@ Engine::Engine()
 	RenderTexture::setUpRenderTextures();
 
 	shader->active();
-	blocks->useTexture(*shader, "tex0");
-	blocksH->useTexture(*shader, "texH");
-	blocksN->useTexture(*shader, "texN");
+
 
 
 
@@ -128,9 +126,10 @@ void Engine::start()
 	std::vector<float> times;
 	float changeText = 0.0;
 	game->start();
-	RenderTexture* rt = new RenderTexture(2048*2, 2048*2);
+	RenderTexture* rt = new RenderTexture(2048, 2048);
 	rt->use(*shader, "texShadow");
 	glm::vec3 cameraDir = camera->getDir();
+	glm::vec3 cameraPos = camera->getDir();
 	float time=0;
 	while (!glfwWindowShouldClose(window))
 	{
@@ -151,7 +150,7 @@ void Engine::start()
 			for (auto t : times)
 				dt += t;
 			dt /= times.size();
-			fps = std::string(std::to_string((int)(1.0f / dt)) + " ³ó¿FPS\n{c:255,0,0}F{c:0,255,0}P{c:0,0,255}S");
+			fps = std::string(std::to_string((int)(1.0f / dt)) + " FPS\n{c:255,0,0}F{c:0,255,0}P{c:0,0,255}S");
 			changeText = 0.2137f;
 			times.clear();
 		}
@@ -159,13 +158,12 @@ void Engine::start()
 
 		camera->update(window, deltaTime);
 
+
 		game->update(deltaTime);
 		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		startShaderMode(*shader);
-		blocks->bind();
-		blocksH->bind();
-		blocksN->bind();
+
 		camera->useCamera(*shader, "camera");
 		shader->setUniformVec3(camera->getPos(), "camPos");
 		shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 1.0f), "lightColor");
@@ -180,11 +178,12 @@ void Engine::start()
 		rt->startUse();
 
 		cameraDir = camera->getDir();
-		glm::vec3 lightDir = glm::vec3(0.0f, -1.0f,-0.5f);
+		cameraPos = camera->getPos();
+		glm::vec3 lightDir = glm::vec3(0.5f, -1.0f,sin(time)*0.0f+0.6f);
 		camera->setDir(lightDir);
 
 		camera->setUseProjection(false);
-		camera->updatePos(glm::vec3(0, 200, 0));
+		camera->newPos(glm::vec3(((int)cameraPos.x/16)*16, 255, ((int)cameraPos.z / 16) * 16));
 
 		shaderShadow->active();
 		camera->useCamera(*shaderShadow, "camera");
@@ -194,9 +193,15 @@ void Engine::start()
 		camera->useCamera(*shader, "lightProjection");
 		shader->setUniformVec3(lightDir, "lightDir");
 		rt->use(*shader, "texShadow");
+		blocks->useTexture(*shader, "tex0");
+		blocksH->useTexture(*shader, "texH");
+		blocksN->useTexture(*shader, "texN");
+		blocks->bind();
+		blocksH->bind();
+		blocksN->bind();
 		
 		camera->setDir(cameraDir);
-		camera->updatePos(glm::vec3(0, -200, 0));
+		camera->newPos(cameraPos);
 		camera->setUseProjection(true);
 		camera->useCamera(*shader, "camera");
 		game->draw(shader);

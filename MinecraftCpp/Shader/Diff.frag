@@ -14,6 +14,7 @@ in vec3 currentPos;
 in vec3 lightV;
 in vec3 cameraV;
 in vec4	fragPosLight;
+in float brightness;
 
 uniform vec3 lightColor;
 
@@ -47,10 +48,10 @@ vec4 directLight()
 		lightCoords = (lightCoords + 1.0f) / 2.0f;
 		float currentDepth = lightCoords.z;
 		// Prevents shadow acne
-		float bias = max(0.025f * (1.0f - dot(normal, lightDirection)), 0.0005f);
+		float bias = max(0.025f * (1.0f - dot(normal, lightDirection)), 0.00005f);
 	
 		// Smoothens out the shadows
-		int sampleRadius = 2;
+		int sampleRadius = 5;
 		vec2 pixelSize = 1.0 / textureSize(texShadow, 0);
 		for(int y = -sampleRadius; y <= sampleRadius; y++)
 		{
@@ -77,7 +78,7 @@ void main()
 		discard;
 
 	//FragColor = vec4(vec3(direcLight() * modelColor),1.0f);
-	FragColor = vec4(vec3(directLight()),texture(tex0, texCoord).a)* modelColor;
+	FragColor = vec4(vec3(directLight()*brightness),texture(tex0, texCoord).a)* modelColor;
 	//FragColor = texture(tex0, texCoord) * modelColor;
 
 }

@@ -31,6 +31,8 @@ public:
 
 	std::vector<glm::vec3> getVertexPos();
 
+	std::vector<unsigned char> getBrightness();
+
 	std::vector<glm::vec2> getVertexTexture(int textureSides);
 
 	std::vector<GLuint> getVertex(int x, int y, int z, int textureSides, int textX, int textY,bool doubleSides=false);

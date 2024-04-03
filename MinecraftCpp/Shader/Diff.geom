@@ -9,7 +9,7 @@ out vec3 currentPos;
 out vec3 lightV;
 out vec3 cameraV;
 out vec4 fragPosLight;
-
+out float brightness;
 uniform mat4 camera;
 uniform mat4 model;
 uniform vec3 camPos;
@@ -20,6 +20,7 @@ in DATA
 	vec2 texCoord;
 	vec3 currentPos;
 	vec4 fragPosLight;
+    float brightness;
 } data_in[];
 
 
@@ -55,6 +56,7 @@ void normalMode()
     cameraV = TBN * camPos;
     pos = gl_in[0].gl_Position.xyz;
     fragPosLight = data_in[0].fragPosLight;
+    brightness = data_in[0].brightness;
     EmitVertex();
 
     gl_Position = gl_in[1].gl_Position;
@@ -64,6 +66,7 @@ void normalMode()
     cameraV = TBN * camPos;
     pos = gl_in[1].gl_Position.xyz;
     fragPosLight = data_in[1].fragPosLight;
+    brightness = data_in[1].brightness;
     EmitVertex();
 
     gl_Position = gl_in[2].gl_Position;
@@ -73,6 +76,7 @@ void normalMode()
     cameraV = TBN * camPos;
     pos = gl_in[2].gl_Position.xyz;
     fragPosLight = data_in[2].fragPosLight;
+    brightness = data_in[2].brightness;
     EmitVertex();
 
     EndPrimitive();

@@ -411,7 +411,7 @@ void Game::desWorld()
 	for (auto c : chunks)
 	{
 		glm::vec3 cPos = c->getLocation();
-		if (abs(cPos.x - camPos.x) > range * 1.5 || abs(cPos.y - camPos.z) > range * 1.5)
+		if (abs(camPos.x - cPos.x) > range + 1 || abs(camPos.z - cPos.z) > range + 1)
 		{
 			toSave.push_back(c);
 		}
@@ -425,7 +425,7 @@ void Game::desWorld()
 	for (auto c : toSave)
 	{
 		glm::vec3 cPos = c->getLocation();
-		if (abs(camPos.x - cPos.x) > range || abs(camPos.z - cPos.z) > range)
+		if (abs(camPos.x - cPos.x) > range + 1 || abs(camPos.z - cPos.z) > range + 1)
 		{
 			bool addToDelete = true;
 			for (auto d : toDelete)
