@@ -82,32 +82,32 @@ std::vector<unsigned char> Cube::getBrightness()
 	if (checkFace(Front, face))
 	{
 		for(int i=0;i<4;i++)
-			brightness.push_back(225);
+			brightness.push_back(2);
 	}
 	if (checkFace(Back, face))
 	{
 		for (int i = 0; i < 4; i++)
-			brightness.push_back(225);
+			brightness.push_back(2);
 	}
 	if (checkFace(Left, face))
 	{
 		for (int i = 0; i < 4; i++)
-			brightness.push_back(200);
+			brightness.push_back(1);
 	}
 	if (checkFace(Right, face))
 	{
 		for (int i = 0; i < 4; i++)
-			brightness.push_back(200);
+			brightness.push_back(1);
 	}
 	if (checkFace(Up, face))
 	{
 		for (int i = 0; i < 4; i++)
-			brightness.push_back(255);
+			brightness.push_back(3);
 	}
 	if (checkFace(Down, face))
 	{
 		for (int i = 0; i < 4; i++)
-			brightness.push_back(160);
+			brightness.push_back(0);
 	}
 	return brightness;
 }
@@ -279,7 +279,7 @@ std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int t
 			((0b1111	 & ((int)pos[i].z + z))		 << 12) +
 			((0b1111	 & ((int)text[i].x + textX)) << 16) +
 			((0b1111	 & ((int)text[i].y + textY)) << 20) +
-			((0b11111111 & ((int)brightness[i]))	 << 24));
+			((0b11		 & ((int)brightness[i]))	 << 24));
 	}
 
 	return vertex;

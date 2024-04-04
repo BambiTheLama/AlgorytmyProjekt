@@ -168,7 +168,6 @@
     <ClCompile Include="Src\core\EBO.cpp" />
     <ClCompile Include="Src\core\Engine.cpp" />
     <ClCompile Include="Src\core\Font.cpp" />
-    <ClCompile Include="Src\core\Rectangle.cpp" />
     <ClCompile Include="Src\core\RenderTexture.cpp" />
     <ClCompile Include="Src\core\Shader.cpp" />
     <ClCompile Include="Src\core\Texture.cpp" />
@@ -202,7 +201,6 @@
     <ClInclude Include="Src\core\EBO.h" />
     <ClInclude Include="Src\core\Engine.h" />
     <ClInclude Include="Src\core\Font.h" />
-    <ClInclude Include="Src\core\Rectangle.h" />
     <ClInclude Include="Src\core\RenderTexture.h" />
     <ClInclude Include="Src\core\Shader.h" />
     <ClInclude Include="Src\core\Texture.h" />

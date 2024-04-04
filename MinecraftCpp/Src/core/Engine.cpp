@@ -1,6 +1,5 @@
 #include "Engine.h"
 #include <iostream>
-#include "Rectangle.h"
 #include "Camera.h"
 #include "Cube.h"
 #include "Shader.h"
