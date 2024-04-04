@@ -33,13 +33,4 @@ public:
 
 };
 
-
 void diffViewport();
-
-void startShaderMode(Shader& s);
-
-void endShaderMode();
-
-Shader& getDiffoltShader();
-
-Texture* getBlocks();

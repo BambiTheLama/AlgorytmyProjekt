@@ -6,11 +6,12 @@
 #include "../core/Engine.h"
 #include "../core/Shader.h"
 #include <glm/gtc/matrix_transform.hpp>
-Game::Game(Camera* camera,GLFWwindow* window)
+#include "../core/RenderTexture.h"
+
+Game::Game(int w,int h,GLFWwindow* window)
 {
 	setNoiseSeed(123693543);
 	Chunk::game = this;
-	this->camera = camera;
 	cube = new Cube();
 
 
@@ -21,6 +22,21 @@ Game::Game(Camera* camera,GLFWwindow* window)
 	vbo = new VBO();
 	ebo = new EBO();
 	selection = new Texture("Res/Selected.jpg");
+
+
+	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
+	shaderShadow = new Shader("Shader/Shadow.vert", "Shader/Shadow.frag");
+	blocks = new Texture("Res/Blocks64.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
+	blocksH = new Texture("Res/Blocks64H.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
+	blocksN = new Texture("Res/Blocks64N.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGB);
+
+	shader->active();
+	glm::mat4 modelMat = glm::mat4(1.0f);
+	shader->setUniformMat4(modelMat, "model");
+	shader->setUniformVec4(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "modelColor");
+	ShadowMap = new RenderTexture(2048, 2048);
+	ShadowMap->use(*shader, "texShadow");
+	camera = new Camera(w, h, 0.1f, 1000, 60, glm::vec3(3000.0f, 100.0f, 5000.0f));
 }
 
 Game::~Game()
@@ -40,6 +56,12 @@ Game::~Game()
 	}
 
 	chunks.clear();
+
+	delete shader;
+	delete blocks;
+	delete blocksH;
+	delete blocksN;
+	delete shaderShadow;
 }
 
 void Game::start()
@@ -51,7 +73,7 @@ void Game::start()
 
 void Game::update(float deltaTime)
 {
-
+	camera->update(window, deltaTime);
 	chunksMutex.lock();
 	for (auto c : chunks)
 		c->update(deltaTime);
@@ -78,7 +100,9 @@ void Game::update(float deltaTime)
 
 		if (b2 && b != b2)
 		{
+
 			b = b2;
+
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
 				deleteBlock(x, y, z);
@@ -147,7 +171,56 @@ void Game::update(float deltaTime)
 
 }
 
-void Game::draw(Shader* s)
+void Game::draw()
+{
+	camera->useCamera(*shader, "camera");
+	shader->setUniformVec3(camera->getPos(), "camPos");
+	shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 1.0f), "lightColor");
+	shader->setUniformVec2(glm::vec2(blocks->getW() / 64, blocks->getH() / 64), "textSize");
+	glm::mat4 model(1.0f);
+	shader->setUniformMat4(model, "model");
+
+	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	ShadowMap->startUse();
+
+	cameraDir = camera->getDir();
+	cameraPos = camera->getPos();
+	glm::vec3 lightDir = glm::vec3(0.0f, -1.0f, 1.0f);
+	camera->setDir(lightDir);
+
+	camera->setUseProjection(false);
+	camera->newPos(glm::vec3(((int)cameraPos.x / 16) * 16, 255, ((int)cameraPos.z / 16) * 16));
+
+	shaderShadow->active();
+	camera->useCamera(*shaderShadow, "camera");
+	renderScene(shaderShadow);
+	ShadowMap->endUse();
+	shader->active();
+	camera->useCamera(*shader, "lightProjection");
+	shader->setUniformVec3(lightDir, "lightDir");
+
+	ShadowMap->use(*shader, "texShadow");
+	blocks->useTexture(*shader, "tex0");
+	blocksH->useTexture(*shader, "texH");
+	blocksN->useTexture(*shader, "texN");
+	blocks->bind();
+	blocksH->bind();
+	blocksN->bind();
+
+	camera->setDir(cameraDir);
+	camera->newPos(cameraPos);
+	camera->setUseProjection(true);
+	camera->useCamera(*shader, "camera");
+	renderScene(shader);
+	drawBlock(shader);
+	ShadowMap->draw();
+
+}
+
+void Game::renderScene(Shader* s)
 {
 	chunksMutex.lock();
 	for (auto c : toDraw)
@@ -157,11 +230,17 @@ void Game::draw(Shader* s)
 		c->draw(s);
 		glDisable(GL_DEPTH_TEST);
 	}
+
+	chunksMutex.unlock();
+}
+
+void Game::drawBlock(Shader* s)
+{
 	if (b)
 	{
 		vao->bind();
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(chunkPos.x,0, chunkPos.z));
+		model = glm::translate(model, glm::vec3(chunkPos.x, 0, chunkPos.z));
 		s->setUniformMat4(model, "model");
 
 		glDisable(GL_DEPTH_TEST);
@@ -174,8 +253,6 @@ void Game::draw(Shader* s)
 		glEnable(GL_DEPTH_TEST);
 
 	}
-	chunksMutex.unlock();
-
 }
 
 Block* Game::getBlockAt(int x, int y, int z)

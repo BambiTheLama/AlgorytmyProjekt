@@ -95,9 +95,10 @@ void Texture::useTexture(Shader& shader, const char* uniform)
 }
 void Texture::useTexture(const char* uniform)
 {
-	Shader& s = getDiffoltShader();
+	Shader* s = getUsingShader();
 	//s.active();
-	glUniform1i(s.getUniformLocation(uniform), slot);
+	if (s)
+		s->setUniformI1(slot, uniform);
 }
 
 void Texture::clearAllTextures()

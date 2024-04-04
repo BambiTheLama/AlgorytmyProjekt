@@ -6,7 +6,8 @@
 #include <thread>
 #include <mutex>
 
-
+class Texture;
+class RenderTexture;
 class Game :
     public Scene
 {
@@ -34,8 +35,18 @@ class Game :
     std::vector<GLuint> index;
     std::vector<GLuint> vertices;
     Cube* cube;
+
+    glm::vec3 cameraDir;
+    glm::vec3 cameraPos;
+    Shader* shader = NULL;
+    Shader* shaderShadow = NULL;
+    Texture* blocks = NULL;
+    Texture* blocksH = NULL;
+    Texture* blocksN = NULL;
+    RenderTexture* ShadowMap = NULL;
+
 public:
-    Game(Camera *camera, GLFWwindow* window);
+    Game(int w,int h, GLFWwindow* window);
 
     ~Game();
 
@@ -43,7 +54,11 @@ public:
 
     void update(float deltaTime);
 
-    void draw(Shader* s);
+    void draw();
+
+    void renderScene(Shader* s);
+
+    void drawBlock(Shader* s);
 
     Block* getBlockAt(int x, int y, int z);
 

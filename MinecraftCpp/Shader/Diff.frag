@@ -48,11 +48,11 @@ vec4 directLight()
 		lightCoords = (lightCoords + 1.0f) / 2.0f;
 		float currentDepth = lightCoords.z;
 		// Prevents shadow acne
-		float bias = max(0.025f * (1.0f - dot(normal, lightDirection)), 0.00005f);
+		float bias = max(0.05f * (1.0f - dot(normal, lightDirection)), 0.0001f);
 	
 		// Smoothens out the shadows
-		int sampleRadius = 5;
-		vec2 pixelSize = 1.0 / textureSize(texShadow, 0);
+		int sampleRadius = 4;
+		vec2 pixelSize = 1.5 / textureSize(texShadow, 0);
 		for(int y = -sampleRadius; y <= sampleRadius; y++)
 		{
 		    for(int x = -sampleRadius; x <= sampleRadius; x++)
@@ -67,8 +67,9 @@ vec4 directLight()
 	
 	}
 
-
-	return (texture(tex0, texCoord) * (diffuse*(1.0f-shadow) + ambient) + texture(texH, texCoord).r * specular) * vec4(lightColor,1.0f);
+	if(shadow==1)
+		return texture(tex0, texCoord) *  ambient;
+	return (texture(tex0, texCoord) * (diffuse*(1.0f-shadow) + ambient) + texture(texH, texCoord).r * specular*(1.0f-shadow)) * vec4(lightColor,1.0f);
 }
 
 void main()

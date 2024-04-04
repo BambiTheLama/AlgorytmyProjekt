@@ -4,6 +4,8 @@
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 
+static Shader* usingShader;
+
 std::string readShader(const char* path)
 {
 	std::ifstream reader(path);
@@ -133,6 +135,7 @@ Shader::~Shader()
 void Shader::active()
 {
 	glUseProgram(ID);
+	usingShader = this;
 }
 
 GLint Shader::getUniformLocation(const char* uniform)
@@ -160,3 +163,7 @@ void Shader::setUniformI1(int v, const char* uniform)
 	glUniform1i(glGetUniformLocation(ID, uniform), v);
 }
 
+Shader* getUsingShader()
+{
+	return usingShader;
+}

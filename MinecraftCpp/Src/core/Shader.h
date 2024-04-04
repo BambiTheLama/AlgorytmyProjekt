@@ -30,3 +30,4 @@ public:
 	void setUniformI1(int v, const char* uniform);
 };
 
+Shader* getUsingShader();
