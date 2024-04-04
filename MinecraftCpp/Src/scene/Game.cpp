@@ -175,7 +175,7 @@ void Game::draw()
 {
 	camera->useCamera(*shader, "camera");
 	shader->setUniformVec3(camera->getPos(), "camPos");
-	shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 1.0f), "lightColor");
+	shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 0.69f), "lightColor");
 	shader->setUniformVec2(glm::vec2(blocks->getW() / 64, blocks->getH() / 64), "textSize");
 	glm::mat4 model(1.0f);
 	shader->setUniformMat4(model, "model");

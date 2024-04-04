@@ -69,7 +69,10 @@ vec4 directLight()
 
 	if(shadow==1)
 		return texture(tex0, texCoord) *  ambient;
-	return (texture(tex0, texCoord) * (diffuse*(1.0f-shadow) + ambient) + texture(texH, texCoord).r * specular*(1.0f-shadow)) * vec4(lightColor,1.0f);
+	vec4 diffuseColor = texture(tex0, texCoord) * diffuse * (1.0f - shadow) * vec4(lightColor,1.0f);
+	vec4 specularColor = texture(texH, texCoord).r * specular * (1.0f-shadow) * vec4(lightColor,1.0f);
+	vec4 ambientColor = texture(tex0, texCoord) *  ambient;
+	return ambientColor + specularColor + diffuseColor;
 }
 
 void main()
@@ -78,8 +81,5 @@ void main()
 	if (texture(tex0, texCoord).a < 0.1)
 		discard;
 
-	//FragColor = vec4(vec3(direcLight() * modelColor),1.0f);
-	FragColor = vec4(vec3(directLight()*brightness),texture(tex0, texCoord).a)* modelColor;
-	//FragColor = texture(tex0, texCoord) * modelColor;
-
+	FragColor = vec4(vec3(directLight()*brightness),texture(tex0, texCoord).a) * modelColor;
 }

@@ -102,9 +102,9 @@ void RenderTexture::endUse()
 void RenderTexture::use(Shader& s, const char* uniform)
 {
     s.active();
-    glBindTexture(GL_TEXTURE_2D, texture);
     glActiveTexture(GL_TEXTURE0 + slot);
     s.setUniformI1(slot, uniform);
+    glBindTexture(GL_TEXTURE_2D, texture);
     //glUniform1i(s.getUniformLocation(uniform), 0);
 
 
