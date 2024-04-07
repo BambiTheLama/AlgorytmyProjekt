@@ -3,17 +3,27 @@
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 4) out;
 
-out vec2 texCoord;
-out vec3 pos;
-out vec3 currentPos;
-out vec3 lightV;
-out vec3 cameraV;
-out vec4 fragPosLight;
-out float brightness;
+out GEO_OUT
+{
+    vec2 texCoord;
+    vec3 pos;
+    vec3 currentPos;
+    vec3 lightV;
+    vec3 cameraV;
+    vec4 fragPosLight;
+    float brightness;
+
+
+    vec3 TangentLightPos;
+    vec3 TangentViewPos;
+    vec3 TangentFragPos;
+} geo;
+
 uniform mat4 camera;
 uniform mat4 model;
 uniform vec3 camPos;
 uniform vec3 lightPos;
+uniform vec3 lightDir;
 
 in DATA
 {
@@ -46,37 +56,49 @@ void normalMode()
 
     mat3 TBN = mat3(T, B, N);
     // TBN is an orthogonal matrix and so its inverse is equal to its transpose
-    TBN = transpose(TBN);
+    //TBN = transpose(TBN);
 
 
     gl_Position = gl_in[0].gl_Position;
-    texCoord = data_in[0].texCoord;
-    currentPos = TBN * gl_in[0].gl_Position.xyz;
-    lightV = TBN * lightPos;
-    cameraV = TBN * camPos;
-    pos = gl_in[0].gl_Position.xyz;
-    fragPosLight = data_in[0].fragPosLight;
-    brightness = data_in[0].brightness;
+    geo.texCoord = data_in[0].texCoord;
+    geo.currentPos =  gl_in[0].gl_Position.xyz;
+    geo.lightV =  normalize(lightDir);
+    geo.cameraV =  camPos;
+    geo.pos = gl_in[0].gl_Position.xyz;
+    geo.fragPosLight = data_in[0].fragPosLight;
+    geo.brightness = data_in[0].brightness;
+
+    geo.TangentLightPos =  geo.lightV;
+    geo.TangentViewPos  = TBN * camPos;
+    geo.TangentFragPos  = TBN * data_in[0].currentPos;
     EmitVertex();
 
     gl_Position = gl_in[1].gl_Position;
-    texCoord = data_in[1].texCoord;
-    currentPos = TBN * gl_in[1].gl_Position.xyz;
-    lightV = TBN * lightPos;
-    cameraV = TBN * camPos;
-    pos = gl_in[1].gl_Position.xyz;
-    fragPosLight = data_in[1].fragPosLight;
-    brightness = data_in[1].brightness;
+    geo.texCoord = data_in[1].texCoord;
+    geo.currentPos =  gl_in[1].gl_Position.xyz;
+    geo.lightV =  normalize(lightDir);
+    geo.cameraV =  camPos;
+    geo.pos = gl_in[1].gl_Position.xyz;
+    geo.fragPosLight = data_in[1].fragPosLight;
+    geo.brightness = data_in[1].brightness;
+
+    geo.TangentLightPos =  geo.lightV;
+    geo.TangentViewPos  = TBN * camPos;
+    geo.TangentFragPos  = TBN * data_in[1].currentPos;
     EmitVertex();
 
     gl_Position = gl_in[2].gl_Position;
-    texCoord = data_in[2].texCoord;
-    currentPos = TBN * gl_in[2].gl_Position.xyz;
-    lightV = TBN * lightPos;
-    cameraV = TBN * camPos;
-    pos = gl_in[2].gl_Position.xyz;
-    fragPosLight = data_in[2].fragPosLight;
-    brightness = data_in[2].brightness;
+    geo.texCoord = data_in[2].texCoord;
+    geo.currentPos =  gl_in[2].gl_Position.xyz;
+    geo.lightV =  normalize(lightDir);
+    geo.cameraV =  camPos;
+    geo.pos = gl_in[2].gl_Position.xyz;
+    geo.fragPosLight = data_in[2].fragPosLight;
+    geo.brightness = data_in[2].brightness;
+
+    geo.TangentLightPos = geo.lightV;
+    geo.TangentViewPos  = TBN * camPos;
+    geo.TangentFragPos  = TBN * data_in[2].currentPos;
     EmitVertex();
 
     EndPrimitive();

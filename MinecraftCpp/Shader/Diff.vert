@@ -47,7 +47,7 @@ void main()
 	else if(d.brightness==2)
 		data_out.brightness = 0.9;
 	else if(d.brightness==1)
-		data_out.brightness = 0.7;
+		data_out.brightness = 0.8;
 	else
-		data_out.brightness = 0.5;
+		data_out.brightness = 0.6;
 }

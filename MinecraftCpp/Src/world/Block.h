@@ -14,6 +14,8 @@ public:
 
 	virtual ~Block(){}
 
+	virtual void update(float deltaTime){}
+
 	virtual void setFaceing(int faces) = 0;
 
 	virtual void setOneFace(int face, bool state = true) = 0;
@@ -31,6 +33,8 @@ public:
 	int getID()const { return ID; }
 
 	virtual char getFaces()const { return 0; }
+
+	virtual bool getDisplay(Block* b) { return b->isTransparent() != isTransparent(); }
 
 	friend class Chunk;
 	friend class Game;

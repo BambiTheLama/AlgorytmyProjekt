@@ -8,6 +8,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../core/RenderTexture.h"
 
+Game* Game::game = NULL;
+
 Game::Game(int w,int h,GLFWwindow* window)
 {
 	setNoiseSeed(123693543);
@@ -36,7 +38,8 @@ Game::Game(int w,int h,GLFWwindow* window)
 	shader->setUniformVec4(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "modelColor");
 	ShadowMap = new RenderTexture(2048, 2048);
 	ShadowMap->use(*shader, "texShadow");
-	camera = new Camera(w, h, 0.1f, 1000, 60, glm::vec3(3000.0f, 100.0f, 5000.0f));
+	camera = new Camera(w, h, 0.1f, 1000, 60, glm::vec3(0.0f, 100.0f, 0.0f));
+	game = this;
 }
 
 Game::~Game()
@@ -62,22 +65,26 @@ Game::~Game()
 	delete blocksH;
 	delete blocksN;
 	delete shaderShadow;
+	game = NULL;
 }
 
 void Game::start()
 {
 	gameRunning = true;
+	genWorld();
 	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
 	worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
 }
 
 void Game::update(float deltaTime)
 {
+	time += deltaTime;
 	camera->update(window, deltaTime);
 	chunksMutex.lock();
+	toAddMutex.lock();
 	for (auto c : chunks)
 		c->update(deltaTime);
-
+	toAddMutex.unlock();
 	glm::vec3 pos = camera->getPos();
 	glm::vec3 dir = camera->getDir();
 	int n = 0;
@@ -111,7 +118,7 @@ void Game::update(float deltaTime)
 			}
 			chunkPos = getChunkPos(x, y, z);
 			cube->setFaceing(b->getFaces());
-			vertices = cube->getVertex(x % chunkW, y % chunkH, z % chunkT, 1, 0, 0);
+			vertices = cube->getVertex(getBlockX(x), y % chunkH, getBlockX(z), 1, 0, 0);
 			index = cube->getIndex();
 			vao->bind();
 			ebo->setNewVertices(index);
@@ -283,6 +290,20 @@ void Game::deleteBlock(int x,int y,int z)
 			c->deleteBlock(x,y,z);
 }
 
+bool Game::addBlock(Block* b)
+{
+	int x = b->x;
+	int y = b->y;
+	int z = b->z;
+	for (auto c : chunks)
+		if (c->isThisChunk(x, y, z))
+			return c->addBlock(b);
+	for (auto a : toAdd)
+		if (a->isThisChunk(x, y, z))
+			return a->addBlock(b);
+	return false;
+}
+
 void Game::setFaceing(int x, int y, int z, bool display, char face)
 {
 #define setFaceingDef(CheckingFace,x1,y1,z1) \
@@ -308,7 +329,7 @@ void Game::setFaceing(int x, int y, int z, bool display, char face)
 	setGenVerticesFlagAt(x, y, z);
 }
 
-void Game::setFaceing(Block* b, int x, int y, int z, char face)
+void Game::setFaceing(Block* b, char face)
 {
 	if (!b)
 		return;
@@ -316,68 +337,68 @@ void Game::setFaceing(Block* b, int x, int y, int z, char face)
 	bool display;
 	if (checkFace(Front, face))
 	{
-		block = getBlockAt(b->x + x, b->y + y, b->z + 1 + z);
+		block = getBlockAt(b->x, b->y, b->z + 1);
 		if (block)
 		{
-			display = b->isTransparent() != block->isTransparent();
+			display = b->getDisplay(block);
 			b->setOneFace((int)Faces::Front, display);
 			block->setOneFace((int)Faces::Back, display);
-			setGenVerticesFlagAt(b->x + x, b->y + y, b->z + 1 + z);
+			setGenVerticesFlagAt(b->x, b->y, b->z + 1);
 		}
 	}
 	if (checkFace(Back, face))
 	{
-		block = getBlockAt(b->x + x, b->y + y, b->z - 1 + z);
+		block = getBlockAt(b->x, b->y, b->z - 1);
 		if (block)
 		{
-			display = b->isTransparent() != block->isTransparent();
+			display = b->getDisplay(block);
 			block->setOneFace((int)Faces::Front, display);
 			b->setOneFace((int)Faces::Back, display);
-			setGenVerticesFlagAt(b->x + x, b->y + y, b->z - 1 + z);
+			setGenVerticesFlagAt(b->x, b->y, b->z - 1);
 		}
 	}
 	if (checkFace(Up, face))
 	{
-		block = getBlockAt(b->x + x, b->y + y + 1, b->z  + z);
+		block = getBlockAt(b->x, b->y + 1, b->z );
 		if (block)
 		{
-			display = b->isTransparent() != block->isTransparent();
+			display = b->getDisplay(block);
 			b->setOneFace((int)Faces::Up, display);
 			block->setOneFace((int)Faces::Down, display);
-			setGenVerticesFlagAt(b->x + x, b->y + y + 1, b->z + z);
+			setGenVerticesFlagAt(b->x, b->y + 1, b->z);
 		}
 	}
 	if (checkFace(Down, face))
 	{
-		block = getBlockAt(b->x + x, b->y + y - 1, b->z + z);
+		block = getBlockAt(b->x, b->y - 1, b->z);
 		if (block)
 		{
-			display = b->isTransparent() != block->isTransparent();
+			display = b->getDisplay(block);
 			block->setOneFace((int)Faces::Up, display);
 			b->setOneFace((int)Faces::Down, display);
-			setGenVerticesFlagAt(b->x + x, b->y + y - 1, b->z + z);
+			setGenVerticesFlagAt(b->x, b->y - 1, b->z);
 		}
 	}
 	if (checkFace(Left, face))
 	{
-		block = getBlockAt(b->x + x - 1, b->y + y , b->z + z);
+		block = getBlockAt(b->x - 1, b->y , b->z);
 		if (block)
 		{
-			display = b->isTransparent() != block->isTransparent();
+			display = b->getDisplay(block);
 			b->setOneFace((int)Faces::Left, display);
 			block->setOneFace((int)Faces::Right, display);
-			setGenVerticesFlagAt(b->x + x - 1, b->y + y, b->z + z);
+			setGenVerticesFlagAt(b->x - 1, b->y, b->z);
 		}
 	}
 	if (checkFace(Right, face))
 	{
-		block = getBlockAt(b->x + x + 1, b->y + y, b->z + z);
+		block = getBlockAt(b->x + 1, b->y, b->z);
 		if (block)
 		{
-			display = b->isTransparent() != block->isTransparent();
+			display = b->getDisplay(block);
 			block->setOneFace((int)Faces::Left, display);
 			b->setOneFace((int)Faces::Right, display);
-			setGenVerticesFlagAt(b->x + x + 1, b->y + y, b->z + z);
+			setGenVerticesFlagAt(b->x + 1, b->y, b->z);
 		}
 	}
 
@@ -527,4 +548,9 @@ void Game::desWorld()
 	chunksMutex.unlock();
 	toDeleteMutex.unlock();
 
+}
+
+Game* getCurrentGame()
+{
+	return Game::game;
 }

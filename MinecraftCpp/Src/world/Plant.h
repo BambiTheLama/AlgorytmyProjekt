@@ -10,6 +10,8 @@ public:
 
 	virtual ~Plant() {}
 
+	virtual void update(float deltaTime);
+
 	virtual void setFaceing(int faces) {}
 
 	virtual void setOneFace(int face, bool state = true) {}
@@ -25,5 +27,10 @@ public:
 	virtual bool isTransparent() { return true; }
 
 	virtual char getFaces()const { return 0b111111; }
+
+private:
+	std::vector<glm::vec3> getPos(int x,int y,int z);
+
+
 };
 

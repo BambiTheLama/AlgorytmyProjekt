@@ -98,22 +98,44 @@ void Chunk::start()
 
 void Chunk::update(float deltaTime)
 {
-	for (auto b : toAdd)
+	for (auto u : toUpdate)
 	{
-
-		if (b->faceToSetUp() <= 0)
-			continue;
-		game->setFaceing(b, x * chunkW, y * chunkH, z * chunkT, b->faceToSetUp());
-
+		u->update(deltaTime);
 	}
-
 	for (auto b : toDelete)
 	{
 		if (!b)
 			continue;
-		blocks[b->y][b->x][b->z] = NULL;
-		game->setFaceing(b->x + x * chunkW, b->y + y * chunkH, b->z + z * chunkT, true);
+
+		int by = b->y;
+		int bz = getBlockZ(b->z);
+		int bx = getBlockX(b->x);
+
+		blocks[by][bx][bz] = NULL;
+		game->setFaceing(b->x, b->y, b->z, true);
+		int toRemove = -1;
+		for(int i=0;i<toUpdate.size();i++)
+			if (b == toUpdate[i])
+			{
+				toRemove = i;
+				break;
+			}
+		if (toRemove > -1)
+			toUpdate.erase(toUpdate.begin() + toRemove);
+
 		delete b;
+	}
+	for (auto b : toAdd)
+	{
+		if (b->faceToSetUp() <= 0)
+			continue;
+		game->setFaceing(b, b->faceToSetUp());
+		int by = b->y;
+		int bz = getBlockZ(b->z);
+		int bx = getBlockX(b->x);
+		if (!blocks[by][bx][bz])
+			blocks[by][bx][bz] = b;
+		
 	}
 	if (genVertices || toAdd.size() > 0 || toDelete.size() > 0)
 	{
@@ -166,26 +188,64 @@ void Chunk::draw(Shader* s)
 
 Block* Chunk::getBlock(int x, int y, int z)
 {
-	x -= this->x * chunkW;
-	y -= this->y * chunkH;
-	z -= this->z * chunkT;
-	if (x >= 0 && x < chunkW && y >= 0 && y < chunkH && z >= 0 && z < chunkT)
-		return blocks[y][x][z];
+	int bx = getBlockX(x);
+	int by = y;
+	int bz = getBlockZ(z);
+	if (bx >= 0 && bx < chunkW && by >= 0 && by < chunkH && bz >= 0 && bz < chunkT)
+	{
+		if(blocks[by][bx][bz])
+			return blocks[by][bx][bz];
+		for (auto a : toAdd)
+		{
+			if (x == a->x && y == a->y && z == a->z)
+				return a;
+		}
+	}
 	return NULL;
 }
 
 void Chunk::deleteBlock(int x, int y, int z)
 {
-	x -= this->x * chunkW;
-	y -= this->y * chunkH;
-	z -= this->z * chunkT;
-	if (x >= 0 && x < chunkW && y >= 0 && y < chunkH && z >= 0 && z < chunkT)
+	int bx = getBlockX(x);
+	int by = y;
+	int bz = getBlockZ(z);
+	if (bx >= 0 && bx < chunkW && by >= 0 && by < chunkH && bz >= 0 && bz < chunkT)
 	{
 		for (auto d : toDelete)
-			if (d == blocks[y][x][z])
+			if (d == blocks[by][bx][bz])
 				return;
-		toDelete.push_back(blocks[y][x][z]);
+		toDelete.push_back(blocks[by][bx][bz]);
 	}
+}
+
+bool Chunk::addBlock(Block* b)
+{
+	int x = getBlockX(b->x);
+	int y = b->y;
+	int z = getBlockZ(b->z);
+
+	if (!blocks[y][x][z])
+	{
+		for (auto a : toAdd)
+			if (b->z == a->z && b->x == a->x && b->y == a->y)
+				return false;
+		toAdd.push_back(b);
+		return true;
+	}
+	for (auto d : toDelete)
+		if (d)
+		{
+			if (b->z == d->z && b->x == d->x && b->y == d->y)
+			{
+				for (auto a : toAdd)
+					if (b->z == a->z && b->x == a->x && b->y == a->y)
+						return false;
+				toAdd.push_back(b);
+				return true;
+			}
+		}
+
+	return false;
 }
 
 bool Chunk::isThisChunk(int x, int y, int z)
@@ -306,6 +366,13 @@ void Chunk::clearBlocks()
 		blocks[j][i][k] = NULL;
 	}
 	wasCleared = true;
+	for (auto a : toAdd)
+	{
+		delete a;
+	}
+	toAdd.clear();
+	toDelete.clear();
+	toUpdate.clear();
 }
 
 void Chunk::genVerticesPos()
@@ -537,8 +604,8 @@ void Chunk::generateTeren()
 	for (int i = 0; i < chunkW; i++)
 		for (int k = 0; k < chunkT; k++)
 		{
-			float x = i + this->x * chunkW;
-			float z = k + this->z * chunkT;
+			float x = i + this->x * (chunkW);
+			float z = k + this->z * (chunkT);
 			bool river = false;
 			bool lake = false;
 			int lakeDeep = waterH;
@@ -651,13 +718,16 @@ void Chunk::generateTeren()
 			}
 #endif // !Laby
 
+			const int blockX = x;
+			const int blockZ = z;
+
 			if (h <= 2)
 				h = 2;
 			for (int j = 0; j < chunkH && j < h - dirtSize; j++)
 			{
 				if (blocks[j][i][k])
 					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(2, i, j, k);
+				blocks[j][i][k] = createBlock(2, blockX, j, blockZ);
 			}
 			int dirtStart = h - dirtSize;
 			if (dirtStart < 0)
@@ -668,20 +738,20 @@ void Chunk::generateTeren()
 			float temperatue = temperatureNoise.GetNoise(x, z);
 			if (h > maxH * 0.57f)
 				temperatue -= (float)h / maxH * 0.4;
-			genBiom(i, k, dirtStart, endPos, temperatue);
+			genBiom(i,k,x, z, dirtStart, endPos, temperatue);
 
 			for (int j = endPos; j < endPos + 3 && j <= waterH && j < chunkH; j++)
 			{
 				if (blocks[j][i][k])
 					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(4, i, j, k);
+				blocks[j][i][k] = createBlock(4, blockX, j, blockZ);
 
 			}
 			for (int j = endPos + 3; j <= waterH && j < chunkH; j++)
 			{
 				if (blocks[j][i][k])
 					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(11, i, j, k);
+				blocks[j][i][k] = createBlock(11, blockX, j, blockZ);
 
 			}
 			if (river && h>waterH)
@@ -693,14 +763,14 @@ void Chunk::generateTeren()
 				{
 					if (blocks[j][i][k])
 						delete blocks[j][i][k];
-					blocks[j][i][k] = createBlock(4, i, j, k);
+					blocks[j][i][k] = createBlock(4, blockX, j, blockZ);
 
 				}
 				for (int j = h-rivDeep; j < h && j < chunkH; j++)
 				{
 					if (blocks[j][i][k])
 						delete blocks[j][i][k];
-					blocks[j][i][k] = createBlock(11, i, j, k);
+					blocks[j][i][k] = createBlock(11, blockX, j, blockZ);
 
 				}
 			}
@@ -710,7 +780,7 @@ void Chunk::generateTeren()
 				{
 					if (blocks[j][i][k])
 						delete blocks[j][i][k];
-					blocks[j][i][k] = createBlock(11, i, j, k);
+					blocks[j][i][k] = createBlock(11, blockX, j, blockZ);
 				}
 
 			}
@@ -723,15 +793,16 @@ void Chunk::generateTeren()
 				if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 666 == 0)
 				{
 					if(temperatue<-0.3)
-						blocks[j][i][k] = createBlock(14, i, j, k);
+						blocks[j][i][k] = createBlock(14, blockX, j, blockZ);
 					else if (temperatue < 0.3)
 					{
 						if((int)(picksAndValies.GetNoise(x, z) * 10000) % 10 >= 6)
-							blocks[j][i][k] = createBlock(12, i, j, k);
+							blocks[j][i][k] = createBlock(12, blockX, j, blockZ);
 						else
-							blocks[j][i][k] = createBlock(13, i, j, k);
+							blocks[j][i][k] = createBlock(13, blockX, j, blockZ);
 					}
-
+					if (blocks[j][i][k])
+						toUpdate.push_back(blocks[j][i][k]);
 
 				}
 
@@ -741,7 +812,7 @@ void Chunk::generateTeren()
 
 }
 
-void Chunk::genBiom(int x, int z, int startY, int endY, float temperature)
+void Chunk::genBiom(int x, int z,int blockX,int blockZ, int startY, int endY, float temperature)
 {
 	int blockID = 1;
 	int blockSurfaceID = 0;
@@ -760,9 +831,25 @@ void Chunk::genBiom(int x, int z, int startY, int endY, float temperature)
 	{
 		if (blocks[j][x][z])
 			delete blocks[j][x][z];
-		blocks[j][x][z] = createBlock(j == endY - 1 ? blockSurfaceID : blockID, x, j, z);
+		blocks[j][x][z] = createBlock(j == endY - 1 ? blockSurfaceID : blockID, blockX, j, blockZ);
+
 
 	}
+}
+
+int getBlockX(int x)
+{
+	if (x >= 0)
+		return x % chunkW;
+	return (chunkW - (abs(x) % chunkW)) % chunkW;
+
+
+}
+int getBlockZ(int z)
+{
+	if (z >= 0)
+		return z % chunkT;
+	return (chunkW - (abs(z) % chunkT)) % chunkT;
 }
 
 void Chunk::setFaceing()
@@ -814,6 +901,7 @@ void Chunk::setFaceing()
 		{
 			if (blocks[j][i][k])
 				toAdd.push_back(blocks[j][i][k]);
+			blocks[j][i][k] = NULL;
 		}
 	}
 }

@@ -1,4 +1,6 @@
 #include "Plant.h"
+#include "Chunk.h"
+#include "../scene/Game.h"
 
 Plant::Plant(int ID, int x, int y, int z, int textureX, int textureY) :Block(ID, x, y, z)
 {
@@ -6,18 +8,26 @@ Plant::Plant(int ID, int x, int y, int z, int textureX, int textureY) :Block(ID,
 	this->textureY = textureY;
 }
 
+void Plant::update(float deltaTime)
+{
+
+}
+
+
+
 std::vector<GLuint> Plant::getVertex()
 {
-	std::vector<glm::vec3> pos{
-		glm::vec3(x    ,y    ,z),
-		glm::vec3(x    ,y + 1,z),
-		glm::vec3(x + 1,y    ,z + 1),
-		glm::vec3(x + 1,y + 1,z + 1),
-		glm::vec3(x + 1,y    ,z),
-		glm::vec3(x + 1,y + 1,z),
-		glm::vec3(x    ,y    ,z + 1),
-		glm::vec3(x    ,y + 1,z + 1),
-	};
+	int x = this->x;
+	int z = this->z;
+	if (x >= 0)
+		x %= chunkW;
+	else
+		x = (chunkW - (abs(x) % chunkW)) % chunkW;
+	if (z >= 0)
+		z %= chunkT;
+	else
+		z = (chunkT - (abs(z) % chunkT)) % chunkT;
+	std::vector<glm::vec3> pos = getPos(x,y,z);
 
 	std::vector<glm::vec2> text{
 	glm::vec2(textureX,textureY + 1),
@@ -33,6 +43,7 @@ std::vector<GLuint> Plant::getVertex()
 	std::vector<GLuint> vertices;
 	for (int i = 0; i < pos.size(); i++)
 	{
+
 		vertices.push_back(
 			(0b1111		 & ((int)pos[i].x))			+
 			((0b11111111 & ((int)pos[i].y)) << 4)	+
@@ -68,4 +79,18 @@ std::vector<GLuint> Plant::getIndex()
 GLuint Plant::indexSize()
 {
 	return 8;
+}
+
+std::vector<glm::vec3> Plant::getPos(int x, int y, int z)
+{
+	return {
+		glm::vec3(x    ,y    ,z),
+		glm::vec3(x    ,y + 1,z),
+		glm::vec3(x + 1,y    ,z + 1),
+		glm::vec3(x + 1,y + 1,z + 1),
+		glm::vec3(x + 1,y    ,z),
+		glm::vec3(x + 1,y + 1,z),
+		glm::vec3(x    ,y    ,z + 1),
+		glm::vec3(x    ,y + 1,z + 1),
+	};
 }

@@ -1,5 +1,6 @@
 #include "CubeBlock.h"
 #include "../core/Engine.h"
+#include "Chunk.h"
 
 CubeBlock::CubeBlock(int ID, int x, int y, int z, int textureX, int textureY, int textureFaces, bool transparent) :Block(ID, x, y, z)
 {
@@ -28,6 +29,16 @@ void CubeBlock::setOneFace(int face, bool state)
 
 std::vector<GLuint> CubeBlock::getVertex()
 {
+	int x = this->x;
+	int z = this->z;
+	if (x >= 0)
+		x %= chunkW;
+	else
+		x = (chunkW  - (abs(x) % chunkW)) % chunkW;
+	if (z >= 0)
+		z %= chunkT;
+	else
+		z = (chunkT  - (abs(z) % chunkT)) % chunkT;
 	return cube->getVertex(x, y, z, textureFaces, textureX, textureY);
 }
 

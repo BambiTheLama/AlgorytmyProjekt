@@ -26,6 +26,7 @@ class Chunk
 	int x, y, z;
 	Block* blocks[chunkH][chunkW][chunkT];
 	std::vector<Block*> toDelete;
+	std::vector<Block*> toUpdate;
 	std::vector<Block*> toAdd;
 	std::vector<Block*> toDraw;
 	VAO* vaoS = NULL;
@@ -57,6 +58,8 @@ public:
 
 	void deleteBlock(int x, int y, int z);
 
+	bool addBlock(Block* b);
+
 	bool isThisChunk(int x, int y, int z);
 
 	void save();
@@ -80,7 +83,11 @@ private:
 	void genVerticesPos();
 	void generateTeren();
 	void setFaceing();
-	void genBiom(int x, int z, int startY, int endY,float temperature);
+	void genBiom(int x, int z, int blockX, int blockZ, int startY, int endY, float temperature);
+
 };
 void setNoiseSeed(int seed);
+
+int getBlockX(int x);
+int getBlockZ(int z);
 

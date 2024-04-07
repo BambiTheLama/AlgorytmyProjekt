@@ -81,6 +81,10 @@
     <ClCompile Include="Src\core\RenderTexture.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Src\world\OakTree.cpp">
+      <Filter>Src\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Leaf.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\text.frag">
@@ -167,5 +171,9 @@
     <ClInclude Include="Src\core\RenderTexture.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Src\world\OakTree.h">
+      <Filter>Src\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Leaf.h" />
   </ItemGroup>
 </Project>

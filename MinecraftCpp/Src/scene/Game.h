@@ -44,6 +44,8 @@ class Game :
     Texture* blocksH = NULL;
     Texture* blocksN = NULL;
     RenderTexture* ShadowMap = NULL;
+    static Game* game;
+    float time = 0.0f;
 
 public:
     Game(int w,int h, GLFWwindow* window);
@@ -66,12 +68,15 @@ public:
 
     void deleteBlock(int x, int y, int z);
 
+    bool addBlock(Block* b);
+
     void setFaceing(int x,int y,int z,bool display, char face = 0b111111);
 
-    void setFaceing(Block* b,int x,int y,int z, char face = 0b111111);
+    void setFaceing(Block* b, char face = 0b111111);
 
     void setGenVerticesFlagAt(int x, int y, int z);
 
+    friend Game* getCurrentGame();
 private:
     void worldGenerateFun();
 
@@ -82,3 +87,4 @@ private:
     void desWorld();
 };
 
+Game* getCurrentGame();
