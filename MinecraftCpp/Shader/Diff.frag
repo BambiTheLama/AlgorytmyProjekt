@@ -8,17 +8,14 @@ uniform sampler2D texN;
 uniform sampler2D texShadow;
 uniform vec3 lightDir;
 
-in GEO_OUT
+in DATA
 {
-    vec2 texCoord;
-    vec3 pos;
-    vec3 currentPos;
-    vec3 lightV;
-    vec3 cameraV;
-    vec4 fragPosLight;
-    float brightness;
-
+	vec2 texCoord;
+	vec3 currentPos;
+	vec4 fragPosLight;
+	flat int brightness;
 } frag;
+
 uniform vec3 camPos;
 
 uniform vec3 lightColor;
@@ -48,12 +45,12 @@ vec3 directLight()
 		normal = cross(normal,vec3(1.0f, 0.0f, 0.0f))*-1;
 
 	//vec3 normal = vec3(1);
-	vec3 lightDirection = frag.lightV;
+	vec3 lightDirection = lightDir;
 	float diffuse = min(max(dot(normal, lightDirection), 0.0f),0.3f);
 
 	// specular lighting
 	float specularLight = 0.50f;
-	vec3 viewDirection = normalize(frag.cameraV - frag.currentPos);
+	vec3 viewDirection = normalize(camPos - frag.currentPos);
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 8);
 	float specular = specAmount * specularLight;
@@ -92,7 +89,7 @@ vec3 directLight()
 	vec3 specularColor = texture(texH, frag.texCoord).r * specular * (1.0f - shadow) * lightColor;
 	vec3 ambientColor = texture(tex0, frag.texCoord).rgb * ambient;
 
-	if(shadow==1)
+	if(shadow == 1)
 		return texture(tex0, frag.texCoord).rgb *  ambient;
 	return ambientColor + specularColor + diffuseColor;
 }

@@ -26,7 +26,7 @@ Game::Game(int w,int h,GLFWwindow* window)
 	selection = new Texture("Res/Selected.jpg");
 
 
-	shader = new Shader("Shader/Diff.vert", "Shader/Diff.geom", "Shader/Diff.frag");
+	shader = new Shader("Shader/Diff.vert", "Shader/Diff.frag");
 	shaderShadow = new Shader("Shader/Shadow.vert", "Shader/Shadow.frag");
 	blocks = new Texture("Res/Blocks64.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
 	blocksH = new Texture("Res/Blocks64H.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);

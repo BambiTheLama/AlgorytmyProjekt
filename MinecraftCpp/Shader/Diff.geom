@@ -12,7 +12,7 @@ out GEO_OUT
     vec3 cameraV;
     vec4 fragPosLight;
     float brightness;
-
+    int blockDir;
 } geo;
 
 uniform mat4 camera;
@@ -27,6 +27,7 @@ in DATA
 	vec3 currentPos;
 	vec4 fragPosLight;
     float brightness;
+    int blockDir;
 } data_in[];
 
 
@@ -40,7 +41,7 @@ void normalMode()
     geo.cameraV =  camPos;
     geo.pos = gl_in[0].gl_Position.xyz;
     geo.fragPosLight = data_in[0].fragPosLight;
-    geo.brightness = data_in[0].brightness;
+    geo.blockDir = data_in[0].blockDir;
 
     EmitVertex();
 
@@ -51,7 +52,7 @@ void normalMode()
     geo.cameraV =  camPos;
     geo.pos = gl_in[1].gl_Position.xyz;
     geo.fragPosLight = data_in[1].fragPosLight;
-    geo.brightness = data_in[1].brightness;
+    geo.blockDir = data_in[1].blockDir;
 
     EmitVertex();
 
@@ -62,7 +63,7 @@ void normalMode()
     geo.cameraV =  camPos;
     geo.pos = gl_in[2].gl_Position.xyz;
     geo.fragPosLight = data_in[2].fragPosLight;
-    geo.brightness = data_in[2].brightness;
+    geo.blockDir = data_in[2].blockDir;
 
     EmitVertex();
 
