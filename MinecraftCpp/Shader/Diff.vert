@@ -20,7 +20,8 @@ out DATA
 	vec2 texCoord;
 	vec3 currentPos;
 	vec4 fragPosLight;
-	flat int brightness;
+	flat int dir;
+	float bright;
 } data_out;
 
 
@@ -43,6 +44,15 @@ void main()
 	data_out.currentPos = currentPos;
 	data_out.fragPosLight = lightProjection * vec4(currentPos,1.0f);
 
-	data_out.brightness = d.blockDir;
+	data_out.dir = d.blockDir;
+
+	if(d.blockDir<=1)
+		data_out.bright = 0.82;
+	else if(d.blockDir<=3)
+		data_out.bright = 0.68;
+	else if(d.blockDir<=4)
+		data_out.bright = 1.0;
+	else		
+		data_out.bright = 0.5;
 
 }

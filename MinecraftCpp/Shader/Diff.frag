@@ -13,7 +13,8 @@ in DATA
 	vec2 texCoord;
 	vec3 currentPos;
 	vec4 fragPosLight;
-	flat int brightness;
+	flat int dir;
+	float bright;
 } frag;
 
 uniform vec3 camPos;
@@ -31,18 +32,18 @@ vec3 directLight()
 	// diffuse lighting
 	vec3 normal = normalize((texture(texN, frag.texCoord).xyz * 2.0f - 1.0f));
 
-	if(frag.brightness <= 0)
+	if(frag.dir == 0)
 		;
-	else if(frag.brightness <= 1)	
+	else if(frag.dir == 1)	
 		normal = normal * -1.0f;
-	else if(frag.brightness <= 2)
+	else if(frag.dir == 2)
 		normal = cross(normal,vec3(0.0f, 1.0f, 0.0f));
-	else if(frag.brightness <= 3)
-		normal = cross(normal,vec3(0.0f, 1.0f, 0.0f))*-1;
-	else if(frag.brightness <= 4)
+	else if(frag.dir == 3)
+		normal = cross(normal,vec3(0.0f, -1.0f, 0.0f));
+	else if(frag.dir == 4)
 		normal = cross(normal,vec3(1.0f, 0.0f, 0.0f));
 	else
-		normal = cross(normal,vec3(1.0f, 0.0f, 0.0f))*-1;
+		normal = cross(normal,vec3(-1.0f, 0.0f, 0.0f));
 
 	//vec3 normal = vec3(1);
 	vec3 lightDirection = lightDir;
@@ -66,7 +67,7 @@ vec3 directLight()
 		lightCoords = (lightCoords + 1.0f) / 2.0f;
 		float currentDepth = lightCoords.z;
 		// Prevents shadow acne
-		float bias = max(0.1f * (1.0f - dot(normal, lightDirection)), 0.0001f);
+		float bias = max(0.5f * (1.0f - dot(normal, lightDirection)), 0.005f);
 	
 		// Smoothens out the shadows
 		int sampleRadius = 3;
@@ -84,9 +85,10 @@ vec3 directLight()
 		shadow /= pow((sampleRadius * 2 + 1), 2);
 	
 	}
-	return (normal+1.0f)/2.0f;
+	//shadow=0.0f;
+	//return (normal+1.0f)/2.0f;
 	vec3 diffuseColor = texture(tex0, frag.texCoord).rgb * diffuse * (1.0f - shadow) * lightColor;
-	vec3 specularColor = texture(texH, frag.texCoord).r * specular * (1.0f - shadow) * lightColor;
+	vec3 specularColor = texture(tex0, frag.texCoord).r * specular * (1.0f - shadow) * lightColor*0.0001f;
 	vec3 ambientColor = texture(tex0, frag.texCoord).rgb * ambient;
 
 	if(shadow == 1)
@@ -100,5 +102,5 @@ void main()
 	if (texture(tex0, frag.texCoord).a < 0.1)
 		discard;
 
-	FragColor = vec4(directLight(),texture(tex0, frag.texCoord).a) * modelColor;
+	FragColor = vec4(directLight()*frag.bright,texture(tex0, frag.texCoord).a) * modelColor;
 }
