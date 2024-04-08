@@ -11,7 +11,7 @@ out GEO_OUT
     vec3 lightV;
     vec3 cameraV;
     vec4 fragPosLight;
-	int blockDir;
+    float brightness;
 
 
     vec3 TangentLightPos;
@@ -19,22 +19,20 @@ out GEO_OUT
     vec3 TangentFragPos;
 } geo;
 
-
-
 uniform mat4 camera;
 uniform mat4 model;
 uniform vec3 camPos;
 uniform vec3 lightPos;
 uniform vec3 lightDir;
 
-
 in DATA
 {
 	vec2 texCoord;
 	vec3 currentPos;
 	vec4 fragPosLight;
-	int blockDir;
+    float brightness;
 } data_in[];
+
 
 void normalMode()
 {
@@ -60,6 +58,7 @@ void normalMode()
     // TBN is an orthogonal matrix and so its inverse is equal to its transpose
     //TBN = transpose(TBN);
 
+
     gl_Position = gl_in[0].gl_Position;
     geo.texCoord = data_in[0].texCoord;
     geo.currentPos =  gl_in[0].gl_Position.xyz;
@@ -67,9 +66,9 @@ void normalMode()
     geo.cameraV =  camPos;
     geo.pos = gl_in[0].gl_Position.xyz;
     geo.fragPosLight = data_in[0].fragPosLight;
-    geo.blockDir = data_in[0].blockDir;
+    geo.brightness = data_in[0].brightness;
 
-    geo.TangentLightPos = TBN * geo.lightV;
+    geo.TangentLightPos =  geo.lightV;
     geo.TangentViewPos  = TBN * camPos;
     geo.TangentFragPos  = TBN * data_in[0].currentPos;
     EmitVertex();
@@ -81,9 +80,9 @@ void normalMode()
     geo.cameraV =  camPos;
     geo.pos = gl_in[1].gl_Position.xyz;
     geo.fragPosLight = data_in[1].fragPosLight;
-    geo.blockDir = data_in[1].blockDir;
+    geo.brightness = data_in[1].brightness;
 
-    geo.TangentLightPos = TBN * geo.lightV;
+    geo.TangentLightPos =  geo.lightV;
     geo.TangentViewPos  = TBN * camPos;
     geo.TangentFragPos  = TBN * data_in[1].currentPos;
     EmitVertex();
@@ -95,9 +94,9 @@ void normalMode()
     geo.cameraV =  camPos;
     geo.pos = gl_in[2].gl_Position.xyz;
     geo.fragPosLight = data_in[2].fragPosLight;
-    geo.blockDir =  data_in[2].blockDir;
+    geo.brightness = data_in[2].brightness;
 
-    geo.TangentLightPos = TBN * geo.lightV;
+    geo.TangentLightPos = geo.lightV;
     geo.TangentViewPos  = TBN * camPos;
     geo.TangentFragPos  = TBN * data_in[2].currentPos;
     EmitVertex();
