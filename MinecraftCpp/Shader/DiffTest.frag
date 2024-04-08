@@ -18,10 +18,6 @@ in GEO_OUT
     vec4 fragPosLight;
 	int blockDir;
 
-	vec3 TangentLightPos;
-    vec3 TangentViewPos;
-    vec3 TangentFragPos;
-
 } frag;
 uniform vec3 camPos;
 uniform vec3 shadowMapLightDir;
