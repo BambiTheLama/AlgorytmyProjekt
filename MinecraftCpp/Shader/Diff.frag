@@ -32,10 +32,15 @@ uniform vec3 lightColor;
 vec4 directLight()
 {
 	// ambient lighting
-	float ambient = 0.40f;
+	float ambient = 1.00f;
 
 	// diffuse lighting
 	vec3 normal = normalize((texture(texN, frag.texCoord).xyz * 2.0f - 1.0f));
+
+	if(frag.brightness==0)
+
+
+
 	//vec3 normal = vec3(1);
 	vec3 lightDirection = frag.TangentLightPos;
 	float diffuse = min(max(dot(normal, lightDirection), 0.0f),0.3f);
@@ -76,12 +81,12 @@ vec4 directLight()
 		shadow /= pow((sampleRadius * 2 + 1), 2);
 	
 	}
-	//shadow=0.0f;
+	shadow=0.0f;
 
 	vec4 diffuseColor = texture(tex0, frag.texCoord) * diffuse * (1.0f - shadow) * vec4(lightColor,1.0f);
 	vec4 specularColor = texture(texH, frag.texCoord).r * specular * (1.0f-shadow) * vec4(lightColor,1.0f);
-	vec4 ambientColor = texture(tex0, frag.texCoord) *  ambient;
-
+	vec4 ambientColor = texture(texN, frag.texCoord) *  ambient;
+	return ambientColor;
 	if(shadow==1)
 		return texture(tex0, frag.texCoord) *  ambient;
 	return ambientColor + specularColor + diffuseColor;
@@ -93,5 +98,5 @@ void main()
 	if (texture(tex0, frag.texCoord).a < 0.1)
 		discard;
 
-	FragColor = vec4(vec3(directLight()*frag.brightness),texture(tex0, frag.texCoord).a) * modelColor;
+	FragColor = vec4(vec3(directLight()),texture(tex0, frag.texCoord).a) * modelColor;
 }

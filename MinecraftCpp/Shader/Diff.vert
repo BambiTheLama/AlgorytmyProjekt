@@ -42,12 +42,7 @@ void main()
 	data_out.texCoord = d.text/ textSize;
 	data_out.currentPos = currentPos;
 	data_out.fragPosLight = lightProjection * vec4(currentPos,1.0f);
-	if(d.brightness==4)
-		data_out.brightness = 1;
-	else if(d.brightness == 3 && d.brightness == 2)
-		data_out.brightness = 0.9;
-	else if(d.brightness == 1 && d.brightness == 0)
-		data_out.brightness = 0.8;
-	else
-		data_out.brightness = 0.6;
+
+	data_out.brightness = d.brightness;
+
 }
