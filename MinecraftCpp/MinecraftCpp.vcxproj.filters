@@ -96,10 +96,10 @@
     <None Include="Shader\Diff.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shader\Diff.vert">
+    <None Include="Shader\DiffTest.vert">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shader\Diff.geom">
+    <None Include="Shader\DiffTest.geom">
       <Filter>Shader</Filter>
     </None>
     <None Include="Shader\texture.frag">
@@ -112,6 +112,15 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="Shader\Shadow.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\DiffTest.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Diff.geom">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Diff.vert">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

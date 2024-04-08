@@ -26,7 +26,7 @@ class Game :
     GLFWwindow* window;
     Block* b = NULL;
     std::vector<glm::vec2> posToGenChunk;
-    int range = 10;
+    int range = 7;
     VAO *vao;
     VBO *vbo;
     EBO *ebo;
@@ -46,7 +46,7 @@ class Game :
     RenderTexture* ShadowMap = NULL;
     static Game* game;
     float time = 0.0f;
-
+    bool debug = false;
 public:
     Game(int w,int h, GLFWwindow* window);
 

@@ -18,6 +18,7 @@ in GEO_OUT
     vec4 fragPosLight;
     float brightness;
 
+
 	vec3 TangentLightPos;
     vec3 TangentViewPos;
     vec3 TangentFragPos;

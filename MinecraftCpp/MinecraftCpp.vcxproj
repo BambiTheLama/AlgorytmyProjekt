@@ -190,6 +190,9 @@
     <None Include="Shader\Diff.frag" />
     <None Include="Shader\Diff.geom" />
     <None Include="Shader\Diff.vert" />
+    <None Include="Shader\DiffTest.geom" />
+    <None Include="Shader\DiffTest.vert" />
+    <None Include="Shader\DiffTest.frag" />
     <None Include="Shader\Shadow.frag" />
     <None Include="Shader\Shadow.vert" />
     <None Include="Shader\text.frag" />

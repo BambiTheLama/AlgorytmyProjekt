@@ -84,6 +84,14 @@ void Game::update(float deltaTime)
 	toAddMutex.lock();
 	for (auto c : chunks)
 		c->update(deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS)
+	{
+		debug = false;
+	}
+	if (glfwGetKey(window, GLFW_KEY_F4) == GLFW_PRESS)
+	{
+		debug = true;
+	}
 	toAddMutex.unlock();
 	glm::vec3 pos = camera->getPos();
 	glm::vec3 dir = camera->getDir();
@@ -181,9 +189,7 @@ void Game::update(float deltaTime)
 void Game::draw()
 {
 	camera->useCamera(*shader, "camera");
-	shader->setUniformVec3(camera->getPos(), "camPos");
-	shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 0.69f), "lightColor");
-	shader->setUniformVec2(glm::vec2(blocks->getW() / 64, blocks->getH() / 64), "textSize");
+
 	glm::mat4 model(1.0f);
 	shader->setUniformMat4(model, "model");
 
@@ -195,8 +201,9 @@ void Game::draw()
 
 	cameraDir = camera->getDir();
 	cameraPos = camera->getPos();
-	glm::vec3 lightDir = glm::vec3(0.0f, -1.0f, 1.0f);
-	camera->setDir(lightDir);
+	glm::vec3 lightDir = glm::vec3(0.0f, 1.0f, 1.0f);
+	glm::vec3 shadowMapLightDir = glm::vec3(0.0f, -3.0f, 1.0f);
+	camera->setDir(shadowMapLightDir);
 
 	camera->setUseProjection(false);
 	camera->newPos(glm::vec3(((int)cameraPos.x / 16) * 16, 255, ((int)cameraPos.z / 16) * 16));
@@ -206,8 +213,13 @@ void Game::draw()
 	renderScene(shaderShadow);
 	ShadowMap->endUse();
 	shader->active();
+	shader->setUniformI1(debug, "isDebug");
+	shader->setUniformVec3(camera->getPos(), "camPos");
+	shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 1.0f), "lightColor");
+	shader->setUniformVec2(glm::vec2(blocks->getW() / 64, blocks->getH() / 64), "textSize");
 	camera->useCamera(*shader, "lightProjection");
 	shader->setUniformVec3(lightDir, "lightDir");
+	shader->setUniformVec3(shadowMapLightDir, "shadowMapLightDir");
 
 	ShadowMap->use(*shader, "texShadow");
 	blocks->useTexture(*shader, "tex0");
@@ -250,14 +262,16 @@ void Game::drawBlock(Shader* s)
 		model = glm::translate(model, glm::vec3(chunkPos.x, 0, chunkPos.z));
 		s->setUniformMat4(model, "model");
 
-		glDisable(GL_DEPTH_TEST);
+		//glDisable(GL_DEPTH_TEST);
+		glDepthFunc(GL_EQUAL);
 		s->setUniformVec4(glm::vec4(100, 0, 100, 0.6f), "modelColor");
 		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		s->setUniformVec4(glm::vec4(100, 100, 100, 1), "modelColor");
 		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+		//glEnable(GL_DEPTH_TEST);
 
 	}
 }
