@@ -201,8 +201,8 @@ void Game::draw()
 
 	cameraDir = camera->getDir();
 	cameraPos = camera->getPos();
-	glm::vec3 lightDir = glm::vec3(0.0f, 1.0f, 1.0f);
-	glm::vec3 shadowMapLightDir = glm::vec3(0.0f, -3.0f, 1.0f);
+	glm::vec3 lightDir = glm::vec3(0.0f, 3.0f, 1);
+	glm::vec3 shadowMapLightDir = glm::vec3(0.0f, -1.0f, sin(time));
 	camera->setDir(shadowMapLightDir);
 
 	camera->setUseProjection(false);

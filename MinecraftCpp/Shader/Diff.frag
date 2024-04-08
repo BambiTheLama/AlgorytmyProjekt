@@ -28,25 +28,36 @@ uniform vec3 camPos;
 
 uniform vec3 lightColor;
 
+uniform vec3 shadowMapLightDir;
+
 
 vec4 directLight()
 {
 	// ambient lighting
-	float ambient = 1.00f;
+	float ambient = 0.50f;
 
 	// diffuse lighting
 	vec3 normal = normalize((texture(texN, frag.texCoord).xyz * 2.0f - 1.0f));
 
-	if(frag.brightness==0)
-
-
+	if(frag.brightness <= 0)
+		normal = normal * 1.0f;
+	else if(frag.brightness <= 1)	
+		normal = normal * -1.0f;
+	else if(frag.brightness <= 2)
+		normal = cross(normal,vec3(0.0f, 1.0f, 0.0f));
+	else if(frag.brightness <= 3)
+		normal = cross(normal,vec3(0.0f, -1.0f, 0.0f));
+	else if(frag.brightness <= 4)
+		normal = cross(normal,vec3(1.0f, 0.0f, 0.0f));
+	else
+		normal = cross(normal,vec3(-1.0f, 0.0f, 0.0f));
 
 	//vec3 normal = vec3(1);
 	vec3 lightDirection = frag.TangentLightPos;
 	float diffuse = min(max(dot(normal, lightDirection), 0.0f),0.3f);
 
 	// specular lighting
-	float specularLight = 0.30f;
+	float specularLight = 0.50f;
 	vec3 viewDirection = normalize(frag.TangentViewPos - frag.TangentFragPos);
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 8);
@@ -63,7 +74,7 @@ vec4 directLight()
 		lightCoords = (lightCoords + 1.0f) / 2.0f;
 		float currentDepth = lightCoords.z;
 		// Prevents shadow acne
-		float bias = max(0.05f * (1.0f - dot(normal, lightDirection)), 0.0001f);
+		float bias = max(0.1f * (1.0f - dot(normal, lightDirection)), 0.0001f);
 	
 		// Smoothens out the shadows
 		int sampleRadius = 3;
@@ -81,12 +92,11 @@ vec4 directLight()
 		shadow /= pow((sampleRadius * 2 + 1), 2);
 	
 	}
-	shadow=0.0f;
 
 	vec4 diffuseColor = texture(tex0, frag.texCoord) * diffuse * (1.0f - shadow) * vec4(lightColor,1.0f);
 	vec4 specularColor = texture(texH, frag.texCoord).r * specular * (1.0f-shadow) * vec4(lightColor,1.0f);
-	vec4 ambientColor = texture(texN, frag.texCoord) *  ambient;
-	return ambientColor;
+	vec4 ambientColor = texture(tex0, frag.texCoord)*ambient;
+
 	if(shadow==1)
 		return texture(tex0, frag.texCoord) *  ambient;
 	return ambientColor + specularColor + diffuseColor;
