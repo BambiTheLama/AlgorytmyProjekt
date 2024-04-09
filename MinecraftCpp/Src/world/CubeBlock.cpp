@@ -38,7 +38,7 @@ std::vector<GLuint> CubeBlock::getVertex()
 		z %= chunkT;
 	else
 		z = (chunkT  - (abs(z) % chunkT)) % chunkT;
-	return cube->getVertex(x, y, z, textureFaces, textureX, textureY);
+	return cube->getVertex(x, y, z, textureFaces,textureID);
 }
 
 std::vector<GLuint> CubeBlock::getIndex()

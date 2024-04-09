@@ -112,21 +112,21 @@ std::vector<unsigned char> Cube::getBrightness()
 	return brightness;
 }
 
-std::vector<glm::vec2> Cube::getVertexTexture(int textureSides)
+std::vector<glm::vec3> Cube::getVertexTexture(int textureSides)
 {
-#define addTexture1 textPos.push_back(glm::vec2(0, 0));\
-					textPos.push_back(glm::vec2(0, 1));\
-					textPos.push_back(glm::vec2(1, 0));\
-					textPos.push_back(glm::vec2(1, 1));
-#define addTexture2 textPos.push_back(glm::vec2(1, 0));\
-					textPos.push_back(glm::vec2(1, 1));\
-					textPos.push_back(glm::vec2(2, 0));\
-					textPos.push_back(glm::vec2(2, 1));
-#define addTexture3 textPos.push_back(glm::vec2(2, 0));\
-					textPos.push_back(glm::vec2(2, 1));\
-					textPos.push_back(glm::vec2(3, 0));\
-					textPos.push_back(glm::vec2(3, 1));
-	std::vector<glm::vec2> textPos;
+#define addTexture1 textPos.push_back(glm::vec3(0, 0, 0));\
+					textPos.push_back(glm::vec3(0, 1, 0));\
+					textPos.push_back(glm::vec3(1, 0, 0));\
+					textPos.push_back(glm::vec3(1, 1, 0));
+#define addTexture2 textPos.push_back(glm::vec3(0, 0, 1));\
+					textPos.push_back(glm::vec3(0, 1, 1));\
+					textPos.push_back(glm::vec3(1, 0, 1));\
+					textPos.push_back(glm::vec3(1, 1, 1));
+#define addTexture3 textPos.push_back(glm::vec3(0, 0, 2));\
+					textPos.push_back(glm::vec3(0, 1, 2));\
+					textPos.push_back(glm::vec3(1, 0, 2));\
+					textPos.push_back(glm::vec3(1, 1, 2));
+	std::vector<glm::vec3> textPos;
 	//if (face <= 0)
 	//	return textPos;
 	if (checkFace(Front, face))
@@ -264,9 +264,9 @@ std::vector<GLuint> Cube::getIndex(bool doubleSides)
 	return index;
 }
 
-std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int textX, int textY, bool doubleSides)
+std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int textID, bool doubleSides)
 {
-	std::vector<glm::vec2> text = getVertexTexture(textureSides);
+	std::vector<glm::vec3> text = getVertexTexture(textureSides);
 	std::vector<unsigned char> brightness = getBrightness();
 	std::vector<glm::vec3> pos = getVertexPos();
 	std::vector<GLuint> vertex;
@@ -277,9 +277,10 @@ std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int t
 			(0b1111		 & ((int)pos[i].x + x))				+
 			((0b11111111 & ((int)pos[i].y + y))		 << 4)	+
 			((0b1111	 & ((int)pos[i].z + z))		 << 12) +
-			((0b1111	 & ((int)text[i].x + textX)) << 16) +
-			((0b1111	 & ((int)text[i].y + textY)) << 20) +
-			((0b111		 & ((int)brightness[i]))	 << 24));
+			((0b1		 & ((int)text[i].x))         << 16) +
+			((0b1		 & ((int)text[i].y))         << 17) +
+			((0b11111	 & ((int)textID + text[i].z))<< 18) +
+			((0b111		 & ((int)brightness[i]))	 << 23));
 	}
 
 	return vertex;
