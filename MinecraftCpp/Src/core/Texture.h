@@ -10,6 +10,7 @@ class Texture
 	GLenum type;
 	int w, h;
 	const char* path;
+	bool loaded = false;
 	GLenum slot;
 	static std::vector<Texture*> textures;
 public:
@@ -25,7 +26,7 @@ public:
 
 	void unbind();
 
-	void useTexture(Shader& shader, const char* uniform);
+	void useTexture(Shader& shader, const char* uniform, int n = 0);
 
 	void useTexture(const char* uniform);
 
@@ -36,6 +37,8 @@ public:
 	int getH() const { return h; }
 
 	void deleteTexture();
+
+	bool wasLoaded() { return loaded; }
 
 	friend class Engine;
 	friend class RenderTexture;

@@ -27,9 +27,8 @@ Game::Game(int w,int h,GLFWwindow* window)
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.frag");
 	shaderShadow = new Shader("Shader/Shadow.vert", "Shader/Shadow.frag");
-	blocks = new Texture("Res/Blocks64.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
-	blocksH = new Texture("Res/Blocks64H.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE);
-	blocksN = new Texture("Res/Blocks64N.png", GL_TEXTURE_2D, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGB);
+	blocks = new GameTextures("Res/Blocks/");
+
 
 	shader->active();
 	glm::mat4 modelMat = glm::mat4(1.0f);
@@ -215,18 +214,18 @@ void Game::draw()
 	shader->setUniformI1(debug, "isDebug");
 	shader->setUniformVec3(camera->getPos(), "camPos");
 	shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 1.0f), "lightColor");
-	shader->setUniformVec2(glm::vec2(blocks->getW() / 64, blocks->getH() / 64), "textSize");
 	camera->useCamera(*shader, "lightProjection");
 	shader->setUniformVec3(lightDir, "lightDir");
 	shader->setUniformVec3(shadowMapLightDir, "shadowMapLightDir");
 
 	ShadowMap->use(*shader, "texShadow");
-	blocks->useTexture(*shader, "tex0");
-	blocksH->useTexture(*shader, "texH");
-	blocksN->useTexture(*shader, "texN");
-	blocks->bind();
-	blocksH->bind();
-	blocksN->bind();
+	blocks->setTextures(*shader, "tex0");
+	//blocks->useTexture(*shader, "tex0");
+	//blocksH->useTexture(*shader, "texH");
+	//blocksN->useTexture(*shader, "texN");
+	//blocks->bind();
+	//blocksH->bind();
+	//blocksN->bind();
 
 	camera->setDir(cameraDir);
 	camera->newPos(cameraPos);

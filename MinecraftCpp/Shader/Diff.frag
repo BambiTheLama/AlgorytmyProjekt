@@ -19,9 +19,7 @@ in DATA
 } frag;
 
 uniform vec3 camPos;
-
 uniform vec3 lightColor;
-
 uniform vec3 shadowMapLightDir;
 
 
@@ -31,7 +29,7 @@ vec3 directLight()
 	float ambient = 0.50f;
 
 	// diffuse lighting
-	vec3 normal = normalize((texture(texN[textID], frag.texCoord).xyz * 2.0f - 1.0f));
+	vec3 normal = normalize((texture(texN[frag.textID], frag.texCoord).xyz * 2.0f - 1.0f));
 
 	if(frag.dir == 0)
 		;
@@ -88,20 +86,20 @@ vec3 directLight()
 	}
 	//shadow=0.0f;
 	//return (normal+1.0f)/2.0f;
-	vec3 diffuseColor = texture(tex0[textID], frag.texCoord).rgb * diffuse * (1.0f - shadow) * lightColor;
-	vec3 specularColor = texture(tex0[textID], frag.texCoord).r * specular * (1.0f - shadow) * lightColor*0.0001f;
-	vec3 ambientColor = texture(tex0[textID], frag.texCoord).rgb * ambient;
-
+	vec3 diffuseColor = texture(tex0[frag.textID], frag.texCoord).rgb * diffuse * (1.0f - shadow) * lightColor;
+	vec3 specularColor = texture(tex0[frag.textID], frag.texCoord).r * specular * (1.0f - shadow) * lightColor*0.0001f;
+	vec3 ambientColor = texture(tex0[frag.textID], frag.texCoord).rgb * ambient;
+	return ambientColor;
 	if(shadow == 1)
-		return texture(tex0[textID], frag.texCoord).rgb *  ambient;
+		return texture(tex0[frag.textID], frag.texCoord).rgb *  ambient;
 	return ambientColor + specularColor + diffuseColor;
 }
 
 void main()
 {
 
-	if (texture(tex0[0], frag.texCoord).a < 0.1)
+	if (texture(tex0[frag.textID], frag.texCoord).a < 0.1)
 		discard;
 
-	FragColor = vec4(directLight()*frag.bright,texture(tex0[textID], frag.texCoord).a) * modelColor;
+	FragColor = vec4(directLight()*frag.bright,texture(tex0[frag.textID], frag.texCoord).a) * modelColor;
 }

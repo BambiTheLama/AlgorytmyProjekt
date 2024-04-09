@@ -3,7 +3,6 @@
 layout (location = 0) in int data;
 
 uniform sampler2D tex0;
-uniform vec2 textSize;
 uniform vec4 modelColor;
 uniform mat4 camera;
 uniform mat4 model;
@@ -37,12 +36,12 @@ void main()
 	d.text.x = data >> 16 & 1;			/// 0b000000000000000100000000000000000
 	d.text.y = data >> 17 & 1;			/// 0b000000000000001000000000000000000
 	d.textID = data >> 18 & 31;			/// 0b000000000111110000000000000000000
-	d.textID = data >> 23 & 7;			/// 0b000000111000000000000000000000000
+	d.blockDir = data >> 23 & 7;		/// 0b000000111000000000000000000000000
 
 		
 	vec3 currentPos = vec3(model * vec4(d.pos, 1.0f));
 	gl_Position = camera * vec4(currentPos, 1.0f);
-	data_out.texCoord = d.text/ textSize;
+	data_out.texCoord = d.text;
 	data_out.currentPos = currentPos;
 	data_out.fragPosLight = lightProjection * vec4(currentPos,1.0f);
 

@@ -5,6 +5,7 @@
 #include "../core/Camera.h"
 #include <thread>
 #include <mutex>
+#include "GameTextures.h"
 
 class Texture;
 class RenderTexture;
@@ -26,7 +27,7 @@ class Game :
     GLFWwindow* window;
     Block* b = NULL;
     std::vector<glm::vec2> posToGenChunk;
-    int range = 15;
+    int range = 1;
     VAO *vao;
     VBO *vbo;
     EBO *ebo;
@@ -40,9 +41,10 @@ class Game :
     glm::vec3 cameraPos;
     Shader* shader = NULL;
     Shader* shaderShadow = NULL;
-    Texture* blocks = NULL;
-    Texture* blocksH = NULL;
-    Texture* blocksN = NULL;
+    GameTextures* blocks;
+    GameTextures* blocksH;
+    GameTextures* blocksN;
+
     RenderTexture* ShadowMap = NULL;
     static Game* game;
     float time = 0.0f;

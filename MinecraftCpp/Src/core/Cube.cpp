@@ -127,8 +127,8 @@ std::vector<glm::vec3> Cube::getVertexTexture(int textureSides)
 					textPos.push_back(glm::vec3(1, 0, 2));\
 					textPos.push_back(glm::vec3(1, 1, 2));
 	std::vector<glm::vec3> textPos;
-	//if (face <= 0)
-	//	return textPos;
+	if (face <= 0)
+		return textPos;
 	if (checkFace(Front, face))
 	{
 		if (textureSides < 2)
@@ -279,7 +279,7 @@ std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int t
 			((0b1111	 & ((int)pos[i].z + z))		 << 12) +
 			((0b1		 & ((int)text[i].x))         << 16) +
 			((0b1		 & ((int)text[i].y))         << 17) +
-			((0b11111	 & ((int)textID + text[i].z))<< 18) +
+			((0b11111	 & (textID + (int)text[i].z))<< 18) +
 			((0b111		 & ((int)brightness[i]))	 << 23));
 	}
 

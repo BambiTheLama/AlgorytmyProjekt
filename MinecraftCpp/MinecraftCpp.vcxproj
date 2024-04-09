@@ -176,6 +176,7 @@
     <ClCompile Include="Src\glad.c" />
     <ClCompile Include="Src\Main.cpp" />
     <ClCompile Include="Src\scene\Game.cpp" />
+    <ClCompile Include="Src\scene\GameTextures.cpp" />
     <ClCompile Include="Src\scene\Scene.cpp" />
     <ClCompile Include="Src\world\Block.cpp" />
     <ClCompile Include="Src\world\BlocksCreator.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="Src\core\VBO.h" />
     <ClInclude Include="Src\Properties.h" />
     <ClInclude Include="Src\scene\Game.h" />
+    <ClInclude Include="Src\scene\GameTextures.h" />
     <ClInclude Include="Src\scene\Scene.h" />
     <ClInclude Include="Src\world\Block.h" />
     <ClInclude Include="Src\world\BlocksCreator.h" />
