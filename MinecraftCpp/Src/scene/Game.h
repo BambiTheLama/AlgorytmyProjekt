@@ -27,7 +27,7 @@ class Game :
     GLFWwindow* window;
     Block* b = NULL;
     std::vector<glm::vec2> posToGenChunk;
-    int range = 1;
+    int range = 16;
     VAO *vao;
     VBO *vbo;
     EBO *ebo;
@@ -60,7 +60,7 @@ public:
 
     void draw();
 
-    void renderScene(Shader* s);
+    void renderScene(Shader* s, bool trans);
 
     void drawBlock(Shader* s);
 

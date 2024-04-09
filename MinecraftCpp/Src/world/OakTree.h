@@ -6,7 +6,7 @@ class OakTree :
     int woodID;
     int leafID;
 public:
-    OakTree(int ID, int x, int y, int z, int textureX, int textureY,int woodID=7, int leafID=8);
+    OakTree(int ID, int x, int y, int z, int textureID,int woodID=7, int leafID=8);
 
     void update(float deltaTime);
 };

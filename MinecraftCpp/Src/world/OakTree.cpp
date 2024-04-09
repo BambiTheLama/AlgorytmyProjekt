@@ -1,7 +1,7 @@
 #include "OakTree.h"
 #include "../scene/Game.h"
 #include "BlocksCreator.h"
-OakTree::OakTree(int ID, int x, int y, int z, int textureX, int textureY, int woodID, int leafID) :Plant(ID, x, y, z, textureX, textureY)
+OakTree::OakTree(int ID, int x, int y, int z, int textureID, int woodID, int leafID) :Plant(ID, x, y, z, textureID)
 {
 	this->woodID = woodID;
 	this->leafID = leafID;

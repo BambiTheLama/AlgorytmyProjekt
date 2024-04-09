@@ -5,7 +5,6 @@ VBO::VBO()
 {
 	glGenBuffers(1, &ID);
 #ifdef DebugInfoMode
-#define info
 	printf("[INFO]: Succesful Create VBO %d\n", (int)ID);
 #endif
 }
@@ -18,6 +17,9 @@ VBO::VBO(GLfloat* vertices, GLsizeiptr size, GLenum drawType) :VBO()
 
 VBO::~VBO()
 {
+#ifdef DebugInfoMode
+	printf("[INFO]: Succesful DELETE VBO %d\n", (int)ID);
+#endif
 	glDeleteBuffers(1, &ID);
 }
 

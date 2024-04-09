@@ -3,10 +3,9 @@
 class Plant :
     public Block
 {
-	int textureX;
-	int textureY;
+	int textureID;
 public:
-	Plant(int ID, int x, int y, int z, int textureX, int textureY);
+	Plant(int ID, int x, int y, int z, int textureID);
 
 	virtual ~Plant() {}
 

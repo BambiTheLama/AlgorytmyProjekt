@@ -28,7 +28,8 @@ Game::Game(int w,int h,GLFWwindow* window)
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.frag");
 	shaderShadow = new Shader("Shader/Shadow.vert", "Shader/Shadow.frag");
 	blocks = new GameTextures("Res/Blocks/");
-
+	blocksN = new GameTextures("Res/BlocksN/");
+	blocksH = new GameTextures("Res/BlocksH/");
 
 	shader->active();
 	glm::mat4 modelMat = glm::mat4(1.0f);
@@ -208,7 +209,7 @@ void Game::draw()
 
 	shaderShadow->active();
 	camera->useCamera(*shaderShadow, "camera");
-	renderScene(shaderShadow);
+	renderScene(shaderShadow, false);
 	ShadowMap->endUse();
 	shader->active();
 	shader->setUniformI1(debug, "isDebug");
@@ -219,7 +220,11 @@ void Game::draw()
 	shader->setUniformVec3(shadowMapLightDir, "shadowMapLightDir");
 
 	ShadowMap->use(*shader, "texShadow");
+	blocksH->setTextures(*shader, "texH");
+	blocksN->setTextures(*shader, "texN");
 	blocks->setTextures(*shader, "tex0");
+
+
 	//blocks->useTexture(*shader, "tex0");
 	//blocksH->useTexture(*shader, "texH");
 	//blocksN->useTexture(*shader, "texN");
@@ -231,20 +236,20 @@ void Game::draw()
 	camera->newPos(cameraPos);
 	camera->setUseProjection(true);
 	camera->useCamera(*shader, "camera");
-	renderScene(shader);
+	renderScene(shader,true);
 	drawBlock(shader);
 	ShadowMap->draw();
 	
 }
 
-void Game::renderScene(Shader* s)
+void Game::renderScene(Shader* s,bool trans)
 {
 	chunksMutex.lock();
 	for (auto c : toDraw)
 	{
 		glEnable(GL_DEPTH_TEST);
 		s->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
-		c->draw(s);
+		c->draw(s, trans);
 		glDisable(GL_DEPTH_TEST);
 	}
 

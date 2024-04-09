@@ -2,10 +2,9 @@
 #include "Chunk.h"
 #include "../scene/Game.h"
 
-Plant::Plant(int ID, int x, int y, int z, int textureX, int textureY) :Block(ID, x, y, z)
+Plant::Plant(int ID, int x, int y, int z, int textureID) :Block(ID, x, y, z)
 {
-	this->textureX = textureX;
-	this->textureY = textureY;
+	this->textureID = textureID;
 }
 
 void Plant::update(float deltaTime)
@@ -30,14 +29,14 @@ std::vector<GLuint> Plant::getVertex()
 	std::vector<glm::vec3> pos = getPos(x,y,z);
 
 	std::vector<glm::vec2> text{
-	glm::vec2(textureX,textureY + 1),
-	glm::vec2(textureX,textureY),
-	glm::vec2(textureX + 1,textureY + 1),
-	glm::vec2(textureX + 1,textureY),
-	glm::vec2(textureX,textureY + 1),
-	glm::vec2(textureX,textureY),
-	glm::vec2(textureX + 1,textureY + 1),
-	glm::vec2(textureX + 1,textureY),
+	glm::vec2(0,1),
+	glm::vec2(0,0),
+	glm::vec2(1,1),
+	glm::vec2(1,0),
+	glm::vec2(0,1),
+	glm::vec2(0,0),
+	glm::vec2(1,1),
+	glm::vec2(1,0),
 	};
 
 	std::vector<GLuint> vertices;
@@ -46,11 +45,11 @@ std::vector<GLuint> Plant::getVertex()
 
 		vertices.push_back(
 			(0b1111		 & ((int)pos[i].x))			+
-			((0b11111111 & ((int)pos[i].y)) << 4)	+
-			((0b1111     & ((int)pos[i].z)) << 12)	+
-			((0b1111     & ((int)text[i].x)) << 16) +
-			((0b1111     & ((int)text[i].y)) << 20) +
-			  (0b11111111 << 24));
+			((0b11111111 & ((int)pos[i].y))  << 4)	+
+			((0b1111     & ((int)pos[i].z))  << 12)	+
+			((0b1	     & ((int)text[i].x)) << 16) +
+			((0b1	     & ((int)text[i].y)) << 17) +
+			((0b11111	 & textureID)		 << 18));
 	}
 
 

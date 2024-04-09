@@ -39,6 +39,8 @@ Chunk::Chunk(int x, int y, int z)
 
 Chunk::~Chunk()
 {
+	delete solidMesh;
+	delete transMesh;
 	if (wasCleared)
 		return;
 	forAllBlocks
@@ -46,6 +48,7 @@ Chunk::~Chunk()
 	{
 		delete blocks[j][i][k];
 	}
+
 }
 
 void Chunk::start()
@@ -106,13 +109,14 @@ void Chunk::update(float deltaTime)
 
 }
 
-void Chunk::draw(Shader* s)
+void Chunk::draw(Shader* s,bool trans)
 {
 	glm::mat4 model(1);
 	model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
 	s->setUniformMat4(model, "model");
 	solidMesh->draw();
-	transMesh->draw();
+	if(trans)
+		transMesh->draw();
 }
 
 Block* Chunk::getBlock(int x, int y, int z)

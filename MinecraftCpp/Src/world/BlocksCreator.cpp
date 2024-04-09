@@ -35,7 +35,15 @@ Block* createBlock(int i,int x,int y,int z)
 
 	case 11:///WATER
 		return new CubeBlock(i, x, y, z, 23, 1, true);
-
+	case 12:///Sapling 1
+		return new OakTree(i, x, y, z, 11);
+	case 13:///Sapling 2
+		return new OakTree(i, x, y, z, 15, 5, 6);
+	case 14:///Sapling 3
+		return new Plant(i, x, y, z, 19);
+	case 15:///Sapling 3
+		//return new Cactus(i, x, y, z, 3, 4);
+		break;
 
 	default:
 		return NULL;

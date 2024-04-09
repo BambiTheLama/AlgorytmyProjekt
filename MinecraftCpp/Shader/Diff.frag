@@ -87,9 +87,8 @@ vec3 directLight()
 	//shadow=0.0f;
 	//return (normal+1.0f)/2.0f;
 	vec3 diffuseColor = texture(tex0[frag.textID], frag.texCoord).rgb * diffuse * (1.0f - shadow) * lightColor;
-	vec3 specularColor = texture(tex0[frag.textID], frag.texCoord).r * specular * (1.0f - shadow) * lightColor*0.0001f;
+	vec3 specularColor = texture(texH[frag.textID], frag.texCoord).r * specular * (1.0f - shadow) * lightColor*0.0001f;
 	vec3 ambientColor = texture(tex0[frag.textID], frag.texCoord).rgb * ambient;
-	return ambientColor;
 	if(shadow == 1)
 		return texture(tex0[frag.textID], frag.texCoord).rgb *  ambient;
 	return ambientColor + specularColor + diffuseColor;
