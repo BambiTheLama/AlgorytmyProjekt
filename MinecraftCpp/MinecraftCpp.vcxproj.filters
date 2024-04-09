@@ -85,6 +85,9 @@
       <Filter>Src\World</Filter>
     </ClCompile>
     <ClCompile Include="Src\world\Leaf.cpp" />
+    <ClCompile Include="Src\world\ChunkMesh.cpp">
+      <Filter>Src\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\text.frag">
@@ -94,12 +97,6 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="Shader\Diff.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shader\DiffTest.vert">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shader\DiffTest.geom">
       <Filter>Shader</Filter>
     </None>
     <None Include="Shader\texture.frag">
@@ -112,9 +109,6 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="Shader\Shadow.vert">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shader\DiffTest.frag">
       <Filter>Shader</Filter>
     </None>
     <None Include="Shader\Diff.geom">
@@ -184,5 +178,8 @@
       <Filter>Src\World</Filter>
     </ClInclude>
     <ClInclude Include="Src\world\Leaf.h" />
+    <ClInclude Include="Src\world\ChunkMesh.h">
+      <Filter>Src\World</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

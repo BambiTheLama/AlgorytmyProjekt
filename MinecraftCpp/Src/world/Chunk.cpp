@@ -22,11 +22,7 @@
 								for (int k = 0; k < chunkT; k++)
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
-#ifdef Laby
-PerlinNoice Chunk::noise = PerlinNoice(5000, 5000, 5, 1, 0.3);
-PerlinNoice Chunk::noise2 = PerlinNoice(6200, 6200, 8, 2, 0.69, 75631);
-PerlinNoice Chunk::noiseRiver = PerlinNoice(6000, 6000, 6, 1, 0.51, 213769241);
-#endif
+
 Chunk::Chunk(int x, int y, int z)
 {
 	this->x = x;
@@ -38,28 +34,11 @@ Chunk::Chunk(int x, int y, int z)
 	}
 	if(!loadGame())
 		generateTeren();
-
-	genVerticesPos();
 	setFaceing();
-	indicesSolid = std::vector<GLuint>();
-
 }
 
 Chunk::~Chunk()
 {
-
-	if (vaoS)
-		delete vaoS;
-	if (eboS)
-		delete eboS;
-	if (vboS)
-		delete vboS;
-	if (vaoT)
-		delete vaoT;
-	if (eboT)
-		delete eboT;
-	if (vboT)
-		delete vboT;
 	if (wasCleared)
 		return;
 	forAllBlocks
@@ -71,29 +50,8 @@ Chunk::~Chunk()
 
 void Chunk::start()
 {
-	if (!vaoT)
-		vaoT = new VAO();
-	if (!vboT)
-		vboT = new VBO();
-	if (!eboT)
-		eboT = new EBO(indicesTrans);
-	if (!vaoS)
-		vaoS = new VAO();
-	if (!vboS)
-		vboS = new VBO();
-	if (!eboS)
-		eboS = new EBO(indicesSolid);
-
-	vaoS->linkData(*vboS, 0, 1, GL_FLOAT, sizeof(float), (void*)0);
-	vaoS->bind();
-	eboS->bind();
-	vaoS->unbind();
-	eboS->unbind();
-	vaoT->linkData(*vboT, 0, 1, GL_FLOAT, sizeof(float), (void*)0);
-	vaoT->bind();
-	eboT->bind();
-	vaoT->unbind();
-	eboT->unbind();
+	solidMesh = new ChunkMesh();
+	transMesh = new ChunkMesh();
 }
 
 void Chunk::update(float deltaTime)
@@ -143,21 +101,6 @@ void Chunk::update(float deltaTime)
 		toDelete.clear();
 		toAdd.clear();
 		genVerticesPos();
-		vaoS->bind();
-		eboS->setNewVertices(indicesSolid);
-		eboS->bind();
-		vboS->setNewVertices(verticesSolid);
-		vaoS->linkData(*vboS, 0, 1, GL_FLOAT, sizeof(GLuint), (void*)0);
-		vaoS->unbind();
-
-		vaoT->bind();
-		eboT->setNewVertices(indicesTrans);
-		eboT->bind();
-		vboT->setNewVertices(verticesTrans);
-		vaoT->linkData(*vboT, 0, 1, GL_FLOAT, sizeof(GLuint), (void*)0);
-		vaoT->unbind();
-
-
 	}
 
 
@@ -168,22 +111,8 @@ void Chunk::draw(Shader* s)
 	glm::mat4 model(1);
 	model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
 	s->setUniformMat4(model, "model");
-	if (indicesSolid.size() > 0)
-	{
-		vaoS->bind();
-		glDrawElements(GL_TRIANGLES, indicesSolid.size(), GL_UNSIGNED_INT, 0);
-		vaoS->unbind();
-	}
-	if (indicesTrans.size() > 0)
-	{
-		//glDepthFunc(GL_EQUAL);
-		vaoT->bind();
-		//glDrawElements(GL_TRIANGLES, indicesTrans.size(), GL_UNSIGNED_INT, 0);
-		s->setUniformMat4(model, "model");
-		glDepthFunc(GL_LESS);
-		glDrawElements(GL_TRIANGLES, indicesTrans.size(), GL_UNSIGNED_INT, 0);
-		vaoT->unbind();
-	}
+	solidMesh->draw();
+	transMesh->draw();
 }
 
 Block* Chunk::getBlock(int x, int y, int z)
@@ -377,6 +306,10 @@ void Chunk::clearBlocks()
 
 void Chunk::genVerticesPos()
 {
+	std::vector<GLuint> indicesSolid;
+	std::vector<int> verticesSolid;
+	std::vector<GLuint> indicesTrans;
+	std::vector<int> verticesTrans;
 
 #define addVertices(indces,ver,lastIndex)  std::vector<GLuint> indexTmp = blocks[j][i][k]->getIndex();\
 	std::vector<GLuint> vertTmp = blocks[j][i][k]->getVertex();\
@@ -387,11 +320,6 @@ void Chunk::genVerticesPos()
 	lastIndex += blocks[j][i][k]->indexSize();\
 	ver.insert(ver.end(), vertTmp.begin(), vertTmp.end());
 
-
-	indicesSolid.clear();
-	indicesTrans.clear();
-	verticesSolid.clear();
-	verticesTrans.clear();
 
 	GLuint lastIndexSolid = 0;
 	GLuint lastIndexTrans = 0;
@@ -411,8 +339,10 @@ void Chunk::genVerticesPos()
 
 
 	}
-
+	solidMesh->newMesh(verticesSolid, indicesSolid);
+	transMesh->newMesh(verticesTrans, indicesTrans);
 }
+
 float getValue(float v)
 {
 	if (v <= -1.0f)
@@ -421,9 +351,6 @@ float getValue(float v)
 		return log(v) / 6.0f + 1;
 	return powf(v, 3);
 }
-
-
-
 
 void genValues(float** tab)
 {
@@ -450,80 +377,7 @@ void genValues(float** tab)
 			tab[x][z] = ((1.0f - vx) * tab[0][z] + vx * tab[w][z] + (1.0f - vz) * tab[x][0] + vz * tab[x][t]) / 2;
 		}
 }
-#define NoiseSizeW 500
-#define NoiseSizeH 500
-static float noise2D[NoiseSizeH][NoiseSizeW];
 
-void setNoiseSeed(int seed)
-{
-	float noise2DTMP[NoiseSizeH][NoiseSizeW];
-	srand(seed);
-
-	for (int x = 0; x < NoiseSizeW; x++)
-		for (int y = 0; y < NoiseSizeH; y++)
-		{
-			noise2DTMP[y][x] = ((float)rand() / RAND_MAX);
-		}
-	int octaves = 5;
-	int bias = 2;
-	for (int x = 0; x < NoiseSizeW; x++)
-		for (int y = 0; y < NoiseSizeH; y++)
-		{
-			float fNoise = 0.0f;
-			float fScaleAcc = 0.0f;
-			float fScale = 1.0f;
-
-			for (int o = 0; o < octaves; o++)
-			{
-				int nPitch = NoiseSizeW >> o;
-				int nSampleX1 = (x / nPitch) * nPitch;
-				int nSampleY1 = (y / nPitch) * nPitch;
-
-				int nSampleX2 = (nSampleX1 + nPitch) % NoiseSizeW;
-				int nSampleY2 = (nSampleY1 + nPitch) % NoiseSizeW;
-
-				float fBlendX = (float)(x - nSampleX1) / (float)nPitch;
-				float fBlendY = (float)(y - nSampleY1) / (float)nPitch;
-
-				float fSampleT = (1.0f - fBlendX) * noise2DTMP[nSampleY1][nSampleX1] + fBlendX * noise2DTMP[nSampleY1][nSampleX2];
-				float fSampleB = (1.0f - fBlendX) * noise2DTMP[nSampleY2][nSampleX1] + fBlendX * noise2DTMP[nSampleY2][nSampleX2];
-
-				fScaleAcc += fScale;
-				fNoise += (fBlendY * (fSampleB - fSampleT) + fSampleT) * fScale;
-				fScale = fScale / bias;
-			}
-
-			// Scale to seed range
-			noise2D[y][x] = fNoise / fScaleAcc;
-		}
-}
-const float frq = 1.0f;
-#ifdef Laby
-float getValueTerrain(int x, int z)
-{
-	int Six = 0;
-	int Siz = 0;
-	int Eix = 0;
-	int Eiz = 0;
-	float v = 0.0f;
-
-	Six = (int)(frq * abs(x)) % NoiseSizeW;
-	Siz = (int)(frq * abs(z)) % NoiseSizeH;
-	Eix = (Six + 1) % NoiseSizeW;
-	Eiz = (Siz + 1) % NoiseSizeH;
-
-	float xp = frq * abs(-x);
-	xp -= (int)xp;
-	float zp = frq * abs(-z);
-	zp -= (int)zp;
-
-	float vd = noise2D[Siz][Six] * (1.0f - xp) + noise2D[Siz][Eix] * xp;
-	float vu = noise2D[Eiz][Six] * (1.0f - xp) + noise2D[Eiz][Eix] * xp;
-	v = vd * (1.0f - zp) + vu * zp;
-	return (v + 1) / 2;
-}
-#endif
-#ifndef Laby
 float getValueTerrain(float v)
 {
 	if (v <= -1.0f)
@@ -532,28 +386,10 @@ float getValueTerrain(float v)
 		return log(v) / 6.0f + 1;
 	return powf(v, 3);
 }
-#endif
-#ifdef Laby
-float Chunk::getNoiseValue(int x,int z)
-{
-	return  (noise.getNoise(x, z) + noise2.getNoise(x, z) / 4) * 4.0f / 5.0f;
-}
-int getTerrainHeight(float noise)
-{
-	return minH + noise * (maxH - minH);
-}
-bool isThisPointAtVec(glm::vec2 p, std::vector<glm::vec2> &points)
-{
-	for (auto po : points)
-		if (po.x == p.x && po.y == p.y)
-			return true;
-	return false;
-}
 
-#endif
 void Chunk::generateTeren()
 {
-#ifndef Laby
+
 	FastNoiseLite terrain(666);
 	terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
 	terrain.SetFrequency(0.001f);
@@ -598,7 +434,7 @@ void Chunk::generateTeren()
 	temperatureNoise.SetFractalLacunarity(1.3f);
 	temperatureNoise.SetFractalGain(0.32f);
 	temperatureNoise.SetFractalWeightedStrength(6.16f);
-#endif
+
 	const int height = maxH - minH;
 	const int dirtSize = 8;
 	for (int i = 0; i < chunkW; i++)
@@ -610,80 +446,7 @@ void Chunk::generateTeren()
 			bool lake = false;
 			int lakeDeep = waterH;
 			int rivDeep = 0;
-#ifdef Laby
-			int h = getTerrainHeight(getNoiseValue(x, z));
-			///RIVER
-			float v = noiseRiver.getNoise(x, z);
-			river = 0.2385f < v&& 0.2675f > v;
 
-			rivDeep = 4 - (abs(0.25f - v) * 400);
-			if (rivDeep >= 3)
-				rivDeep = 3;
-
-			if (v > 0.18f && v < 0.32f && !river && h >= waterH)
-			{
-				h -= pow((7 - abs(0.25f - v) * 100) / 7.0f, 2) * (h - waterH) * 1.69f;
-				if (h < waterH-1)
-					h = waterH-1;
-			}
-			if (river &&h>=waterH-1)
-			{
-				h = waterH - rivDeep - 3; +(h - waterH) / 2.f;
-				if (h < 0)
-					h = 0;
-			}
-			else
-			{
-				river = false;
-			}
-
-			///LAKE
-			static const float lakeNoiseV = 0.90085f;
-			lake = lakeNoiseV < noiseRiver.getNoise(x, z);
-			if (lake && !river && h>=waterH)
-			{
-				int minLakeH = h;
-				int pixels = 0;
-				std::vector<glm::vec2> posToCheck;
-				std::vector<glm::vec2> posChecked;
-				posToCheck.push_back(glm::vec2(x, z));
-				posChecked.push_back(glm::vec2(x, z));
-
-
-#define ifCorrectPointAdd(dx,dz)\
-					if (lakeNoiseV < noiseRiver.getNoise(p.x+dx, p.y+dz))\
-					{\
-						if (!isThisPointAtVec(glm::vec2(p.x + dx,p.y+dz), posChecked))\
-						{\
-							posToCheck.push_back(glm::vec2(p.x + dx, p.y+dz));\
-							posChecked.push_back(glm::vec2(p.x + dx, p.y+dz));\
-						}\
-					}\
-
-				while (posToCheck.size() > 0)
-				{
-					glm::vec2 p = posToCheck.back(); 
-					if (minLakeH > getTerrainHeight(getNoiseValue(p.x, p.y)))
-						minLakeH = getTerrainHeight(getNoiseValue(p.x, p.y));
-					posToCheck.pop_back();
-
-					ifCorrectPointAdd(1, 0);
-					ifCorrectPointAdd(-1, 0);
-					ifCorrectPointAdd(0, 1);
-					ifCorrectPointAdd(0, -1);
-				}
-
-				h = minLakeH - 1;
-				if (h < 0)
-					h = 0;
-				lakeDeep = h - abs((lakeNoiseV - noiseRiver.getNoise(x, z)) * 125.0f);
-				if (lakeDeep < 0)
-					lakeDeep = 0;
-			}
-
-
-#endif // Laby
-#ifndef Laby
 			float t = (getValueTerrain(terrain.GetNoise(x, z)) + 1)/2;
 			float e = getValueTerrain(erosia.GetNoise(x, z));
 			float pv = getValueTerrain(picksAndValies.GetNoise(x, z));
@@ -716,7 +479,7 @@ void Chunk::generateTeren()
 			{
 				river = false;
 			}
-#endif // !Laby
+
 
 			const int blockX = x;
 			const int blockZ = z;
@@ -845,6 +608,7 @@ int getBlockX(int x)
 
 
 }
+
 int getBlockZ(int z)
 {
 	if (z >= 0)
@@ -854,7 +618,6 @@ int getBlockZ(int z)
 
 void Chunk::setFaceing()
 {
-
 	forAllBlocks
 	{
 		if (!blocks[j][i][k])

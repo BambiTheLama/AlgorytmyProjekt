@@ -12,7 +12,6 @@ Game* Game::game = NULL;
 
 Game::Game(int w,int h,GLFWwindow* window)
 {
-	setNoiseSeed(123693543);
 	Chunk::game = this;
 	cube = new Cube();
 
@@ -236,7 +235,7 @@ void Game::draw()
 	renderScene(shader);
 	drawBlock(shader);
 	ShadowMap->draw();
-
+	
 }
 
 void Game::renderScene(Shader* s)

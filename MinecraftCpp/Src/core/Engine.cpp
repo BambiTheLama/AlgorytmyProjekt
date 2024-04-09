@@ -50,6 +50,7 @@ Engine::Engine()
 
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, reside);
+	glfwSwapInterval(0);
 	gladLoadGL();
 	glViewport(0, 0, width, height);
 

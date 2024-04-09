@@ -1,8 +1,8 @@
 #pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "VBO.h"
 
-class VBO;
 class VAO
 {
 	GLuint ID;

@@ -7,10 +7,10 @@ class CubeBlock :
 {
 	Cube* cube;
 	int textureFaces;
-	int textureX, textureY;
+	int textureID;
 	bool transparent;
 public:
-	CubeBlock(int ID, int x, int y, int z, int textureX = 0, int textureY = 0, int textureFaces = 1, bool transparent = false);
+	CubeBlock(int ID, int x, int y, int z, int textureID = 0 , int textureFaces = 1, bool transparent = false);
 
 	~CubeBlock();
 

@@ -2,12 +2,11 @@
 #include "../core/Engine.h"
 #include "Chunk.h"
 
-CubeBlock::CubeBlock(int ID, int x, int y, int z, int textureX, int textureY, int textureFaces, bool transparent) :Block(ID, x, y, z)
+CubeBlock::CubeBlock(int ID, int x, int y, int z, int textureID, int textureFaces, bool transparent) :Block(ID, x, y, z)
 {
 	cube = new Cube();
 	this->textureFaces = textureFaces;
-	this->textureX = textureX;
-	this->textureY = textureY;
+	this->textureID = textureID;
 	this->transparent = transparent;
 }
 

@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "PerlinNoise.h"
+#include "ChunkMesh.h"
 #define chunkW 15
 #define chunkH 255
 #define chunkT 15
@@ -13,9 +14,6 @@
 #define noSave
 
 class Game;
-class VBO;
-class VAO;
-class EBO;
 class Chunk
 {
 #ifdef Laby
@@ -29,16 +27,10 @@ class Chunk
 	std::vector<Block*> toUpdate;
 	std::vector<Block*> toAdd;
 	std::vector<Block*> toDraw;
-	VAO* vaoS = NULL;
-	VBO* vboS = NULL;
-	EBO* eboS = NULL;
-	VAO* vaoT = NULL;
-	VBO* vboT = NULL;
-	EBO* eboT = NULL;
-	std::vector<GLuint> verticesSolid;
-	std::vector<GLuint> indicesSolid;
-	std::vector<GLuint> verticesTrans;
-	std::vector<GLuint> indicesTrans;
+	ChunkMesh* solidMesh;
+	ChunkMesh* transMesh;
+	int indicesSolidSize = 0;
+	int indicesTransSize = 0;
 	static Game* game;
 	bool genVertices = false;
 	bool wasCleared = false;
@@ -77,16 +69,13 @@ public:
 	friend class Game;
 
 private:
-#ifdef Laby
-	float getNoiseValue(int x, int z);
-#endif
+
 	void genVerticesPos();
 	void generateTeren();
 	void setFaceing();
 	void genBiom(int x, int z, int blockX, int blockZ, int startY, int endY, float temperature);
 
 };
-void setNoiseSeed(int seed);
 
 int getBlockX(int x);
 int getBlockZ(int z);
