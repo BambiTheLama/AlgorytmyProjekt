@@ -7,6 +7,7 @@
 #include "../core/Shader.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "../core/RenderTexture.h"
+#include <algorithm>
 
 Game* Game::game = NULL;
 
@@ -73,6 +74,13 @@ void Game::start()
 	genWorld();
 	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
 	worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
+}
+
+glm::vec3 camPos;
+
+bool compareObj(Chunk* c1, Chunk* c2)
+{
+	return glm::distance(c1->getPos(), camPos) > glm::distance(c2->getPos(), camPos);
 }
 
 void Game::update(float deltaTime)
@@ -164,23 +172,11 @@ void Game::update(float deltaTime)
 	}
 	toDelete.clear();
 	toDeleteMutex.unlock();
-	toDraw.clear();
-	for (auto c : chunks)
-	{
-		toDraw.push_back(c);
-	}
-	for (int i = 0; i < toDraw.size(); i++)
-	{
-		for (int j = i; j < toDraw.size(); j++)
-		{
-			if (glm::distance(toDraw[i]->getPos(), camera->getPos()) < glm::distance(toDraw[j]->getPos(), camera->getPos()))
-			{
-				Chunk* c = toDraw[i];
-				toDraw[i] = toDraw[j];
-				toDraw[j] = c;
-			}
-		}
-	}
+	toDraw = chunks;
+
+	camPos = camera->getPos();
+	std::sort(toDraw.begin(), toDraw.end(), compareObj);
+
 	chunksMutex.unlock();
 
 }
@@ -224,13 +220,6 @@ void Game::draw()
 	blocksN->setTextures(*shader, "texN");
 	blocks->setTextures(*shader, "tex0");
 
-
-	//blocks->useTexture(*shader, "tex0");
-	//blocksH->useTexture(*shader, "texH");
-	//blocksN->useTexture(*shader, "texN");
-	//blocks->bind();
-	//blocksH->bind();
-	//blocksN->bind();
 
 	camera->setDir(cameraDir);
 	camera->newPos(cameraPos);

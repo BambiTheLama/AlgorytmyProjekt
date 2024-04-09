@@ -668,7 +668,6 @@ void Chunk::setFaceing()
 		{
 			if (blocks[j][i][k])
 				toAdd.push_back(blocks[j][i][k]);
-			blocks[j][i][k] = NULL;
 		}
 	}
 }
