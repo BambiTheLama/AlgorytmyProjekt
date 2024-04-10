@@ -622,6 +622,10 @@ int getBlockZ(int z)
 
 void Chunk::setFaceing()
 {
+	Chunk* lChunk = game->getChunkAt(x - 1, y, z);
+	Chunk* rChunk = game->getChunkAt(x + 1, y, z);
+	Chunk* bChunk = game->getChunkAt(x, y, z - 1);
+	Chunk* fChunk = game->getChunkAt(x, y, z + 1);
 	forAllBlocks
 	{
 		if (!blocks[j][i][k])
@@ -664,10 +668,58 @@ void Chunk::setFaceing()
 			blocks[j][i][k]->setOneFace((int)Faces::Front, trans);
 			blocks[j][i][k + 1]->setOneFace((int)Faces::Back, trans);
 		}
-		if ((i == 0 || i == chunkW - 1 || j == 0 || j == chunkH - 1 || k == 0 || k == chunkT - 1))
+		if (i == 0 && blocks[j][i][k])
 		{
-			if (blocks[j][i][k])
-				toAdd.push_back(blocks[j][i][k]);
+			if (lChunk && lChunk->blocks[j][chunkW - 1][k])
+			{
+				Block* b1 = blocks[j][i][k];
+				Block* b2 = lChunk->blocks[j][chunkW - 1][k];
+				bool display = b1->getDisplay(b2);
+				b1->setOneFace((int)Faces::Left, display);
+				b2->setOneFace((int)Faces::Right, display);
+			}
+		} 
+		else if (i == chunkW - 1 && blocks[j][i][k])
+		{
+			if (rChunk && rChunk->blocks[j][0][k])
+			{
+				Block* b1 = blocks[j][i][k];
+				Block* b2 = rChunk->blocks[j][0][k];
+				bool display = b1->getDisplay(b2);
+				b1->setOneFace((int)Faces::Right, display);
+				b2->setOneFace((int)Faces::Left, display);
+			}
 		}
+		if (k == 0 && blocks[j][i][k])
+		{
+			if (bChunk && bChunk->blocks[j][i][chunkT - 1])
+			{
+				Block* b1 = blocks[j][i][k];
+				Block* b2 = bChunk->blocks[j][i][chunkT - 1];
+				bool display = b1->getDisplay(b2);
+				b1->setOneFace((int)Faces::Back, display);
+				b2->setOneFace((int)Faces::Front, display);
+			}
+		}
+		else if (k == chunkT - 1 && blocks[j][i][k])
+		{
+			if (fChunk && fChunk->blocks[j][i][0])
+			{
+				Block* b1 = blocks[j][i][k];
+				Block* b2 = fChunk->blocks[j][i][0];
+				bool display = b1->getDisplay(b2);
+				b1->setOneFace((int)Faces::Front, display);
+				b2->setOneFace((int)Faces::Back, display);
+			}
+		}
+
 	}
+	if (lChunk)
+		lChunk->genVerticesFlag();
+	if (rChunk)
+		rChunk->genVerticesFlag();
+	if (fChunk)
+		fChunk->genVerticesFlag();
+	if (bChunk)
+		bChunk->genVerticesFlag();
 }

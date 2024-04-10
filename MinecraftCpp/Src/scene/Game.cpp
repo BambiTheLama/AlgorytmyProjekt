@@ -410,7 +410,20 @@ void Game::setFaceing(Block* b, char face)
 
 	setGenVerticesFlagAt(b->x, b->y, b->z);
 }
-
+Chunk* Game::getChunkAt(int x, int y, int z)
+{
+	for (auto c : chunks)
+	{
+		if (c->x == x && c->y == y && c->z == z)
+			return c;
+	}
+	for (auto c : toAdd)
+	{
+		if (c->x == x && c->y == y && c->z == z)
+			return c;
+	}
+	return NULL;
+}
 void Game::setGenVerticesFlagAt(int x, int y, int z)
 {
 	for (auto c : chunks)
