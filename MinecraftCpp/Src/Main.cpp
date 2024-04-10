@@ -3,6 +3,10 @@
 #include "stdlib.h"
 #include <iostream>
 
+extern "C" {
+	__declspec(dllexport) unsigned long long NvOptimusEnablement = 0x00000001;
+}
+
 int main()
 {
 	setlocale(LC_ALL, "PL");
