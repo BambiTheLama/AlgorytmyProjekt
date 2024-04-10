@@ -4,9 +4,9 @@ out vec4 FragColor;
 uniform vec4 modelColor;
 
 
-uniform sampler2D texN[23];
-uniform sampler2D texH[23];
-uniform sampler2D tex0[23];
+uniform sampler2D texN[24];
+uniform sampler2D texH[24];
+uniform sampler2D tex0[24];
 
 uniform sampler2D texShadow;
 uniform vec3 lightDir;
