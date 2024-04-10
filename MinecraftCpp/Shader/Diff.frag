@@ -2,9 +2,12 @@
 
 out vec4 FragColor;
 uniform vec4 modelColor;
-uniform sampler2D tex0[31];
-uniform sampler2D texH[31];
-uniform sampler2D texN[31];
+
+
+uniform sampler2D texN[23];
+uniform sampler2D texH[23];
+uniform sampler2D tex0[23];
+
 uniform sampler2D texShadow;
 uniform vec3 lightDir;
 
@@ -85,6 +88,7 @@ vec3 directLight()
 	
 	}
 	//shadow=0.0f;
+	//return vec3(texture(tex0[frag.textID], frag.texCoord).r);
 	//return (normal+1.0f)/2.0f;
 	vec3 diffuseColor = texture(tex0[frag.textID], frag.texCoord).rgb * diffuse * (1.0f - shadow) * lightColor;
 	vec3 specularColor = texture(texH[frag.textID], frag.texCoord).r * specular * (1.0f - shadow) * lightColor*0.0001f;
@@ -96,9 +100,9 @@ vec3 directLight()
 
 void main()
 {
-
+	
 	if (texture(tex0[frag.textID], frag.texCoord).a < 0.1)
 		discard;
 
-	FragColor = vec4(directLight()*frag.bright,texture(tex0[frag.textID], frag.texCoord).a) * modelColor;
+	FragColor = vec4(directLight()*frag.bright,1.0f) * modelColor;
 }

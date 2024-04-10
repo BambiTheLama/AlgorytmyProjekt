@@ -12,7 +12,7 @@ GameTextures::GameTextures(const char* path)
 		"spruce_log_top","spruce_log","spruce_leaves","spruce_sapling",
 		"cactus_top","cactus_side","cactus_top","water"
 	};
-
+	
 	for (int i = 0; i < n; i++)
 	{
 		std::string p = std::string(path)  + names[i] + ".png";
@@ -25,7 +25,6 @@ GameTextures::GameTextures(const char* path)
 		}
 		textures.push_back(t);
 	}
-	printf("END\n");
 }
 
 GameTextures::~GameTextures()
@@ -44,6 +43,16 @@ void GameTextures::setTextures(Shader& s, const char* uniform)
 		if (!textures[i])
 			continue;
 		textures[i]->useTexture(s, uniform, i);
+		textures[i]->bind();
+	}
+}
+
+void GameTextures::bindTextures()
+{
+	for (int i = 0; i < textures.size(); i++)
+	{
+		if (!textures[i])
+			continue;
 		textures[i]->bind();
 	}
 }

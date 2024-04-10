@@ -11,7 +11,7 @@
 #define maxH 255
 #define waterH 90
 //#define Laby
-#define noSave
+//#define noSave
 
 class Game;
 class Chunk

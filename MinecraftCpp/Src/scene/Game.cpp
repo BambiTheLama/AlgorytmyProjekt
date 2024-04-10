@@ -28,11 +28,14 @@ Game::Game(int w,int h,GLFWwindow* window)
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.frag");
 	shaderShadow = new Shader("Shader/Shadow.vert", "Shader/Shadow.frag");
-	blocks = new GameTextures("Res/Blocks/");
+
 	blocksN = new GameTextures("Res/BlocksN/");
 	blocksH = new GameTextures("Res/BlocksH/");
-
+	blocks  = new GameTextures("Res/Blocks/");
 	shader->active();
+	blocks ->setTextures(*shader, "tex0");
+	blocksN->setTextures(*shader, "texH");
+	blocksH->setTextures(*shader, "texN");
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	shader->setUniformMat4(modelMat, "model");
 	shader->setUniformVec4(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "modelColor");
@@ -216,9 +219,11 @@ void Game::draw()
 	shader->setUniformVec3(shadowMapLightDir, "shadowMapLightDir");
 
 	ShadowMap->use(*shader, "texShadow");
-	blocksH->setTextures(*shader, "texH");
-	blocksN->setTextures(*shader, "texN");
-	blocks->setTextures(*shader, "tex0");
+	blocks->bindTextures();
+	blocksN->bindTextures();
+	blocksH->bindTextures();
+	
+
 
 
 	camera->setDir(cameraDir);

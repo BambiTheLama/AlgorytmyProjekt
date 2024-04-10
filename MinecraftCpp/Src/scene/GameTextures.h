@@ -11,5 +11,7 @@ public:
 	~GameTextures();
 
 	void setTextures(Shader& s, const char* uniform);
+
+	void bindTextures();
 };
 

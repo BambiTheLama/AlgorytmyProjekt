@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/noise.hpp>
 #include "Engine.h"
+#include <math.h>
 
 Cube::Cube()
 {
@@ -270,7 +271,9 @@ std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int t
 	std::vector<unsigned char> brightness = getBrightness();
 	std::vector<glm::vec3> pos = getVertexPos();
 	std::vector<GLuint> vertex;
-	int n = text.size();
+	
+	int n = std::min(text.size(), std::min(brightness.size(), pos.size()));
+
 	for (int i = 0; i < n; i++)
 	{
 		vertex.push_back(

@@ -2,7 +2,6 @@
 
 layout (location = 0) in int data;
 
-uniform sampler2D tex0;
 uniform vec4 modelColor;
 uniform mat4 camera;
 uniform mat4 model;

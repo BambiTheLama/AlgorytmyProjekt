@@ -103,7 +103,9 @@ void Chunk::update(float deltaTime)
 		genVertices = false;
 		toDelete.clear();
 		toAdd.clear();
+		//setFaceing();
 		genVerticesPos();
+
 	}
 
 
