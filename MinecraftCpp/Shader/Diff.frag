@@ -104,5 +104,5 @@ void main()
 	if (texture(tex0[frag.textID], frag.texCoord).a < 0.1)
 		discard;
 
-	FragColor = vec4(directLight()*frag.bright,1.0f) * modelColor;
+	FragColor = vec4(directLight()*frag.bright,texture(tex0[frag.textID], frag.texCoord).a) * modelColor;
 }
