@@ -194,7 +194,7 @@ std::vector<glm::vec3> Cube::getVertexTexture(int textureSides)
 }
 int Cube::getVertexTexture(int textureSides,char dir)
 {
-	if (checkFace(Front, face))
+	if (checkFace(Front, dir))
 	{
 		if (textureSides < 2)
 		{
@@ -202,10 +202,10 @@ int Cube::getVertexTexture(int textureSides,char dir)
 		}
 		else
 		{
-			return 2;
+			return 1;
 		}
 	}
-	if (checkFace(Back, face))
+	if (checkFace(Back, dir))
 	{
 		if (textureSides < 2)
 		{
@@ -213,10 +213,10 @@ int Cube::getVertexTexture(int textureSides,char dir)
 		}
 		else
 		{
-			return 2;
+			return 1;
 		}
 	}
-	if (checkFace(Left, face))
+	if (checkFace(Left, dir))
 	{
 		if (textureSides < 2)
 		{
@@ -224,10 +224,10 @@ int Cube::getVertexTexture(int textureSides,char dir)
 		}
 		else
 		{
-			return 2;
+			return 1;
 		}
 	}
-	if (checkFace(Right, face))
+	if (checkFace(Right, dir))
 	{
 		if (textureSides < 2)
 		{
@@ -235,14 +235,14 @@ int Cube::getVertexTexture(int textureSides,char dir)
 		}
 		else
 		{
-			return 2;
+			return 1;
 		}
 	}
-	if (checkFace(Up, face))
+	if (checkFace(Up, dir))
 	{
 		return 0;
 	}
-	if (checkFace(Down, face))
+	if (checkFace(Down, dir))
 	{
 		if (textureSides < 3)
 		{
@@ -250,14 +250,12 @@ int Cube::getVertexTexture(int textureSides,char dir)
 		}
 		else
 		{
-			return 3;
+			return 2;
 		}
 	}
 
 	return 0;
 }
-
-
 
 std::vector<GLuint> Cube::getIndex(bool doubleSides)
 {
@@ -354,12 +352,13 @@ std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int t
 
 	return vertex;
 }
+
 GLuint Cube::getVertex(int x, int y, int z, int textureSides, int textID, int dir)
 {
 	return (x & 0b1111) +
 		((y & 0b11111111) << 4) +
 		((z & 0b1111) << 12) +
-		(((textID + getVertexTexture(textureSides, dir)) & 0b111111) << 16);
+		(((textID + getVertexTexture(textureSides, 0b1<<dir)) & 0b111111) << 16);
 }
 
 GLuint Cube::indexSize()

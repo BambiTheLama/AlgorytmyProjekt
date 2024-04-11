@@ -9,10 +9,12 @@ class Engine;
 
 enum class Faces :char
 {
-	Front = 0b001000,
-	Back  = 0b000100,
-	Left  = 0b000010,
+
+
 	Right = 0b000001,
+	Left  = 0b000010,
+	Back  = 0b000100,
+	Front = 0b001000,
 	Up	  = 0b010000,
 	Down  = 0b100000,
 };
