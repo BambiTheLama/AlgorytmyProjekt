@@ -39,8 +39,6 @@ Chunk::Chunk(int x, int y, int z)
 
 Chunk::~Chunk()
 {
-	delete solidMesh;
-	delete transMesh;
 	if (wasCleared)
 		return;
 	forAllBlocks
@@ -48,13 +46,21 @@ Chunk::~Chunk()
 	{
 		delete blocks[j][i][k];
 	}
-
+	for (int i = 0; i < 6; i++)
+	{
+		delete solidMesh[i];
+		delete transMesh[i];
+	}
 }
 
 void Chunk::start()
 {
-	solidMesh = new ChunkMesh();
-	transMesh = new ChunkMesh();
+	for (int i = 0; i < 6; i++)
+	{
+		solidMesh[i] = new ChunkMesh(i);
+		transMesh[i] = new ChunkMesh(i);
+	}
+
 }
 
 void Chunk::update(float deltaTime)
@@ -116,9 +122,11 @@ void Chunk::draw(Shader* s,bool trans)
 	glm::mat4 model(1);
 	model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
 	s->setUniformMat4(model, "model");
-	solidMesh->draw();
-	if(trans)
-		transMesh->draw();
+	for (int i = 0; i < 6; i++)
+		solidMesh[i]->draw(s);
+	if (trans)
+		for (int i = 0; i < 6; i++)
+			transMesh[i]->draw(s);
 }
 
 Block* Chunk::getBlock(int x, int y, int z)
@@ -312,20 +320,9 @@ void Chunk::clearBlocks()
 
 void Chunk::genVerticesPos()
 {
-	std::vector<GLuint> indicesSolid;
-	std::vector<int> verticesSolid;
-	std::vector<GLuint> indicesTrans;
-	std::vector<int> verticesTrans;
-
-#define addVertices(indces,ver,lastIndex)  std::vector<GLuint> indexTmp = blocks[j][i][k]->getIndex();\
-	std::vector<GLuint> vertTmp = blocks[j][i][k]->getVertex();\
-	for (auto ind : indexTmp)\
-	{\
-		indces.push_back(ind + lastIndex);\
-	}\
-	lastIndex += blocks[j][i][k]->indexSize();\
-	ver.insert(ver.end(), vertTmp.begin(), vertTmp.end());
-
+	const int vecSize = 6;
+	std::vector<int> verticesSolid[vecSize];
+	std::vector<int> verticesTrans[vecSize];
 
 	GLuint lastIndexSolid = 0;
 	GLuint lastIndexTrans = 0;
@@ -334,19 +331,43 @@ void Chunk::genVerticesPos()
 	{
 		if (blocks[j][i][k]->indexSize() <= 0)
 			continue;
+		std::vector<int> vert;
+
 		if (blocks[j][i][k]->isTransparent())
 		{
-			addVertices(indicesTrans,verticesTrans,lastIndexTrans)
+			for (int w = 0; w < vecSize; w++)
+			{
+				if (blocks[j][i][k]->isRenderedSide(w))
+				{
+					verticesTrans[w].push_back(blocks[j][i][k]->getVertex(w));
+				}
+
+			}
 		}
 		else
 		{
-			addVertices(indicesSolid, verticesSolid, lastIndexSolid)
+
+			for (int w = 0; w < vecSize; w++)
+			{
+
+				if (blocks[j][i][k]->isRenderedSide(w))
+				{
+					verticesSolid[w].push_back(blocks[j][i][k]->getVertex(w));
+				}
+
+			}
 		}
+		
+
 
 
 	}
-	solidMesh->newMesh(verticesSolid, indicesSolid);
-	transMesh->newMesh(verticesTrans, indicesTrans);
+	for (int i = 0; i < vecSize; i++)
+	{
+		solidMesh[i]->newMesh(verticesSolid[i]);
+		transMesh[i]->newMesh(verticesTrans[i]);
+	}
+
 }
 
 float getValue(float v)

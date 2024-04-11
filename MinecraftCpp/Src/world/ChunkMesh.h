@@ -2,19 +2,20 @@
 #include "../core/EBO.h"
 #include "../core/VAO.h"
 
+class Shader;
 class ChunkMesh
 {
 	VAO* vao = NULL;
 	VBO* vbo = NULL;
-	EBO* ebo = NULL;
 	int elements;
+	int dir;
 public:
-	ChunkMesh();
+	ChunkMesh(int dir);
 
 	~ChunkMesh();
 
-	void newMesh(std::vector<int> data, std::vector<GLuint> indices);
+	void newMesh(std::vector<int> data);
 
-	void draw();
+	void draw(Shader* s);
 };
 

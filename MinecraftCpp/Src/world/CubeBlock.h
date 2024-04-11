@@ -18,7 +18,17 @@ public:
 
 	virtual void setOneFace(int face, bool state = true);
 
+	virtual void setOneFace(int face, Block* b) { setOneFace(face, getDisplay(b)); }
+
 	virtual std::vector<GLuint> getVertex();
+
+	virtual GLuint getVertex(int dir);
+
+	virtual bool isRenderedSide(int dir) { 
+		int v = ((int)(0b1 << (dir)) & (int)cube->getFaces());
+		int v2 = (int)(0b1 << (dir));
+		return v == v2;
+	}
 
 	virtual std::vector<GLuint> getIndex();
 

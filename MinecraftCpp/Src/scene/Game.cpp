@@ -41,7 +41,7 @@ Game::Game(int w,int h,GLFWwindow* window)
 	shader->setUniformVec4(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "modelColor");
 	ShadowMap = new RenderTexture(2048, 2048);
 	ShadowMap->use(*shader, "texShadow");
-	camera = new Camera(w, h, 0.1f, 1000, 60, glm::vec3(0.0f, 100.0f, 0.0f));
+	camera = new Camera(w, h, 0.1f, 1000, 60, glm::vec3(0.0f, 100.0f, -1.0f));
 	game = this;
 }
 
@@ -74,7 +74,6 @@ Game::~Game()
 void Game::start()
 {
 	gameRunning = true;
-	genWorld();
 	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
 	worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
 }
@@ -126,23 +125,23 @@ void Game::update(float deltaTime)
 		if (b2 && b != b2)
 		{
 
-			b = b2;
-
-			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-			{
-				deleteBlock(x, y, z);
-				b = NULL;
-				break;
-			}
-			chunkPos = getChunkPos(x, y, z);
-			cube->setFaceing(b->getFaces());
-			vertices = cube->getVertex(getBlockX(x), y % chunkH, getBlockX(z), 1, 0, 0);
-			index = cube->getIndex();
-			vao->bind();
-			ebo->setNewVertices(index);
-			vbo->setNewVertices(vertices);
-			vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(int), (void*)0);
-			break;
+			//b = b2;
+			//
+			//if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+			//{
+			//	deleteBlock(x, y, z);
+			//	b = NULL;
+			//	break;
+			//}
+			//chunkPos = getChunkPos(x, y, z);
+			//cube->setFaceing(b->getFaces());
+			//vertices = cube->getVertex(getBlockX(x), y % chunkH, getBlockX(z), 1, 0, 0);
+			//index = cube->getIndex();
+			//vao->bind();
+			//ebo->setNewVertices(index);
+			//vbo->setNewVertices(vertices);
+			//vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(int), (void*)0);
+			//break;
 		}
 		n++;
 	}
@@ -186,6 +185,7 @@ void Game::update(float deltaTime)
 
 void Game::draw()
 {
+
 	camera->useCamera(*shader, "camera");
 
 	glm::mat4 model(1.0f);
@@ -212,6 +212,8 @@ void Game::draw()
 	ShadowMap->endUse();
 	shader->active();
 	shader->setUniformI1(debug, "isDebug");
+	glm::mat4 modelMat(1.0f);
+	shader->setUniformMat4(modelMat, "model");
 	shader->setUniformVec3(camera->getPos(), "camPos");
 	shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 1.0f), "lightColor");
 	camera->useCamera(*shader, "lightProjection");
@@ -225,14 +227,18 @@ void Game::draw()
 	
 
 
+	
 
 	camera->setDir(cameraDir);
 	camera->newPos(cameraPos);
 	camera->setUseProjection(true);
 	camera->useCamera(*shader, "camera");
 	renderScene(shader,true);
+
+
 	drawBlock(shader);
 	ShadowMap->draw();
+
 	
 }
 

@@ -9,12 +9,12 @@ class Engine;
 
 enum class Faces :char
 {
-	Up    = 0b000001,
-	Down  = 0b000010,
-	Right = 0b000100,
-	Left  = 0b001000,
-	Front = 0b010000,
-	Back  = 0b100000,
+	Front = 0b001000,
+	Back  = 0b000100,
+	Left  = 0b000010,
+	Right = 0b000001,
+	Up	  = 0b010000,
+	Down  = 0b100000,
 };
 #define checkFace(face,myFace) ((int)Faces::face & (int)myFace) == (int)Faces::face
 
@@ -35,11 +35,17 @@ public:
 
 	std::vector<glm::vec3> getVertexTexture(int textureSides);
 
+	int getVertexTexture(int textureSides, char dir);
+
 	std::vector<GLuint> getVertex(int x, int y, int z, int textureSides, int textID,bool doubleSides=false);
+
+	GLuint getVertex(int x, int y, int z, int textureSides, int textID, int dir);
 
 	std::vector<GLuint> getIndex(bool doubleSides = false);
 
 	char getFaces()const { return face; }
+
+	bool hasSide(int dir) { return ((int)(0b1 << dir) & (int)face) != (int)(0b1 << dir); }
 
 	GLuint indexSize();
 

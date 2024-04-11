@@ -178,6 +178,7 @@
     <ClCompile Include="Src\scene\Game.cpp" />
     <ClCompile Include="Src\scene\GameTextures.cpp" />
     <ClCompile Include="Src\scene\Scene.cpp" />
+    <ClCompile Include="Src\test.cpp" />
     <ClCompile Include="Src\world\Block.cpp" />
     <ClCompile Include="Src\world\BlocksCreator.cpp" />
     <ClCompile Include="Src\world\Chunk.cpp" />

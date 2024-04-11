@@ -4,12 +4,13 @@ out vec4 FragColor;
 uniform vec4 modelColor;
 
 
-uniform sampler2D texN[24];
-uniform sampler2D texH[24];
-uniform sampler2D tex0[24];
+uniform sampler2D texN[31];
+uniform sampler2D texH[31];
+uniform sampler2D tex0[31];
 
 uniform sampler2D texShadow;
 uniform vec3 lightDir;
+uniform int dir;
 
 in DATA
 {
@@ -17,7 +18,6 @@ in DATA
 	vec3 currentPos;
 	vec4 fragPosLight;
 	flat int textID;
-	flat int dir;
 	float bright;
 } frag;
 
@@ -34,15 +34,15 @@ vec3 directLight()
 	// diffuse lighting
 	vec3 normal = normalize((texture(texN[frag.textID], frag.texCoord).xyz * 2.0f - 1.0f));
 
-	if(frag.dir == 0)
+	if(dir == 0)
 		;
-	else if(frag.dir == 1)	
+	else if(dir == 1)	
 		normal = normal * -1.0f;
-	else if(frag.dir == 2)
+	else if(dir == 2)
 		normal = cross(normal,vec3(0.0f, 1.0f, 0.0f));
-	else if(frag.dir == 3)
+	else if(dir == 3)
 		normal = cross(normal,vec3(0.0f, -1.0f, 0.0f));
-	else if(frag.dir == 4)
+	else if(dir == 4)
 		normal = cross(normal,vec3(1.0f, 0.0f, 0.0f));
 	else
 		normal = cross(normal,vec3(-1.0f, 0.0f, 0.0f));

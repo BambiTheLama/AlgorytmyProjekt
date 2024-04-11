@@ -15,6 +15,8 @@ public:
 
 	virtual void setOneFace(int face, bool state = true) {}
 
+	virtual void setOneFace(int face, Block* b) {}
+
 	virtual std::vector<GLuint> getVertex();
 
 	virtual std::vector<GLuint> getIndex();

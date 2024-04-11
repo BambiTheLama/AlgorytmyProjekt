@@ -4,11 +4,11 @@
 #include <string>
 #include "PerlinNoise.h"
 #include "ChunkMesh.h"
-#define chunkW 15
-#define chunkH 255
-#define chunkT 15
+#define chunkW 16
+#define chunkH 256
+#define chunkT 16
 #define minH 8
-#define maxH 255
+#define maxH 256
 #define waterH 90
 //#define Laby
 //#define noSave
@@ -27,8 +27,8 @@ class Chunk
 	std::vector<Block*> toUpdate;
 	std::vector<Block*> toAdd;
 	std::vector<Block*> toDraw;
-	ChunkMesh* solidMesh;
-	ChunkMesh* transMesh;
+	ChunkMesh* solidMesh[6];
+	ChunkMesh* transMesh[6];
 	int indicesSolidSize = 0;
 	int indicesTransSize = 0;
 	static Game* game;

@@ -22,6 +22,10 @@ public:
 
 	virtual std::vector<GLuint> getVertex() = 0;
 
+	virtual bool isRenderedSide(int dir) { return false; }
+
+	virtual GLuint getVertex(int dir) { return 0; }
+
 	virtual std::vector<GLuint> getIndex() = 0;
 
 	virtual GLuint indexSize() = 0;

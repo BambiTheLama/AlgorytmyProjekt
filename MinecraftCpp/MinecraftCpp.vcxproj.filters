@@ -84,12 +84,17 @@
     <ClCompile Include="Src\world\OakTree.cpp">
       <Filter>Src\World</Filter>
     </ClCompile>
-    <ClCompile Include="Src\world\Leaf.cpp" />
     <ClCompile Include="Src\world\ChunkMesh.cpp">
       <Filter>Src\World</Filter>
     </ClCompile>
     <ClCompile Include="Src\scene\GameTextures.cpp">
       <Filter>Src\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Leaf.cpp">
+      <Filter>Src\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\test.cpp">
+      <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -180,12 +185,14 @@
     <ClInclude Include="Src\world\OakTree.h">
       <Filter>Src\World</Filter>
     </ClInclude>
-    <ClInclude Include="Src\world\Leaf.h" />
     <ClInclude Include="Src\world\ChunkMesh.h">
       <Filter>Src\World</Filter>
     </ClInclude>
     <ClInclude Include="Src\scene\GameTextures.h">
       <Filter>Src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Leaf.h">
+      <Filter>Src\World</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
