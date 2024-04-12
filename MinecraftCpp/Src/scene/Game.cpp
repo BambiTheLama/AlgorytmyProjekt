@@ -34,8 +34,8 @@ Game::Game(int w,int h,GLFWwindow* window)
 	blocks  = new GameTextures("Res/Blocks/");
 	shader->active();
 	blocks ->setTextures(*shader, "tex0");
-	blocksN->setTextures(*shader, "texH");
-	blocksH->setTextures(*shader, "texN");
+	blocksN->setTextures(*shader, "texN");
+	blocksH->setTextures(*shader, "texH");
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	shader->setUniformMat4(modelMat, "model");
 	shader->setUniformVec4(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "modelColor");
