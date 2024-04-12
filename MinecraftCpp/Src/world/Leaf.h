@@ -8,5 +8,8 @@ public:
 
     bool getDisplay(Block* b) { return true; }
 
+    virtual void setOneFace(int face, bool state) {}
+
+    virtual void setOneFace(int face, Block* b) {  }
 };
 

@@ -20,6 +20,8 @@ public:
 
 	virtual void setOneFace(int face, bool state = true) = 0;
 
+	virtual void setOneFace(int face, Block* b) = 0;
+
 	virtual std::vector<GLuint> getVertex() = 0;
 
 	virtual bool isRenderedSide(int dir) { return false; }

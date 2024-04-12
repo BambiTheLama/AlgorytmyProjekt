@@ -653,43 +653,35 @@ void Chunk::setFaceing()
 	{
 		if (!blocks[j][i][k])
 			continue;
-		const bool isTransparent = blocks[j][i][k]->isTransparent();
-		bool trans;
 		if (j - 1 > 0  && blocks[j - 1][i][k])
 		{
-			trans = blocks[j - 1][i][k]->isTransparent() != isTransparent;
-			blocks[j][i][k]->setOneFace((int)Faces::Down, trans); 
-			blocks[j - 1][i][k]->setOneFace((int)Faces::Up, trans);
+			blocks[j][i][k]->setOneFace((int)Faces::Down, blocks[j - 1][i][k]);
+			blocks[j - 1][i][k]->setOneFace((int)Faces::Up, blocks[j][i][k]);
 		}
 		if (j + 1 < chunkH  && blocks[j + 1][i][k])
 		{
-			trans = blocks[j + 1][i][k]->isTransparent() != isTransparent;
-			blocks[j][i][k]->setOneFace((int)Faces::Up, trans);
-			blocks[j + 1][i][k]->setOneFace((int)Faces::Down, trans);
+			blocks[j][i][k]->setOneFace((int)Faces::Up, blocks[j + 1][i][k]);
+			blocks[j + 1][i][k]->setOneFace((int)Faces::Down, blocks[j][i][k]);
 		}
 		if (i - 1 > 0  && blocks[j][i - 1][k])
 		{
-			trans = blocks[j][i - 1][k]->isTransparent() != isTransparent;
-			blocks[j][i][k]->setOneFace((int)Faces::Left, trans);
-			blocks[j][i - 1][k]->setOneFace((int)Faces::Right, trans);
+			blocks[j][i][k]->setOneFace((int)Faces::Left, blocks[j][i - 1][k]);
+			blocks[j][i - 1][k]->setOneFace((int)Faces::Right, blocks[j][i][k]);
 		}
 		if (i + 1 < chunkW  && blocks[j][i + 1][k])
 		{
-			trans = blocks[j][i + 1][k]->isTransparent() != isTransparent;
-			blocks[j][i][k]->setOneFace((int)Faces::Right, trans);
-			blocks[j][i + 1][k]->setOneFace((int)Faces::Left, trans);
+			blocks[j][i][k]->setOneFace((int)Faces::Right, blocks[j][i + 1][k]);
+			blocks[j][i + 1][k]->setOneFace((int)Faces::Left, blocks[j][i][k]);
 		}
 		if (k - 1 > 0  && blocks[j][i][k - 1])
 		{
-			trans = blocks[j][i][k - 1]->isTransparent() != isTransparent;
-			blocks[j][i][k]->setOneFace((int)Faces::Back, trans);
-			blocks[j][i][k - 1]->setOneFace((int)Faces::Front, trans);
+			blocks[j][i][k]->setOneFace((int)Faces::Back, blocks[j][i][k - 1]);
+			blocks[j][i][k - 1]->setOneFace((int)Faces::Front, blocks[j][i][k]);
 		}
 		if (k + 1 < chunkT  && blocks[j][i][k + 1])
 		{
-			trans = blocks[j][i][k + 1]->isTransparent() != isTransparent;
-			blocks[j][i][k]->setOneFace((int)Faces::Front, trans);
-			blocks[j][i][k + 1]->setOneFace((int)Faces::Back, trans);
+			blocks[j][i][k]->setOneFace((int)Faces::Front, blocks[j][i][k + 1]);
+			blocks[j][i][k + 1]->setOneFace((int)Faces::Back, blocks[j][i][k]);
 		}
 		if (i == 0 && blocks[j][i][k])
 		{
@@ -697,9 +689,8 @@ void Chunk::setFaceing()
 			{
 				Block* b1 = blocks[j][i][k];
 				Block* b2 = lChunk->blocks[j][chunkW - 1][k];
-				bool display = b1->getDisplay(b2);
-				b1->setOneFace((int)Faces::Left, display);
-				b2->setOneFace((int)Faces::Right, display);
+				b1->setOneFace((int)Faces::Left, b2);
+				b2->setOneFace((int)Faces::Right, b1);
 			}
 		} 
 		else if (i == chunkW - 1 && blocks[j][i][k])
@@ -708,9 +699,8 @@ void Chunk::setFaceing()
 			{
 				Block* b1 = blocks[j][i][k];
 				Block* b2 = rChunk->blocks[j][0][k];
-				bool display = b1->getDisplay(b2);
-				b1->setOneFace((int)Faces::Right, display);
-				b2->setOneFace((int)Faces::Left, display);
+				b1->setOneFace((int)Faces::Right, b2);
+				b2->setOneFace((int)Faces::Left, b1);
 			}
 		}
 		if (k == 0 && blocks[j][i][k])
@@ -719,9 +709,8 @@ void Chunk::setFaceing()
 			{
 				Block* b1 = blocks[j][i][k];
 				Block* b2 = bChunk->blocks[j][i][chunkT - 1];
-				bool display = b1->getDisplay(b2);
-				b1->setOneFace((int)Faces::Back, display);
-				b2->setOneFace((int)Faces::Front, display);
+				b1->setOneFace((int)Faces::Back, b2);
+				b2->setOneFace((int)Faces::Front, b1);
 			}
 		}
 		else if (k == chunkT - 1 && blocks[j][i][k])
@@ -730,9 +719,8 @@ void Chunk::setFaceing()
 			{
 				Block* b1 = blocks[j][i][k];
 				Block* b2 = fChunk->blocks[j][i][0];
-				bool display = b1->getDisplay(b2);
-				b1->setOneFace((int)Faces::Front, display);
-				b2->setOneFace((int)Faces::Back, display);
+				b1->setOneFace((int)Faces::Front, b2);
+				b2->setOneFace((int)Faces::Back, b1);
 			}
 		}
 

@@ -23,7 +23,7 @@ in DATA
 
 uniform vec3 camPos;
 uniform vec3 lightColor;
-uniform vec3 shadowMapLightDir;
+
 
 
 vec3 directLight()

@@ -3,6 +3,7 @@
 #include "Plant.h"
 #include "OakTree.h"
 #include "Leaf.h"
+#include "Water.h"
 
 Block* createBlock(int i,int x,int y,int z)
 {
@@ -34,7 +35,7 @@ Block* createBlock(int i,int x,int y,int z)
 		return new Leaf(i, x, y, z, 18);
 
 	case 11:///WATER
-		return new CubeBlock(i, x, y, z, 23, 1, true);
+		return new Water(i, x, y, z, 23);
 	case 12:///Sapling 1
 		return new OakTree(i, x, y, z, 11);
 	case 13:///Sapling 2

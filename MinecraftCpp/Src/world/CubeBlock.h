@@ -25,9 +25,7 @@ public:
 	virtual GLuint getVertex(int dir);
 
 	virtual bool isRenderedSide(int dir) { 
-		int v = ((int)(0b1 << (dir)) & (int)cube->getFaces());
-		int v2 = (int)(0b1 << (dir));
-		return v == v2;
+		return ((int)(0b1 << (dir)) & (int)cube->getFaces()) == (0b1 << (dir));
 	}
 
 	virtual std::vector<GLuint> getIndex();

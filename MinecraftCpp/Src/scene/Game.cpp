@@ -73,9 +73,12 @@ Game::~Game()
 
 void Game::start()
 {
-	gameRunning = true;
+	//gameRunning = true;
 	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
 	worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
+	genWorld();
+	while(posToGenChunk.size()>0)
+		genWorld();
 }
 
 glm::vec3 camPos;
@@ -125,7 +128,7 @@ void Game::update(float deltaTime)
 		if (b2 && b != b2)
 		{
 
-			//b = b2;
+			b = b2;
 			//
 			//if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			//{
@@ -178,8 +181,16 @@ void Game::update(float deltaTime)
 
 	camPos = camera->getPos();
 	std::sort(toDraw.begin(), toDraw.end(), compareObj);
+	if (glfwGetKey(window, GLFW_KEY_TAB))
+		for (auto c : chunks)
+		{
+			c->setFaceing();
+			c->genVerticesFlag();
+		}
 
 	chunksMutex.unlock();
+
+	
 
 }
 
@@ -199,8 +210,8 @@ void Game::draw()
 
 	cameraDir = camera->getDir();
 	cameraPos = camera->getPos();
-	glm::vec3 lightDir = glm::vec3(0.0f, 3.0f, 1);
-	glm::vec3 shadowMapLightDir = glm::vec3(0.0f, -1.0f, sin(time));
+	glm::vec3 lightDir = glm::vec3(0, 1.0f, sin(time));
+	glm::vec3 shadowMapLightDir = -lightDir;
 	camera->setDir(shadowMapLightDir);
 
 	camera->setUseProjection(false);

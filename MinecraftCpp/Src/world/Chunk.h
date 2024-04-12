@@ -67,12 +67,12 @@ public:
 	void clearBlocks();
 
 	friend class Game;
-
+	void setFaceing();
 private:
 
 	void genVerticesPos();
 	void generateTeren();
-	void setFaceing();
+
 	void genBiom(int x, int z, int blockX, int blockZ, int startY, int endY, float temperature);
 
 };
