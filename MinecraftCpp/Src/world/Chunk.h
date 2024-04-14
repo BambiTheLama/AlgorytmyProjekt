@@ -11,7 +11,7 @@
 #define maxH 256
 #define waterH 90
 //#define Laby
-//#define noSave
+#define noSave
 
 class Game;
 class Chunk
@@ -58,7 +58,7 @@ public:
 
 	bool loadGame();
 
-	glm::vec3 getPos() { return glm::vec3(x * chunkW + chunkW / 2, y * chunkH + chunkH / 2, z * chunkT + chunkT / 2); }
+	glm::vec3 getPos() { return glm::vec3(x * chunkW, y * chunkH, z * chunkT); }
 
 	glm::vec3 getLocation() { return glm::vec3(x, y, z); }
 
@@ -66,14 +66,19 @@ public:
 
 	void clearBlocks();
 
-	friend class Game;
-	void setFaceing();
-private:
+	static void saveBlockToChunk(int x, int y, int z, int ID);
 
+	static std::string fileName(int x, int y, int z) { return path + "chunk " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ".json"; }
+
+	friend class Game;
+private:
+	void setFaceing();
 	void genVerticesPos();
 	void generateTeren();
 
 	void genBiom(int x, int z, int blockX, int blockZ, int startY, int endY, float temperature);
+
+
 
 };
 

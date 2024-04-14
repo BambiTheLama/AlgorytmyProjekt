@@ -34,13 +34,13 @@ vec3 directLight()
 	// diffuse lighting
 	vec3 normal = normalize((texture(texN[frag.textID], frag.texCoord).xyz * 2.0f - 1.0f));
 
-	if(dir == 0)
+	if(dir == 3)
 		;
-	else if(dir == 1)	
+	else if(dir == 2)	
 		normal = normal * -1.0f;
-	else if(dir == 2)
+	else if(dir == 1)
 		normal = cross(normal,vec3(0.0f, 1.0f, 0.0f));
-	else if(dir == 3)
+	else if(dir == 0)
 		normal = cross(normal,vec3(0.0f, -1.0f, 0.0f));
 	else if(dir == 4)
 		normal = cross(normal,vec3(1.0f, 0.0f, 0.0f));
@@ -54,7 +54,7 @@ vec3 directLight()
 	// specular lighting
 	float specularLight = 0.50f;
 	vec3 viewDirection = normalize(camPos - frag.currentPos);
-	vec3 reflectionDirection = reflect(-lightDirection, normal);
+	vec3 reflectionDirection = reflect(lightDirection, normal);
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 8);
 	float specular = specAmount * specularLight;
 
@@ -69,7 +69,7 @@ vec3 directLight()
 		lightCoords = (lightCoords + 1.0f) / 2.0f;
 		float currentDepth = lightCoords.z;
 		// Prevents shadow acne
-		float bias = max(0.5f * (1.0f - dot(normal, lightDirection)), 0.005f);
+		float bias = max(0.5f * (1.0f - dot(normal, lightDirection)), 0.01f);
 	
 		// Smoothens out the shadows
 		int sampleRadius = 3;

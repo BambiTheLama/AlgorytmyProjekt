@@ -73,12 +73,12 @@ Game::~Game()
 
 void Game::start()
 {
-	//gameRunning = true;
+
+	gameRunning = true;
 	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
 	worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
-	genWorld();
-	while(posToGenChunk.size()>0)
-		genWorld();
+	
+
 }
 
 glm::vec3 camPos;
@@ -210,7 +210,7 @@ void Game::draw()
 
 	cameraDir = camera->getDir();
 	cameraPos = camera->getPos();
-	glm::vec3 lightDir = glm::vec3(0, 1.0f, sin(time));
+	glm::vec3 lightDir = glm::vec3(sin(time), 1.0f, 0.0f);
 	glm::vec3 shadowMapLightDir = -lightDir;
 	camera->setDir(shadowMapLightDir);
 
@@ -329,6 +329,7 @@ bool Game::addBlock(Block* b)
 	for (auto a : toAdd)
 		if (a->isThisChunk(x, y, z))
 			return a->addBlock(b);
+	Chunk::saveBlockToChunk(x, y, z, b->ID);
 	return false;
 }
 
@@ -594,4 +595,32 @@ void Game::desWorld()
 Game* getCurrentGame()
 {
 	return Game::game;
+}
+
+
+void addObjectToSave(int x, int y, int z,int ID)
+{
+	int cX;
+	if (x >= 0)
+		cX = x / chunkW;
+	else
+		cX = x / chunkW - 1;
+	int cZ;
+	if (z >= 0)
+		cZ = z / chunkW;
+	else
+		cZ = z / chunkW - 1;
+
+	Game* g = getCurrentGame();
+	if (!g)
+		return;
+	Chunk* chunk = g->getChunkAt(cX, 0, cZ);
+	if (!chunk)
+	{
+
+	}
+	else
+	{
+
+	}
 }

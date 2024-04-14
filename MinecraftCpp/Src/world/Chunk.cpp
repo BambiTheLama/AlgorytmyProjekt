@@ -35,6 +35,35 @@ Chunk::Chunk(int x, int y, int z)
 	if(!loadGame())
 		generateTeren();
 	setFaceing();
+	std::ifstream read(fileName(x, y, z));
+	if (read)
+	{
+		nlohmann::json j;
+
+		read >> j;
+
+		if (j.contains("ToAdd"))
+		{
+			int size = j["ToAdd"].size();
+			for (int i = 0; i < size; i++)
+			{
+				int ID = j["ToAdd"][i][0];
+				int x = j["ToAdd"][i][1];
+				int y = j["ToAdd"][i][2];
+				int z = j["ToAdd"][i][3];
+				Block* b = createBlock(ID, x, y, z);
+				if (b)
+				{
+					if (!addBlock(b))
+						delete b;
+				}
+			}
+
+		}
+
+
+	}
+	read.close();
 }
 
 Chunk::~Chunk()
@@ -211,7 +240,7 @@ void Chunk::save()
 	int times = 0;
 	int ID = 0;
 	int b = 0;
-	std::string pathFile = path + "chunk " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ".json";
+	std::string pathFile = fileName(x, y, z);
 	std::ofstream save(pathFile);
 	if (!save.is_open())
 	{
@@ -260,7 +289,7 @@ bool Chunk::loadGame()
 	int times = 0;
 	int ID = 0;
 	int b = 0;
-	std::string pathFile = path + "chunk " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ".json";
+	std::string pathFile = fileName(x, y, z);
 	std::ifstream read(pathFile);
 	if (!read.is_open())
 	{
@@ -316,6 +345,43 @@ void Chunk::clearBlocks()
 	toAdd.clear();
 	toDelete.clear();
 	toUpdate.clear();
+}
+
+void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
+{
+	int cX;
+	if (x >= 0)
+		cX = x / chunkW;
+	else
+		cX = x / chunkW - 1;
+	int cY = 0;
+	int cZ;
+	if (z >= 0)
+		cZ = z / chunkT;
+	else
+		cZ = z / chunkT - 1;
+	std::string pathFile = fileName(cX, cY, cZ);
+	std::ifstream read(pathFile);
+	nlohmann::json json;
+	if (read.is_open())
+	{
+		read >> json;
+	}
+
+	read.close();
+	int size = 0;
+	if (json.contains("ToAdd"))
+	{
+		size = (int)json["ToAdd"].size();
+	}
+	json["ToAdd"][size][0] = ID;
+	json["ToAdd"][size][1] = getBlockX(x);
+	json["ToAdd"][size][2] = y;
+	json["ToAdd"][size][3] = getBlockZ(z);
+	std::ofstream save(pathFile);
+	save << json;
+	save.close();
+
 }
 
 void Chunk::genVerticesPos()
@@ -485,9 +551,9 @@ void Chunk::generateTeren()
 			float v = riverNoise.GetNoise(x, z);
 			river = 0.90f < v;
 			///RIVER WATER
-			rivDeep = (abs(0.90f - v) * 10.0f) * 6;
-			if (rivDeep >= 6)
-				rivDeep = 6;
+			rivDeep = (abs(0.90f - v) * 10.0f) * 9;
+			if (rivDeep > 9)
+				rivDeep = 9;
 			///RIVER SAND
 			if (v > 0.70f && !river && h >= waterH)
 			{
@@ -496,16 +562,14 @@ void Chunk::generateTeren()
 					h = waterH ;
 			}
 			///RIVER WATER LEVEL
-			if (river && h > waterH)
+			if (river)
 			{
-				h = waterH - rivDeep;
+				if (h >= waterH - rivDeep)
+					h = waterH - rivDeep;
 				if (h < 0)
 					h = 0;
 			}
-			else
-			{
-				river = false;
-			}
+
 
 
 			const int blockX = x;
@@ -537,16 +601,15 @@ void Chunk::generateTeren()
 				blocks[j][i][k] = createBlock(4, blockX, j, blockZ);
 
 			}
-			for (int j = endPos + 3; j <= waterH && j < chunkH; j++)
-			{
-				if (blocks[j][i][k])
-					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(11, blockX, j, blockZ);
 
-			}
-			if (river && h>waterH)
+			if (river)
 			{
-				int start = h - rivDeep-3;
+				int start;
+				if (h >= waterH)
+					start = waterH - rivDeep - 3;
+				else
+					start = h - rivDeep - 3;
+
 				if (start < 0)
 					start = 0;
 				for (int j = start; j < h - rivDeep && j < chunkH; j++)
@@ -556,13 +619,7 @@ void Chunk::generateTeren()
 					blocks[j][i][k] = createBlock(4, blockX, j, blockZ);
 
 				}
-				for (int j = h-rivDeep; j < h && j < chunkH; j++)
-				{
-					if (blocks[j][i][k])
-						delete blocks[j][i][k];
-					blocks[j][i][k] = createBlock(11, blockX, j, blockZ);
 
-				}
 			}
 			if (lake)
 			{
@@ -580,7 +637,7 @@ void Chunk::generateTeren()
 				int j = h;
 				if (blocks[j][i][k])
 					delete blocks[j][i][k];
-				if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 666 == 0)
+				if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 469 == 0)
 				{
 					if(temperatue<-0.3)
 						blocks[j][i][k] = createBlock(14, blockX, j, blockZ);
@@ -595,6 +652,12 @@ void Chunk::generateTeren()
 						toUpdate.push_back(blocks[j][i][k]);
 
 				}
+
+			}
+			for (int j = h; j <= waterH && j < chunkH; j++)
+			{
+				if (!blocks[j][i][k])
+					blocks[j][i][k] = createBlock(11, blockX, j, blockZ);
 
 			}
 

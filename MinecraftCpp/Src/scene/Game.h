@@ -92,3 +92,5 @@ private:
 };
 
 Game* getCurrentGame();
+
+void addObjectToSave(int x, int y, int z, int ID);
