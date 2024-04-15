@@ -1,11 +1,11 @@
 #include "Chunk.h"
-#include "CubeBlock.h"
+#include "Blocks/CubeBlock.h"
 #include "../scene/Game.h"
 #include "FastNoiseLite.h"
 #include "../core/VAO.h"
 #include "../core/VBO.h"
 #include "../core/EBO.h"
-#include "BlocksCreator.h"
+#include "Blocks/BlocksCreator.h"
 #include <json.hpp>
 #include <fstream>
 #include "../Properties.h"
@@ -22,6 +22,7 @@
 								for (int k = 0; k < chunkT; k++)
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
+std::vector<SaveChunkData*> Chunk::saveData;
 
 Chunk::Chunk(int x, int y, int z)
 {
@@ -32,38 +33,52 @@ Chunk::Chunk(int x, int y, int z)
 	{
 		blocks[j][i][k] = NULL;
 	}
-	if(!loadGame())
-		generateTeren();
-	setFaceing();
-	std::ifstream read(fileName(x, y, z));
-	if (read)
-	{
-		nlohmann::json j;
-
-		read >> j;
-
-		if (j.contains("ToAdd"))
+	SaveChunkData* data = NULL;
+	int element = -1;
+	for (int i = 0; i < saveData.size(); i++)
+		if (saveData[i]->x == x && saveData[i]->y == y && saveData[i]->z == z)
 		{
-			int size = j["ToAdd"].size();
-			for (int i = 0; i < size; i++)
-			{
-				int ID = j["ToAdd"][i][0];
-				int x = j["ToAdd"][i][1];
-				int y = j["ToAdd"][i][2];
-				int z = j["ToAdd"][i][3];
-				Block* b = createBlock(ID, x, y, z);
-				if (b)
-				{
-					if (!addBlock(b))
-						delete b;
-				}
-			}
+			data = saveData[i];
+			element = i;
+			break;
+		}
+	if (data)
+	{
+		saveData.erase(saveData.begin() + element);
+		if (!loadGame(data->j))
+			generateTeren();
+	}
+	else
+	{
+		if (!loadGame())
+			generateTeren();
+	}
+	setFaceing();
+	if (!data)
+		return;
+	
+	nlohmann::json j = data->j;
 
+	if (j.contains("ToAdd"))
+	{
+		int size = j["ToAdd"].size();
+		for (int i = 0; i < size; i++)
+		{
+			int ID = j["ToAdd"][i][0];
+			int x = j["ToAdd"][i][1];
+			int y = j["ToAdd"][i][2];
+			int z = j["ToAdd"][i][3];
+			Block* b = createBlock(ID, x, y, z);
+			if (b)
+			{
+				if (!addBlock(b))
+					delete b;
+			}
 		}
 
-
 	}
-	read.close();
+	delete data;
+
 }
 
 Chunk::~Chunk()
@@ -283,12 +298,8 @@ void Chunk::save()
 	save.close();
 
 }
-
 bool Chunk::loadGame()
 {
-	int times = 0;
-	int ID = 0;
-	int b = 0;
 	std::string pathFile = fileName(x, y, z);
 	std::ifstream read(pathFile);
 	if (!read.is_open())
@@ -300,8 +311,16 @@ bool Chunk::loadGame()
 	nlohmann::json json;
 	read >> json;
 	read.close();
+	return loadGame(json);
+}
+bool Chunk::loadGame(nlohmann::json json)
+{
+
 	if (!json.contains("Blocks") || json["Blocks"].size() <= 0)
 		return false;
+	int times = 0;
+	int ID = 0;
+	int b = 0;
 	forAllBlocks
 	{
 		if (times <= 0)
@@ -321,9 +340,6 @@ bool Chunk::loadGame()
 		{
 			blocks[j][i][k] = createBlock(ID, i, j, k);
 		}
-
-
-
 	}
 
 	return true;
@@ -353,34 +369,46 @@ void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
 	if (x >= 0)
 		cX = x / chunkW;
 	else
-		cX = x / chunkW - 1;
+		cX = ((x) / chunkW )- 1;
 	int cY = 0;
 	int cZ;
 	if (z >= 0)
 		cZ = z / chunkT;
 	else
 		cZ = z / chunkT - 1;
-	std::string pathFile = fileName(cX, cY, cZ);
-	std::ifstream read(pathFile);
-	nlohmann::json json;
-	if (read.is_open())
+	SaveChunkData* data = NULL;
+	for (auto s : saveData)
+		if (s->x == cX && s->y == cY && s->z == cZ)
+		{
+			data = s;
+			break;
+		}
+	if (data == NULL)
 	{
-		read >> json;
-	}
+		data = new SaveChunkData();
+		saveData.push_back(data);
+		data->x = cX;
+		data->y = cY;
+		data->z = cZ;
+		std::string pathFile = fileName(cX, cY, cZ);
+		std::ifstream read(pathFile);
+		if (read.is_open())
+		{
+			read >> data->j;
+		}
 
-	read.close();
-	int size = 0;
-	if (json.contains("ToAdd"))
-	{
-		size = (int)json["ToAdd"].size();
+		read.close();
 	}
-	json["ToAdd"][size][0] = ID;
-	json["ToAdd"][size][1] = getBlockX(x);
-	json["ToAdd"][size][2] = y;
-	json["ToAdd"][size][3] = getBlockZ(z);
-	std::ofstream save(pathFile);
-	save << json;
-	save.close();
+	
+	int size = 0;
+	if (data->j.contains("ToAdd"))
+	{
+		size = (int)data->j["ToAdd"].size();
+	}
+	data->j["ToAdd"][size][0] = ID;
+	data->j["ToAdd"][size][1] = getBlockX(x);
+	data->j["ToAdd"][size][2] = y;
+	data->j["ToAdd"][size][3] = getBlockZ(z);
 
 }
 
@@ -469,6 +497,23 @@ void genValues(float** tab)
 			float vz = (float)z / (float)chunkT;
 			tab[x][z] = ((1.0f - vx) * tab[0][z] + vx * tab[w][z] + (1.0f - vz) * tab[x][0] + vz * tab[x][t]) / 2;
 		}
+}
+
+void Chunk::saveBlockData()
+{
+	for (auto s : saveData)
+	{
+		std::string path = fileName(s->x, s->y, s->z);
+		std::ofstream save(path);
+		if (save.is_open())
+		{
+			save << s->j;
+			save.close();
+		}
+		delete s;
+		
+	}
+	saveData.clear();
 }
 
 float getValueTerrain(float v)
@@ -703,7 +748,7 @@ int getBlockZ(int z)
 {
 	if (z >= 0)
 		return z % chunkT;
-	return (chunkW - (abs(z) % chunkT)) % chunkT;
+	return (chunkT - (abs(z) % chunkT)) % chunkT;
 }
 
 void Chunk::setFaceing()

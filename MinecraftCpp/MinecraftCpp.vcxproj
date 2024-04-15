@@ -179,16 +179,16 @@
     <ClCompile Include="Src\scene\GameTextures.cpp" />
     <ClCompile Include="Src\scene\Scene.cpp" />
     <ClCompile Include="Src\test.cpp" />
-    <ClCompile Include="Src\world\Block.cpp" />
-    <ClCompile Include="Src\world\BlocksCreator.cpp" />
+    <ClCompile Include="Src\world\Blocks\Block.cpp" />
+    <ClCompile Include="Src\world\Blocks\BlocksCreator.cpp" />
+    <ClCompile Include="Src\world\Blocks\CubeBlock.cpp" />
+    <ClCompile Include="Src\world\Blocks\Leaf.cpp" />
+    <ClCompile Include="Src\world\Blocks\OakTree.cpp" />
+    <ClCompile Include="Src\world\Blocks\Plant.cpp" />
+    <ClCompile Include="Src\world\Blocks\Water.cpp" />
     <ClCompile Include="Src\world\Chunk.cpp" />
     <ClCompile Include="Src\world\ChunkMesh.cpp" />
-    <ClCompile Include="Src\world\CubeBlock.cpp" />
-    <ClCompile Include="Src\world\Leaf.cpp" />
-    <ClCompile Include="Src\world\OakTree.cpp" />
     <ClCompile Include="Src\world\PerlinNoise.cpp" />
-    <ClCompile Include="Src\world\Plant.cpp" />
-    <ClCompile Include="Src\world\Water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Diff.frag" />
@@ -216,16 +216,16 @@
     <ClInclude Include="Src\scene\Game.h" />
     <ClInclude Include="Src\scene\GameTextures.h" />
     <ClInclude Include="Src\scene\Scene.h" />
-    <ClInclude Include="Src\world\Block.h" />
-    <ClInclude Include="Src\world\BlocksCreator.h" />
+    <ClInclude Include="Src\world\Blocks\Block.h" />
+    <ClInclude Include="Src\world\Blocks\BlocksCreator.h" />
+    <ClInclude Include="Src\world\Blocks\CubeBlock.h" />
+    <ClInclude Include="Src\world\Blocks\Leaf.h" />
+    <ClInclude Include="Src\world\Blocks\OakTree.h" />
+    <ClInclude Include="Src\world\Blocks\Plant.h" />
+    <ClInclude Include="Src\world\Blocks\Water.h" />
     <ClInclude Include="Src\world\Chunk.h" />
     <ClInclude Include="Src\world\ChunkMesh.h" />
-    <ClInclude Include="Src\world\CubeBlock.h" />
-    <ClInclude Include="Src\world\Leaf.h" />
-    <ClInclude Include="Src\world\OakTree.h" />
     <ClInclude Include="Src\world\PerlinNoise.h" />
-    <ClInclude Include="Src\world\Plant.h" />
-    <ClInclude Include="Src\world\Water.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,6 @@
 #include "Plant.h"
-#include "Chunk.h"
-#include "../scene/Game.h"
+#include "../Chunk.h"
+#include "../../scene/Game.h"
 
 Plant::Plant(int ID, int x, int y, int z, int textureID) :Block(ID, x, y, z)
 {

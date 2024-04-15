@@ -63,12 +63,14 @@ Game::~Game()
 
 	chunks.clear();
 
+
 	delete shader;
 	delete blocks;
 	delete blocksH;
 	delete blocksN;
 	delete shaderShadow;
 	game = NULL;
+	Chunk::saveBlockData();
 }
 
 void Game::start()
@@ -158,6 +160,7 @@ void Game::update(float deltaTime)
 	}
 
 	toAdd.clear();
+
 	toAddMutex.unlock();
 	toDeleteMutex.lock();
 	for (auto d : toDelete)
@@ -190,7 +193,7 @@ void Game::update(float deltaTime)
 
 	chunksMutex.unlock();
 
-	
+
 
 }
 
@@ -219,7 +222,7 @@ void Game::draw()
 
 	shaderShadow->active();
 	camera->useCamera(*shaderShadow, "camera");
-	renderScene(shaderShadow, false);
+	renderScene(shaderShadow, true);
 	ShadowMap->endUse();
 	shader->active();
 	shader->setUniformI1(debug, "isDebug");
@@ -531,7 +534,9 @@ void Game::genWorld()
 
 	if (abs(pos.x - camPos.x) <= range && abs(pos.y - camPos.z) <= range)
 	{
+
 		c = new Chunk(pos.x, 0, pos.y);
+
 	}
 
 	toAddMutex.lock();

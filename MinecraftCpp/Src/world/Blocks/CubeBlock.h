@@ -1,7 +1,7 @@
 #pragma once
 #include "Block.h"
-#include "../core/Cube.h"
-#include "../core/Texture.h"
+#include "../../core/Cube.h"
+#include "../../core/Texture.h"
 class CubeBlock :
     public Block
 {

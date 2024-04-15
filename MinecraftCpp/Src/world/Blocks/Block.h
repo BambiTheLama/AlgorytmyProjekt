@@ -1,5 +1,5 @@
 #pragma once
-#include "../core/Cube.h"
+#include "../../core/Cube.h"
 #include <vector>
 #include <glm/glm.hpp>
 

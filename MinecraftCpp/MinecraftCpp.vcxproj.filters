@@ -19,6 +19,9 @@
     <Filter Include="Src\Scene">
       <UniqueIdentifier>{016cf8cb-c4f6-420b-8667-774213e8329b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\World\Blocks">
+      <UniqueIdentifier>{b46d9cef-8011-4d90-92e4-f8d46ea28f7d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\glad.c">
@@ -57,47 +60,47 @@
     <ClCompile Include="Src\scene\Scene.cpp">
       <Filter>Src\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\world\Block.cpp">
-      <Filter>Src\World</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\world\Chunk.cpp">
-      <Filter>Src\World</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\world\CubeBlock.cpp">
-      <Filter>Src\World</Filter>
-    </ClCompile>
     <ClCompile Include="Src\core\Font.cpp">
       <Filter>Src\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\world\BlocksCreator.cpp">
-      <Filter>Src\World</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\world\PerlinNoise.cpp">
-      <Filter>Src\World</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\world\Plant.cpp">
-      <Filter>Src\World</Filter>
     </ClCompile>
     <ClCompile Include="Src\core\RenderTexture.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Src\world\OakTree.cpp">
+    <ClCompile Include="Src\scene\GameTextures.cpp">
+      <Filter>Src\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\test.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Chunk.cpp">
       <Filter>Src\World</Filter>
     </ClCompile>
     <ClCompile Include="Src\world\ChunkMesh.cpp">
       <Filter>Src\World</Filter>
     </ClCompile>
-    <ClCompile Include="Src\scene\GameTextures.cpp">
-      <Filter>Src\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\world\Leaf.cpp">
+    <ClCompile Include="Src\world\PerlinNoise.cpp">
       <Filter>Src\World</Filter>
     </ClCompile>
-    <ClCompile Include="Src\test.cpp">
-      <Filter>Src</Filter>
+    <ClCompile Include="Src\world\Blocks\Block.cpp">
+      <Filter>Src\World\Blocks</Filter>
     </ClCompile>
-    <ClCompile Include="Src\world\Water.cpp">
-      <Filter>Src\World</Filter>
+    <ClCompile Include="Src\world\Blocks\BlocksCreator.cpp">
+      <Filter>Src\World\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Blocks\CubeBlock.cpp">
+      <Filter>Src\World\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Blocks\Leaf.cpp">
+      <Filter>Src\World\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Blocks\OakTree.cpp">
+      <Filter>Src\World\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Blocks\Plant.cpp">
+      <Filter>Src\World\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Blocks\Water.cpp">
+      <Filter>Src\World\Blocks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -160,45 +163,45 @@
     <ClInclude Include="Src\scene\Scene.h">
       <Filter>Src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\world\Block.h">
-      <Filter>Src\World</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\world\Chunk.h">
-      <Filter>Src\World</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\world\CubeBlock.h">
-      <Filter>Src\World</Filter>
-    </ClInclude>
     <ClInclude Include="Src\core\Font.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\world\BlocksCreator.h">
-      <Filter>Src\World</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Properties.h" />
-    <ClInclude Include="Src\world\PerlinNoise.h">
-      <Filter>Src\World</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\world\Plant.h">
-      <Filter>Src\World</Filter>
-    </ClInclude>
     <ClInclude Include="Src\core\RenderTexture.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\world\OakTree.h">
+    <ClInclude Include="Src\scene\GameTextures.h">
+      <Filter>Src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Chunk.h">
       <Filter>Src\World</Filter>
     </ClInclude>
     <ClInclude Include="Src\world\ChunkMesh.h">
       <Filter>Src\World</Filter>
     </ClInclude>
-    <ClInclude Include="Src\scene\GameTextures.h">
-      <Filter>Src\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\world\Leaf.h">
+    <ClInclude Include="Src\world\PerlinNoise.h">
       <Filter>Src\World</Filter>
     </ClInclude>
-    <ClInclude Include="Src\world\Water.h">
-      <Filter>Src\World</Filter>
+    <ClInclude Include="Src\world\Blocks\Block.h">
+      <Filter>Src\World\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Blocks\BlocksCreator.h">
+      <Filter>Src\World\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Blocks\CubeBlock.h">
+      <Filter>Src\World\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Blocks\Leaf.h">
+      <Filter>Src\World\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Blocks\OakTree.h">
+      <Filter>Src\World\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Blocks\Plant.h">
+      <Filter>Src\World\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Blocks\Water.h">
+      <Filter>Src\World\Blocks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

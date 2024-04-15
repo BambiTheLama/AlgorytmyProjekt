@@ -1,6 +1,6 @@
 #include "CubeBlock.h"
-#include "../core/Engine.h"
-#include "Chunk.h"
+#include "../../core/Engine.h"
+#include "../Chunk.h"
 
 CubeBlock::CubeBlock(int ID, int x, int y, int z, int textureID, int textureFaces, bool transparent) :Block(ID, x, y, z)
 {

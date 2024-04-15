@@ -9,5 +9,7 @@ public:
 	virtual void setOneFace(int face, bool state = true) { CubeBlock::setOneFace(face, state); }
 
 	virtual void setOneFace(int face, Block* b) { setOneFace(face, false); }
+
+	virtual GLuint getVertex(int dir);
 };
 

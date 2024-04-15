@@ -1,9 +1,10 @@
 #pragma once
-#include "Block.h"
+#include "Blocks/Block.h"
 #include <vector>
 #include <string>
 #include "PerlinNoise.h"
 #include "ChunkMesh.h"
+#include <json.hpp>
 #define chunkW 16
 #define chunkH 256
 #define chunkT 16
@@ -11,9 +12,13 @@
 #define maxH 256
 #define waterH 90
 //#define Laby
-#define noSave
+//#define noSave
 
 class Game;
+struct SaveChunkData {
+	int x, y, z;
+	nlohmann::json j;
+};
 class Chunk
 {
 #ifdef Laby
@@ -35,6 +40,7 @@ class Chunk
 	bool genVertices = false;
 	bool wasCleared = false;
 	static std::string path;
+	static std::vector<SaveChunkData*> saveData;
 public:
 	Chunk(int x, int y, int z);
 
@@ -58,7 +64,9 @@ public:
 
 	bool loadGame();
 
-	glm::vec3 getPos() { return glm::vec3(x * chunkW, y * chunkH, z * chunkT); }
+	bool loadGame(nlohmann::json j);
+
+	glm::vec3 getPos() { return glm::vec3(x * chunkW + chunkW / 2, y * chunkH + chunkH / 2, z * chunkT + chunkT / 2); }
 
 	glm::vec3 getLocation() { return glm::vec3(x, y, z); }
 
@@ -72,6 +80,8 @@ public:
 
 	friend class Game;
 private:
+
+	static void saveBlockData();
 	void setFaceing();
 	void genVerticesPos();
 	void generateTeren();
