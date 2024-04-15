@@ -15,9 +15,8 @@ struct getData{
 	vec3 pos;
 	vec2 text;
 	int textID;
-	bool cutX;
 	bool cutY;
-	bool cutZ;
+	bool cutSides;
 	bool animatedUp;
 	bool animatedDown;
 };
@@ -39,32 +38,30 @@ void main()
 	d.pos.x  = data       & 15;			/// 0b000000000000000000000000000001111
 	d.pos.y  = data >> 4  & 255;		/// 0b000000000000000000000111111110000
 	d.pos.z  = data >> 12 & 15;			/// 0b000000000000000011110000000000000
-	d.textID = data >> 16 & 95;			/// 0b000000000011111100000000000000000
-	d.cutX = (data >> 22) == 1;	        /// 0b000000000100000000000000000000000
-	d.cutY = (data >> 23) == 1;	        /// 0b000000001000000000000000000000000
-	d.cutZ = (data >> 24) == 1;	        /// 0b000000010000000000000000000000000
-	d.animatedUp = (data >> 25) == 1;	/// 0b000000010000000000000000000000000
-	d.animatedDown = (data >> 26) == 1;	/// 0b000000010000000000000000000000000
+	d.textID = data >> 16 & 63;			/// 0b000000000011111100000000000000000
+	d.cutY = (data >> 22) == 1;	        /// 0b000000001000000000000000000000000
+	d.cutSides = (data >> 23) == 1;	    /// 0b000000010000000000000000000000000
+	d.animatedUp = (data >> 24) == 1;	/// 0b000000100000000000000000000000000
+	d.animatedDown = (data >> 25) == 1;	/// 0b000001000000000000000000000000000
 
 	vec3 vPos = pos;
-	if(d.cutX)
-	{
-		if(vPos.x >= 0.5)
-			vPos.x -= 0.075f;
-		else
-			vPos.x += 0.075f;
-	}
+
 	if(d.cutY)
 	{
 		if(vPos.y >= 0.5)
 			vPos.y -= 0.1f;
 	}
-	if(d.cutZ)
+	if(d.cutSides)
 	{
-		if(vPos.z >= 0.5)
-			vPos.z -= 0.075f;
-		else
-			vPos.z += 0.075f;
+		if(dir==0)
+			vPos.x-=0.08;
+		else if(dir==1)
+			vPos.x+=0.08;
+		else if(dir==2)
+			vPos.z+=0.08;
+		else if(dir==3)
+			vPos.z-=0.08;
+
 	}
 	if(d.animatedUp)
 	{

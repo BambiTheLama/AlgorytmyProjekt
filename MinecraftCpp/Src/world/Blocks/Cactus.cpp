@@ -12,5 +12,5 @@ GLuint Cactus::getVertex(int dir)
         return CubeBlock::getVertex(dir);
     }
 
-    return CubeBlock::getVertex(dir) + (0b100 << 22);
+    return CubeBlock::getVertex(dir) + (0b1 << 23);
 }
