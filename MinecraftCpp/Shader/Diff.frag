@@ -24,7 +24,30 @@ in DATA
 uniform vec3 camPos;
 uniform vec3 lightColor;
 
-
+vec3 getNormal(vec3 normal)
+{
+	if(dir == 3)
+		return normal;
+	else if(dir == 2)	
+		return normal * -1.0f;
+	else if(dir == 1)
+		return cross(normal,vec3(0.0f, 1.0f, 0.0f));
+	else if(dir == 0)
+		return cross(normal,vec3(0.0f, -1.0f, 0.0f));
+	else if(dir == 4)
+		return cross(normal,vec3(1.0f, 0.0f, 0.0f));
+	else if(dir == 5)
+		return cross(normal,vec3(-1.0f, 0.0f, 0.0f));
+	else if(dir == 6)
+		return cross(normal,vec3(0.0f, -1.0f, -1.0f));
+	else if(dir == 7)
+		return cross(normal,vec3(0.0f, 1.0f, 1.0f));
+	else if(dir == 8)
+		return cross(normal,vec3(0.0f, 1.0f, -1.0f));
+	else if(dir == 9)
+		return cross(normal,vec3(0.0f, -1.0f, 1.0f));
+	return normal;
+}
 
 vec3 directLight()
 {
@@ -32,20 +55,7 @@ vec3 directLight()
 	float ambient = 0.50f;
 
 	// diffuse lighting
-	vec3 normal = normalize((texture(texN[frag.textID], frag.texCoord).xyz * 2.0f - 1.0f));
-
-	if(dir == 3)
-		;
-	else if(dir == 2)	
-		normal = normal * -1.0f;
-	else if(dir == 1)
-		normal = cross(normal,vec3(0.0f, 1.0f, 0.0f));
-	else if(dir == 0)
-		normal = cross(normal,vec3(0.0f, -1.0f, 0.0f));
-	else if(dir == 4)
-		normal = cross(normal,vec3(1.0f, 0.0f, 0.0f));
-	else if(dir == 5)
-		normal = cross(normal,vec3(-1.0f, 0.0f, 0.0f));
+	vec3 normal = getNormal(normalize((texture(texN[frag.textID], frag.texCoord).xyz * 2.0f - 1.0f)));
 
 	//vec3 normal = vec3(1);
 	vec3 lightDirection = lightDir;
@@ -105,4 +115,5 @@ void main()
 		discard;
 
 	FragColor = vec4(directLight()*frag.bright,texture(tex0[frag.textID], frag.texCoord).a) * modelColor;
+
 }
