@@ -301,6 +301,7 @@ void Chunk::save()
 	save.close();
 
 }
+
 bool Chunk::loadGame()
 {
 	std::string pathFile = fileName(x, y, z);
@@ -316,6 +317,7 @@ bool Chunk::loadGame()
 	read.close();
 	return loadGame(json);
 }
+
 bool Chunk::loadGame(nlohmann::json json)
 {
 
@@ -417,9 +419,10 @@ void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
 
 void Chunk::genVerticesPos()
 {
-	const int vecSize = 6;
-	std::vector<int> verticesSolid[vecSize];
-	std::vector<int> verticesTrans[vecSize];
+	const int vecSolidSize = 6;
+	const int vecTransSize = 10;
+	std::vector<int> verticesSolid[vecSolidSize];
+	std::vector<int> verticesTrans[vecTransSize];
 
 	GLuint lastIndexSolid = 0;
 	GLuint lastIndexTrans = 0;
@@ -432,7 +435,7 @@ void Chunk::genVerticesPos()
 
 		if (blocks[j][i][k]->isTransparent())
 		{
-			for (int w = 0; w < vecSize; w++)
+			for (int w = 0; w < vecTransSize; w++)
 			{
 				if (blocks[j][i][k]->isRenderedSide(w))
 				{
@@ -444,7 +447,7 @@ void Chunk::genVerticesPos()
 		else
 		{
 
-			for (int w = 0; w < vecSize; w++)
+			for (int w = 0; w < vecSolidSize; w++)
 			{
 
 				if (blocks[j][i][k]->isRenderedSide(w))
@@ -459,12 +462,13 @@ void Chunk::genVerticesPos()
 
 
 	}
-	for (int i = 0; i < vecSize; i++)
+	for (int i = 0; i < vecSolidSize; i++)
 	{
 		solidMesh[i]->newMesh(verticesSolid[i]);
 		transMesh[i]->newMesh(verticesTrans[i]);
 	}
-
+	for (int i = vecSolidSize; i < vecTransSize; i++)
+		transMesh[i]->newMesh(verticesTrans[i]);
 }
 
 float getValue(float v)
@@ -687,11 +691,11 @@ void Chunk::generateTeren()
 					delete blocks[j][i][k];
 				if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 469 == 0)
 				{
-					if(temperatue<-0.3)
+					if (temperatue < -0.3)
 						blocks[j][i][k] = createBlock(14, blockX, j, blockZ);
 					else if (temperatue < 0.3)
 					{
-						if((int)(picksAndValies.GetNoise(x, z) * 10000) % 10 >= 6)
+						if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 10 >= 6)
 							blocks[j][i][k] = createBlock(12, blockX, j, blockZ);
 						else
 							blocks[j][i][k] = createBlock(13, blockX, j, blockZ);
@@ -703,7 +707,7 @@ void Chunk::generateTeren()
 							int ch = rand() % 4;
 							for (int cy = 0; cy < ch; cy++)
 							{
-								if(!blocks[j + cy][i][k])
+								if (!blocks[j + cy][i][k])
 									blocks[j + cy][i][k] = createBlock(15, blockX, j + cy, blockZ);
 							}
 
@@ -714,6 +718,21 @@ void Chunk::generateTeren()
 						toUpdate.push_back(blocks[j][i][k]);
 
 				}
+				else if (temperatue >= -0.3 && temperatue <= 0.3 && (int)(picksAndValies.GetNoise(x, z) * 1000000) % 469 > 100)
+				{
+					int blockId = -1;
+					if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 100 == 10)
+						blockId = 19;
+					else if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 100 == 69)
+						blockId = 17;
+					else if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 100 == 21)
+						blockId = 18;
+					else if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 100 % 2 == 0)
+						blockId = 16;
+					if(blockId>-1)
+						blocks[j][i][k] = createBlock(blockId, blockX, j, blockZ);
+				}
+
 
 			}
 			for (int j = h; j <= waterH && j < chunkH; j++)

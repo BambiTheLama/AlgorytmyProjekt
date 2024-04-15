@@ -28,6 +28,8 @@ public:
 	void setUniformVec2(glm::vec2 vec, const char* uniform);
 
 	void setUniformI1(int v, const char* uniform);
+
+	void setUniformF1(float v, const char* uniform);
 };
 
 Shader* getUsingShader();

@@ -272,11 +272,13 @@ void Game::renderScene(Shader* s,bool trans)
 	{
 		c->draw(s, trans);
 	}
+	s->setUniformF1(time, "time");
 	for (int i = 0; i < 6; i++)
 	{
 		solidMesh[i]->draw(s);
+		transMesh[i]->draw(s);
 	}
-	for (int i = 0; i < 10; i++)
+	for (int i = 6; i < 10; i++)
 	{
 		transMesh[i]->draw(s);
 	}

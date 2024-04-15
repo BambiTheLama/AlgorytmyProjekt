@@ -51,8 +51,8 @@ static std::vector<glm::vec3> vertQuad = {
 	glm::vec3(1,1,0),
 	//X4
 	glm::vec3(0,0,1),
-	glm::vec3(0,1,1),
 	glm::vec3(1,0,0),
+	glm::vec3(0,1,1),
 	glm::vec3(1,1,0),
 };
 static VBO* vboQuadText = NULL;
@@ -87,26 +87,26 @@ static std::vector<glm::vec2> vertQuadText = {
 	glm::vec2(1,0),
 	glm::vec2(0,1),
 	glm::vec2(1,1),
-	//Left
+	//X1
 	glm::vec2(0,1),
 	glm::vec2(0,0),
 	glm::vec2(1,1),
 	glm::vec2(1,0),
-	//Right
+	//X2
 	glm::vec2(0,1),
 	glm::vec2(1,1),
 	glm::vec2(0,0),
 	glm::vec2(1,0),
-	//UP
+	//X3
+	glm::vec2(0,1),
+	glm::vec2(0,0),
+	glm::vec2(1,1),
+	glm::vec2(1,0),
+	//X4
 	glm::vec2(0,1),
 	glm::vec2(1,1),
 	glm::vec2(0,0),
 	glm::vec2(1,0),
-	//Down
-	glm::vec2(0,0),
-	glm::vec2(1,0),
-	glm::vec2(0,1),
-	glm::vec2(1,1),
 };
 
 ChunkMesh::ChunkMesh(int dir)

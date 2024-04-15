@@ -46,6 +46,14 @@ Block* createBlock(int i,int x,int y,int z)
 	case 15:///Sapling 3
 		return new Cactus(i, x, y, z, 20);
 		break;
+	case 16://Grass
+		return new Plant(i, x, y, z, 24);
+	case 17://Yellow Flower
+		return new Plant(i, x, y, z, 25);
+	case 18://Red Flower
+		return new Plant(i, x, y, z, 26);
+	case 19://Blue Flower
+		return new Plant(i, x, y, z, 27);
 
 	default:
 		return NULL;

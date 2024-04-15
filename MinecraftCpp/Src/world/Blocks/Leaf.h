@@ -11,5 +11,7 @@ public:
     virtual void setOneFace(int face, bool state) {}
 
     virtual void setOneFace(int face, Block* b) {  }
+
+    virtual GLuint getVertex(int dir);
 };
 

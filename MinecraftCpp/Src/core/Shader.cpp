@@ -163,6 +163,10 @@ void Shader::setUniformI1(int v, const char* uniform)
 {
 	glUniform1i(glGetUniformLocation(ID, uniform), v);
 }
+void Shader::setUniformF1(float v, const char* uniform)
+{
+	glUniform1f(glGetUniformLocation(ID, uniform), v);
+}
 
 Shader* getUsingShader()
 {

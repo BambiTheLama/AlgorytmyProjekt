@@ -49,7 +49,8 @@ std::vector<GLuint> Plant::getVertex()
 			((0b1111     & ((int)pos[i].z))  << 12)	+
 			((0b1	     & ((int)text[i].x)) << 16) +
 			((0b1	     & ((int)text[i].y)) << 17) +
-			((0b11111	 & textureID)		 << 18));
+			((0b11111	 & textureID)		 << 18)+
+			(0b1<<25));
 	}
 
 
@@ -73,6 +74,15 @@ std::vector<GLuint> Plant::getIndex()
 
 
 	return index;
+}
+
+GLuint Plant::getVertex(int dir)
+{
+	return (x & 0b1111) +
+		((y & 0b11111111) << 4) +
+		((z & 0b1111) << 12) +
+		((textureID & 0b111111) << 16)+ 
+		(0b1 << 25);
 }
 
 GLuint Plant::indexSize()

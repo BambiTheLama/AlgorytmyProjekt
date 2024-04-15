@@ -9,6 +9,7 @@ uniform mat4 camera;
 uniform mat4 model;
 uniform mat4 lightProjection;
 uniform int dir;
+uniform float time;
 
 struct getData{
 	vec3 pos;
@@ -17,7 +18,8 @@ struct getData{
 	bool cutX;
 	bool cutY;
 	bool cutZ;
-
+	bool animatedUp;
+	bool animatedDown;
 };
 
 out DATA
@@ -41,6 +43,8 @@ void main()
 	d.cutX = (data >> 22) == 1;	        /// 0b000000000100000000000000000000000
 	d.cutY = (data >> 23) == 1;	        /// 0b000000001000000000000000000000000
 	d.cutZ = (data >> 24) == 1;	        /// 0b000000010000000000000000000000000
+	d.animatedUp = (data >> 25) == 1;	/// 0b000000010000000000000000000000000
+	d.animatedDown = (data >> 26) == 1;	/// 0b000000010000000000000000000000000
 
 	vec3 vPos = pos;
 	if(d.cutX)
@@ -61,6 +65,24 @@ void main()
 			vPos.z -= 0.075f;
 		else
 			vPos.z += 0.075f;
+	}
+	if(d.animatedUp)
+	{
+		if(vPos.y>0.5f)
+		{
+			vPos.z+=sin(time)/12.0f;
+			vPos.x+=sin(time)/12.0f;
+		}
+
+	}
+	if(d.animatedDown)
+	{
+		if(vPos.y<0.5f)
+		{
+			vPos.z-=sin(time)/12.0f;
+			vPos.x-=sin(time)/12.0f;
+		}
+
 	}
 	vec3 currentPos = vec3(model * vec4(vPos+d.pos, 1.0f));
 	gl_Position = camera * vec4(currentPos, 1.0f);
