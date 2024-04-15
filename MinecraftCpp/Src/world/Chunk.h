@@ -33,7 +33,7 @@ class Chunk
 	std::vector<Block*> toAdd;
 	std::vector<Block*> toDraw;
 	ChunkMesh* solidMesh[6];
-	ChunkMesh* transMesh[6];
+	ChunkMesh* transMesh[10];
 	int indicesSolidSize = 0;
 	int indicesTransSize = 0;
 	static Game* game;

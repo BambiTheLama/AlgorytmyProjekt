@@ -45,19 +45,19 @@ void main()
 	vec3 vPos = pos;
 	if(d.cutX)
 	{
-		if(vPos.x >= 0.9)
+		if(vPos.x >= 0.5)
 			vPos.x -= 0.075f;
 		else
 			vPos.x += 0.075f;
 	}
 	if(d.cutY)
 	{
-		if(vPos.y >= 0.9)
+		if(vPos.y >= 0.5)
 			vPos.y -= 0.1f;
 	}
 	if(d.cutZ)
 	{
-		if(vPos.z >= 0.9)
+		if(vPos.z >= 0.5)
 			vPos.z -= 0.075f;
 		else
 			vPos.z += 0.075f;

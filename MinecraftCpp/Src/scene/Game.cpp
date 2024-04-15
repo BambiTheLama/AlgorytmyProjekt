@@ -43,6 +43,15 @@ Game::Game(int w,int h,GLFWwindow* window)
 	ShadowMap->use(*shader, "texShadow");
 	camera = new Camera(w, h, 0.1f, 1000, 60, glm::vec3(0.0f, 100.0f, -1.0f));
 	game = this;
+
+	for (int i = 0; i < 6; i++)
+	{
+		solidMesh[i] = new ChunkMesh(i);
+		transMesh[i] = new ChunkMesh(i);
+	}
+	for (int i = 6; i < 10; i++)
+		transMesh[i] = new ChunkMesh(i);
+
 }
 
 Game::~Game()
@@ -62,7 +71,13 @@ Game::~Game()
 	}
 
 	chunks.clear();
-
+	for (int i = 0; i < 6; i++)
+	{
+		delete solidMesh[i];
+		delete transMesh[i];
+	}
+	for (int i = 6; i < 10; i++)
+		delete transMesh[i];
 
 	delete shader;
 	delete blocks;
@@ -129,27 +144,11 @@ void Game::update(float deltaTime)
 
 		if (b2 && b != b2)
 		{
-
 			b = b2;
-			//
-			//if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-			//{
-			//	deleteBlock(x, y, z);
-			//	b = NULL;
-			//	break;
-			//}
-			//chunkPos = getChunkPos(x, y, z);
-			//cube->setFaceing(b->getFaces());
-			//vertices = cube->getVertex(getBlockX(x), y % chunkH, getBlockX(z), 1, 0, 0);
-			//index = cube->getIndex();
-			//vao->bind();
-			//ebo->setNewVertices(index);
-			//vbo->setNewVertices(vertices);
-			//vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(int), (void*)0);
-			//break;
 		}
 		n++;
 	}
+	
 	toAddMutex.lock();
 	for (auto a : toAdd)
 	{
@@ -158,9 +157,9 @@ void Game::update(float deltaTime)
 		chunks.push_back(a);
 
 	}
-
+	if (toAdd.size() > 0)
+		reloadMesh = true;
 	toAdd.clear();
-
 	toAddMutex.unlock();
 	toDeleteMutex.lock();
 	for (auto d : toDelete)
@@ -178,8 +177,15 @@ void Game::update(float deltaTime)
 		if (r >= 0 && r < chunks.size())
 			chunks.erase(chunks.begin() + r);
 	}
+	if (toDelete.size() > 0)
+	{
+		reloadMesh = true;
+	}
 	toDelete.clear();
+
+
 	toDeleteMutex.unlock();
+
 	toDraw = chunks;
 
 	camPos = camera->getPos();
@@ -199,7 +205,8 @@ void Game::update(float deltaTime)
 
 void Game::draw()
 {
-
+	if (reloadMesh)
+		genMesh();
 	camera->useCamera(*shader, "camera");
 
 	glm::mat4 model(1.0f);
@@ -259,14 +266,21 @@ void Game::draw()
 void Game::renderScene(Shader* s,bool trans)
 {
 	chunksMutex.lock();
+	glEnable(GL_DEPTH_TEST);
+	s->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
 	for (auto c : toDraw)
 	{
-		glEnable(GL_DEPTH_TEST);
-		s->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
 		c->draw(s, trans);
-		glDisable(GL_DEPTH_TEST);
 	}
-
+	for (int i = 0; i < 6; i++)
+	{
+		solidMesh[i]->draw(s);
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		transMesh[i]->draw(s);
+	}
+	glDisable(GL_DEPTH_TEST);
 	chunksMutex.unlock();
 }
 
@@ -595,6 +609,28 @@ void Game::desWorld()
 	chunksMutex.unlock();
 	toDeleteMutex.unlock();
 
+}
+
+void Game::genMesh()
+{
+	for (int i = 0; i < 6; i++)
+	{
+		solidMesh[i]->clearMesh();
+		transMesh[i]->clearMesh();
+		for (auto c : toDraw)
+		{
+			solidMesh[i]->addData(c->solidMesh[i]->getData());
+			transMesh[i]->addData(c->transMesh[i]->getData());
+		}
+	}
+	for (int i = 6; i < 10; i++)
+	{
+		transMesh[i]->clearMesh();
+		for (auto c : toDraw)
+		{
+			transMesh[i]->addData(c->transMesh[i]->getData());
+		}
+	}
 }
 
 Game* getCurrentGame()

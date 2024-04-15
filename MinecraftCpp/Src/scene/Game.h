@@ -27,7 +27,7 @@ class Game :
     GLFWwindow* window;
     Block* b = NULL;
     std::vector<glm::vec2> posToGenChunk;
-    int range = 6;
+    int range = 16;
     VAO *vao;
     VBO *vbo;
     EBO *ebo;
@@ -45,10 +45,14 @@ class Game :
     GameTextures* blocksH;
     GameTextures* blocksN;
 
+    ChunkMesh* solidMesh[6];
+    ChunkMesh* transMesh[10];
+
     RenderTexture* ShadowMap = NULL;
     static Game* game;
     float time = 0.0f;
     bool debug = false;
+    bool reloadMesh = false;
 public:
     Game(int w,int h, GLFWwindow* window);
 
@@ -80,6 +84,8 @@ public:
 
     void setGenVerticesFlagAt(int x, int y, int z);
 
+
+
     friend Game* getCurrentGame();
 private:
     void worldGenerateFun();
@@ -89,6 +95,8 @@ private:
     void genWorld();
 
     void desWorld();
+
+    void genMesh();
 };
 
 Game* getCurrentGame();

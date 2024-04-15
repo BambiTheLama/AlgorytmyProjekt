@@ -95,6 +95,8 @@ Chunk::~Chunk()
 		delete solidMesh[i];
 		delete transMesh[i];
 	}
+	for (int i = 6; i < 10; i++)
+		delete transMesh[i];
 }
 
 void Chunk::start()
@@ -103,8 +105,9 @@ void Chunk::start()
 	{
 		solidMesh[i] = new ChunkMesh(i);
 		transMesh[i] = new ChunkMesh(i);
-	}
-
+	}	
+	for (int i = 6; i < 10; i++)
+		transMesh[i] = new ChunkMesh(i);
 }
 
 void Chunk::update(float deltaTime)
@@ -169,7 +172,7 @@ void Chunk::draw(Shader* s,bool trans)
 	for (int i = 0; i < 6; i++)
 		solidMesh[i]->draw(s);
 	if (trans)
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 10; i++)
 			transMesh[i]->draw(s);
 }
 

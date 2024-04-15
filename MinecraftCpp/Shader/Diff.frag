@@ -44,7 +44,7 @@ vec3 directLight()
 		normal = cross(normal,vec3(0.0f, -1.0f, 0.0f));
 	else if(dir == 4)
 		normal = cross(normal,vec3(1.0f, 0.0f, 0.0f));
-	else
+	else if(dir == 5)
 		normal = cross(normal,vec3(-1.0f, 0.0f, 0.0f));
 
 	//vec3 normal = vec3(1);
