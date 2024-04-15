@@ -4,6 +4,7 @@
 #include "OakTree.h"
 #include "Leaf.h"
 #include "Water.h"
+#include "Cactus.h"
 
 Block* createBlock(int i,int x,int y,int z)
 {
@@ -43,7 +44,7 @@ Block* createBlock(int i,int x,int y,int z)
 	case 14:///Sapling 3
 		return new Plant(i, x, y, z, 19);
 	case 15:///Sapling 3
-		//return new Cactus(i, x, y, z, 3, 4);
+		return new Cactus(i, x, y, z, 20);
 		break;
 
 	default:

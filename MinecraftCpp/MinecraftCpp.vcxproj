@@ -181,6 +181,7 @@
     <ClCompile Include="Src\test.cpp" />
     <ClCompile Include="Src\world\Blocks\Block.cpp" />
     <ClCompile Include="Src\world\Blocks\BlocksCreator.cpp" />
+    <ClCompile Include="Src\world\Blocks\Cactus.cpp" />
     <ClCompile Include="Src\world\Blocks\CubeBlock.cpp" />
     <ClCompile Include="Src\world\Blocks\Leaf.cpp" />
     <ClCompile Include="Src\world\Blocks\OakTree.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="Src\scene\Scene.h" />
     <ClInclude Include="Src\world\Blocks\Block.h" />
     <ClInclude Include="Src\world\Blocks\BlocksCreator.h" />
+    <ClInclude Include="Src\world\Blocks\Cactus.h" />
     <ClInclude Include="Src\world\Blocks\CubeBlock.h" />
     <ClInclude Include="Src\world\Blocks\Leaf.h" />
     <ClInclude Include="Src\world\Blocks\OakTree.h" />

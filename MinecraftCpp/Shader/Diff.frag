@@ -72,7 +72,7 @@ vec3 directLight()
 		float bias = max(0.5f * (1.0f - dot(normal, lightDirection)), 0.01f);
 	
 		// Smoothens out the shadows
-		int sampleRadius = 3;
+		int sampleRadius = 1;
 		vec2 pixelSize = 1.0 / textureSize(texShadow, 0);
 		for(int y = -sampleRadius; y <= sampleRadius; y++)
 		{

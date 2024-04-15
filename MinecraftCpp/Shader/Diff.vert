@@ -38,17 +38,17 @@ void main()
 	d.pos.y  = data >> 4  & 255;		/// 0b000000000000000000000111111110000
 	d.pos.z  = data >> 12 & 15;			/// 0b000000000000000011110000000000000
 	d.textID = data >> 16 & 95;			/// 0b000000000011111100000000000000000
-	d.cutX = (data >> 22 & 1) == 1;	    /// 0b000000000100000000000000000000000
-	d.cutY = (data >> 23 & 1) == 1;	    /// 0b000000001000000000000000000000000
-	d.cutZ = (data >> 24 & 1) == 1;	    /// 0b000000010000000000000000000000000
+	d.cutX = (data >> 22) == 1;	        /// 0b000000000100000000000000000000000
+	d.cutY = (data >> 23) == 1;	        /// 0b000000001000000000000000000000000
+	d.cutZ = (data >> 24) == 1;	        /// 0b000000010000000000000000000000000
 
-	vec3 vPos=pos;
+	vec3 vPos = pos;
 	if(d.cutX)
 	{
-		if(vPos.x <= 0.1)
-			vPos.x += 0.1f;
-		else	
-			vPos.x -= 0.1f;
+		if(vPos.x >= 0.9)
+			vPos.x -= 0.075f;
+		else
+			vPos.x += 0.075f;
 	}
 	if(d.cutY)
 	{
@@ -57,13 +57,12 @@ void main()
 	}
 	if(d.cutZ)
 	{
-		if(vPos.z <= 0.1)
-			vPos.z += 0.1f;
-		else	
-			vPos.z -= 0.1f;
+		if(vPos.z >= 0.9)
+			vPos.z -= 0.075f;
+		else
+			vPos.z += 0.075f;
 	}
-	vPos+=d.pos;
-	vec3 currentPos = vec3(model * vec4(vPos, 1.0f));
+	vec3 currentPos = vec3(model * vec4(vPos+d.pos, 1.0f));
 	gl_Position = camera * vec4(currentPos, 1.0f);
 	data_out.texCoord = textPos;
 	data_out.currentPos = currentPos;

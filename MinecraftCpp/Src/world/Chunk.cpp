@@ -693,6 +693,20 @@ void Chunk::generateTeren()
 						else
 							blocks[j][i][k] = createBlock(13, blockX, j, blockZ);
 					}
+					else
+					{
+						if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 10 >= 6)
+						{
+							int ch = rand() % 4;
+							for (int cy = 0; cy < ch; cy++)
+							{
+								if(!blocks[j + cy][i][k])
+									blocks[j + cy][i][k] = createBlock(15, blockX, j + cy, blockZ);
+							}
+
+						}
+
+					}
 					if (blocks[j][i][k])
 						toUpdate.push_back(blocks[j][i][k]);
 
