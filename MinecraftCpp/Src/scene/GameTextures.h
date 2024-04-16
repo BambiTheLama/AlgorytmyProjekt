@@ -6,7 +6,7 @@ class GameTextures
 {
 	std::vector<Texture*> textures;
 public:
-	GameTextures(const char* path);
+	GameTextures(const char* path, const char* type);
 
 	~GameTextures();
 

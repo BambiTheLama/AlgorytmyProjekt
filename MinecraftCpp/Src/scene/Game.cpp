@@ -29,13 +29,14 @@ Game::Game(int w,int h,GLFWwindow* window)
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.frag");
 	shaderShadow = new Shader("Shader/Shadow.vert", "Shader/Shadow.frag");
 
-	blocksN = new GameTextures("Res/BlocksN/");
-	blocksH = new GameTextures("Res/BlocksH/");
-	blocks  = new GameTextures("Res/Blocks/");
+	solidBlocks = new GameTextures("Res/Blocks/", "Solid");
+	solidBlocksH = new GameTextures("Res/BlocksH/", "Solid");
+	solidBlocksN = new GameTextures("Res/BlocksN/", "Solid");
+	transBlocks = new GameTextures("Res/Blocks/", "Trans");
+	transBlocksH = new GameTextures("Res/BlocksH/", "Trans");
+	transBlocksN = new GameTextures("Res/BlocksN/", "Trans");
 	shader->active();
-	blocks ->setTextures(*shader, "tex0");
-	blocksN->setTextures(*shader, "texN");
-	blocksH->setTextures(*shader, "texH");
+
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	shader->setUniformMat4(modelMat, "model");
 	shader->setUniformVec4(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "modelColor");
@@ -44,13 +45,6 @@ Game::Game(int w,int h,GLFWwindow* window)
 	camera = new Camera(w, h, 0.1f, 1000, 60, glm::vec3(0.0f, 100.0f, -1.0f));
 	game = this;
 
-	for (int i = 0; i < 6; i++)
-	{
-		solidMesh[i] = new ChunkMesh(i);
-		transMesh[i] = new ChunkMesh(i);
-	}
-	for (int i = 6; i < 10; i++)
-		transMesh[i] = new ChunkMesh(i);
 
 }
 
@@ -71,18 +65,15 @@ Game::~Game()
 	}
 
 	chunks.clear();
-	for (int i = 0; i < 6; i++)
-	{
-		delete solidMesh[i];
-		delete transMesh[i];
-	}
-	for (int i = 6; i < 10; i++)
-		delete transMesh[i];
+
 
 	delete shader;
-	delete blocks;
-	delete blocksH;
-	delete blocksN;
+	delete transBlocks;
+	delete transBlocksH;
+	delete transBlocksN;
+	delete solidBlocks;
+	delete solidBlocksH;
+	delete solidBlocksN;
 	delete shaderShadow;
 	game = NULL;
 	Chunk::saveBlockData();
@@ -205,8 +196,7 @@ void Game::update(float deltaTime)
 
 void Game::draw()
 {
-	if (reloadMesh)
-		genMesh();
+
 	camera->useCamera(*shader, "camera");
 
 	glm::mat4 model(1.0f);
@@ -242,9 +232,7 @@ void Game::draw()
 	shader->setUniformVec3(shadowMapLightDir, "shadowMapLightDir");
 
 	ShadowMap->use(*shader, "texShadow");
-	blocks->bindTextures();
-	blocksN->bindTextures();
-	blocksH->bindTextures();
+
 	
 
 
@@ -268,19 +256,26 @@ void Game::renderScene(Shader* s,bool trans)
 	chunksMutex.lock();
 	glEnable(GL_DEPTH_TEST);
 	s->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
+	s->setUniformF1(time, "time");
+	solidBlocks->setTextures(*s, "tex0");
+	solidBlocksH->setTextures(*s, "texN");
+	solidBlocksN->setTextures(*s, "texH");
 	for (auto c : toDraw)
 	{
-		c->draw(s, trans);
+		c->draw(s, false);
 	}
-	s->setUniformF1(time, "time");
-	for (int i = 0; i < 6; i++)
+	if (!trans)
 	{
-		solidMesh[i]->draw(s);
-		transMesh[i]->draw(s);
+		glDisable(GL_DEPTH_TEST);
+		chunksMutex.unlock();
+		return;
 	}
-	for (int i = 6; i < 10; i++)
+	transBlocks->setTextures(*s, "tex0");
+	transBlocksH->setTextures(*s, "texN");
+	transBlocksN->setTextures(*s, "texH");
+	for (auto c : toDraw)
 	{
-		transMesh[i]->draw(s);
+		c->draw(s, true);
 	}
 	glDisable(GL_DEPTH_TEST);
 	chunksMutex.unlock();
@@ -613,27 +608,6 @@ void Game::desWorld()
 
 }
 
-void Game::genMesh()
-{
-	for (int i = 0; i < 6; i++)
-	{
-		solidMesh[i]->clearMesh();
-		transMesh[i]->clearMesh();
-		for (auto c : toDraw)
-		{
-			solidMesh[i]->addData(c->solidMesh[i]->getData());
-			transMesh[i]->addData(c->transMesh[i]->getData());
-		}
-	}
-	for (int i = 6; i < 10; i++)
-	{
-		transMesh[i]->clearMesh();
-		for (auto c : toDraw)
-		{
-			transMesh[i]->addData(c->transMesh[i]->getData());
-		}
-	}
-}
 
 Game* getCurrentGame()
 {

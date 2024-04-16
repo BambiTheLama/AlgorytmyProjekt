@@ -2,21 +2,25 @@
 #include "../core/Texture.h"
 #include "../core/Shader.h"
 #include <string>
-GameTextures::GameTextures(const char* path)
+#include <fstream>
+#include <json.hpp>
+GameTextures::GameTextures(const char* path, const char* type)
 {
-	const int n = 31;
-	std::string names[n] = {
-		"grass_block_top","grass_block_side","dirt","stone","snow","grass_block_snow","dirt",
-		"sand","birch_log_top","birch_log","birch_leaves","birch_sapling",
-		"oak_log_top","oak_log","oak_leaves","oak_sapling",
-		"spruce_log_top","spruce_log","spruce_leaves","spruce_sapling",
-		"cactus_top","cactus_side","cactus_top","water",
-		"grass","dandelion","poppy","cornflower","ice"
-	};
+	nlohmann::json j;
+	std::ifstream readFile("Res/Textures.json");
+	if (readFile.is_open())
+	{
+		readFile >> j;
+	}
+	readFile.close();
+	if (!j.contains(type))
+		return;
+	const int n = j[type].size();
+
 	
 	for (int i = 0; i < n; i++)
 	{
-		std::string p = std::string(path)  + names[i] + ".png";
+		std::string p = std::string(path) + std::string(j[type][i]) + ".png";
 		Texture* t = new Texture(p.c_str());
 		if (!t->wasLoaded())
 		{

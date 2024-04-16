@@ -169,11 +169,23 @@ void Chunk::draw(Shader* s,bool trans)
 	glm::mat4 model(1);
 	model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
 	s->setUniformMat4(model, "model");
-	for (int i = 0; i < 6; i++)
-		solidMesh[i]->draw(s);
 	if (trans)
+	{
 		for (int i = 0; i < 10; i++)
+		{
 			transMesh[i]->draw(s);
+		}
+
+	}
+	else
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			solidMesh[i]->draw(s);
+		}
+
+	}
+
 }
 
 Block* Chunk::getBlock(int x, int y, int z)

@@ -26,37 +26,37 @@ Block* createBlock(int i,int x,int y,int z)
 	case 5:///Wood 1
 		return new CubeBlock(i, x, y, z, 8, 2);
 	case 6:
-		return new Leaf(i, x, y, z, 10);
+		return new Leaf(i, x, y, z, 0);
 	case 7:///Wood 2
-		return new CubeBlock(i, x, y, z, 12, 2);
+		return new CubeBlock(i, x, y, z, 10, 2);
 	case 8:
-		return new Leaf(i, x, y, z, 14);
+		return new Leaf(i, x, y, z, 2);
 	case 9:///Wood 3
-		return new CubeBlock(i, x, y, z, 16, 2);
+		return new CubeBlock(i, x, y, z, 12, 2);
 	case 10:
-		return new Leaf(i, x, y, z, 18);
+		return new Leaf(i, x, y, z, 4);
 
 	case 11:///WATER
-		return new Water(i, x, y, z, 23);
+		return new Water(i, x, y, z, 9);
 	case 12:///Sapling 1
-		return new OakTree(i, x, y, z, 11);
+		return new OakTree(i, x, y, z, 1);
 	case 13:///Sapling 2
-		return new OakTree(i, x, y, z, 15, 5, 6);
+		return new OakTree(i, x, y, z, 3, 5, 6);
 	case 14:///Sapling 3
-		return new SpruceTree(i, x, y, z, 19, 9, 8);
-	case 15:///Sapling 3
-		return new Cactus(i, x, y, z, 20);
+		return new SpruceTree(i, x, y, z, 5, 9, 8);
+	case 15:///Cactus
+		return new Cactus(i, x, y, z, 6);
 		break;
 	case 16://Grass
-		return new Plant(i, x, y, z, 24);
+		return new Plant(i, x, y, z, 10);
 	case 17://Yellow Flower
-		return new Plant(i, x, y, z, 25);
+		return new Plant(i, x, y, z, 11);
 	case 18://Red Flower
-		return new Plant(i, x, y, z, 26);
+		return new Plant(i, x, y, z, 12);
 	case 19://Blue Flower
-		return new Plant(i, x, y, z, 27);
+		return new Plant(i, x, y, z, 13);
 	case 20://ICE
-		return new CubeBlock(i, x, y, z, 28, 1, true);
+		return new CubeBlock(i, x, y, z, 14, 1, true);
 
 	default:
 		return NULL;
