@@ -11,7 +11,7 @@ GameTextures::GameTextures(const char* path)
 		"oak_log_top","oak_log","oak_leaves","oak_sapling",
 		"spruce_log_top","spruce_log","spruce_leaves","spruce_sapling",
 		"cactus_top","cactus_side","cactus_top","water",
-		"grass","dandelion","poppy","cornflower"
+		"grass","dandelion","poppy","cornflower","ice"
 	};
 	
 	for (int i = 0; i < n; i++)

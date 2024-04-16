@@ -105,6 +105,9 @@
     <ClCompile Include="Src\world\Blocks\Cactus.cpp">
       <Filter>Src\World\Blocks</Filter>
     </ClCompile>
+    <ClCompile Include="Src\world\Blocks\SpruceTree.cpp">
+      <Filter>Src\World\Blocks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\text.frag">
@@ -207,6 +210,9 @@
       <Filter>Src\World\Blocks</Filter>
     </ClInclude>
     <ClInclude Include="Src\world\Blocks\Cactus.h">
+      <Filter>Src\World\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\world\Blocks\SpruceTree.h">
       <Filter>Src\World\Blocks</Filter>
     </ClInclude>
   </ItemGroup>

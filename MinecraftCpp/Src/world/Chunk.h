@@ -8,7 +8,7 @@
 #define chunkW 16
 #define chunkH 256
 #define chunkT 16
-#define minH 8
+#define minH 25
 #define maxH 256
 #define waterH 90
 //#define Laby

@@ -186,6 +186,7 @@
     <ClCompile Include="Src\world\Blocks\Leaf.cpp" />
     <ClCompile Include="Src\world\Blocks\OakTree.cpp" />
     <ClCompile Include="Src\world\Blocks\Plant.cpp" />
+    <ClCompile Include="Src\world\Blocks\SpruceTree.cpp" />
     <ClCompile Include="Src\world\Blocks\Water.cpp" />
     <ClCompile Include="Src\world\Chunk.cpp" />
     <ClCompile Include="Src\world\ChunkMesh.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="Src\world\Blocks\Leaf.h" />
     <ClInclude Include="Src\world\Blocks\OakTree.h" />
     <ClInclude Include="Src\world\Blocks\Plant.h" />
+    <ClInclude Include="Src\world\Blocks\SpruceTree.h" />
     <ClInclude Include="Src\world\Blocks\Water.h" />
     <ClInclude Include="Src\world\Chunk.h" />
     <ClInclude Include="Src\world\ChunkMesh.h" />

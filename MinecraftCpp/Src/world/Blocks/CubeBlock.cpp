@@ -25,6 +25,13 @@ void CubeBlock::setOneFace(int face, bool state)
 {
 	cube->setOneFace(face, state);
 }
+void CubeBlock::setOneFace(int face, Block* b) 
+{
+	if (transparent)
+		setOneFace(face, true); 
+	else
+		setOneFace(face, getDisplay(b));
+}
 
 std::vector<GLuint> CubeBlock::getVertex()
 {

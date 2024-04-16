@@ -5,6 +5,7 @@
 #include "Leaf.h"
 #include "Water.h"
 #include "Cactus.h"
+#include "SpruceTree.h"
 
 Block* createBlock(int i,int x,int y,int z)
 {
@@ -42,7 +43,7 @@ Block* createBlock(int i,int x,int y,int z)
 	case 13:///Sapling 2
 		return new OakTree(i, x, y, z, 15, 5, 6);
 	case 14:///Sapling 3
-		return new Plant(i, x, y, z, 19);
+		return new SpruceTree(i, x, y, z, 19, 9, 8);
 	case 15:///Sapling 3
 		return new Cactus(i, x, y, z, 20);
 		break;
@@ -54,6 +55,8 @@ Block* createBlock(int i,int x,int y,int z)
 		return new Plant(i, x, y, z, 26);
 	case 19://Blue Flower
 		return new Plant(i, x, y, z, 27);
+	case 20://ICE
+		return new CubeBlock(i, x, y, z, 28, 1, true);
 
 	default:
 		return NULL;

@@ -42,6 +42,8 @@ public:
 
 	virtual bool getDisplay(Block* b) { return b->isTransparent() != isTransparent(); }
 
+	virtual bool isUpdateBlock() { return false; }
+
 	friend class Chunk;
 	friend class Game;
 };

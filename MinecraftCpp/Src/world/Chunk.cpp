@@ -344,6 +344,8 @@ bool Chunk::loadGame(nlohmann::json json)
 		else
 		{
 			blocks[j][i][k] = createBlock(ID, i, j, k);
+			if (blocks[j][i][k]->isUpdateBlock())
+				toUpdate.push_back(blocks[j][i][k]);
 		}
 	}
 
@@ -718,7 +720,7 @@ void Chunk::generateTeren()
 						toUpdate.push_back(blocks[j][i][k]);
 
 				}
-				else if (temperatue >= -0.3 && temperatue <= 0.3 && (int)(picksAndValies.GetNoise(x, z) * 1000000) % 469 > 100)
+				else if (temperatue >= -0.3 && temperatue <= 0.3 && ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 469) % 3 == 0)
 				{
 					int blockId = -1;
 					if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 100 == 10)
@@ -735,13 +737,13 @@ void Chunk::generateTeren()
 
 
 			}
-			for (int j = h; j <= waterH && j < chunkH; j++)
+			for (int j = h; j < waterH && j < chunkH; j++)
 			{
 				if (!blocks[j][i][k])
 					blocks[j][i][k] = createBlock(11, blockX, j, blockZ);
-
 			}
-
+			if (!blocks[waterH][i][k])
+				blocks[waterH][i][k] = createBlock((temperatue<=-0.3)?20:11, blockX, waterH, blockZ);
 		}
 
 }
