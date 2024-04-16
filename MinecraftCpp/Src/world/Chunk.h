@@ -8,9 +8,9 @@
 #define chunkW 16
 #define chunkH 256
 #define chunkT 16
-#define minH 25
+#define minH 5
 #define maxH 256
-#define waterH 90
+#define waterH 75
 //#define Laby
 //#define noSave
 

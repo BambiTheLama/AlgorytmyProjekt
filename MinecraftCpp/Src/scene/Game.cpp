@@ -258,8 +258,8 @@ void Game::renderScene(Shader* s,bool trans)
 	s->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
 	s->setUniformF1(time, "time");
 	solidBlocks->setTextures(*s, "tex0");
-	solidBlocksH->setTextures(*s, "texN");
-	solidBlocksN->setTextures(*s, "texH");
+	solidBlocksH->setTextures(*s, "texH");
+	solidBlocksN->setTextures(*s, "texN");
 	for (auto c : toDraw)
 	{
 		c->draw(s, false);
@@ -271,8 +271,8 @@ void Game::renderScene(Shader* s,bool trans)
 		return;
 	}
 	transBlocks->setTextures(*s, "tex0");
-	transBlocksH->setTextures(*s, "texN");
-	transBlocksN->setTextures(*s, "texH");
+	transBlocksH->setTextures(*s, "texH");
+	transBlocksN->setTextures(*s, "texN");
 	for (auto c : toDraw)
 	{
 		c->draw(s, true);

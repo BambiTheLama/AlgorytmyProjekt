@@ -543,6 +543,8 @@ float getValueTerrain(float v)
 		return -log(-v) / 6.0f - 1;
 	if (v >= 1.0f)
 		return log(v) / 6.0f + 1;
+	if (v <= 0)
+		return v;
 	return powf(v, 3);
 }
 
@@ -550,49 +552,55 @@ void Chunk::generateTeren()
 {
 
 	FastNoiseLite terrain(666);
-	terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
-	terrain.SetFrequency(0.001f);
-	terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
-	terrain.SetFractalOctaves(3);
-	terrain.SetFractalLacunarity(2.0f);
-	terrain.SetFractalGain(2.177f);
-	terrain.SetFractalWeightedStrength(4.8f);
-
 	FastNoiseLite erosia(2137);
-	erosia.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	erosia.SetFrequency(0.01f);
-	erosia.SetFractalType(FastNoiseLite::FractalType_FBm);
-	erosia.SetFractalOctaves(3);
-	erosia.SetFractalLacunarity(0.91f);
-	erosia.SetFractalGain(1.34f);
-	erosia.SetFractalWeightedStrength(4.64f);
-
 	FastNoiseLite picksAndValies(80085);
-	picksAndValies.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	picksAndValies.SetFrequency(0.001f);
-	picksAndValies.SetFractalType(FastNoiseLite::FractalType_FBm);
-	picksAndValies.SetFractalOctaves(5);
-	picksAndValies.SetFractalLacunarity(2.9f);
-	picksAndValies.SetFractalGain(1.01f);
-	picksAndValies.SetFractalWeightedStrength(2.560f);
-
 	FastNoiseLite riverNoise(80085);
-	riverNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	riverNoise.SetFrequency(0.001f);
-	riverNoise.SetFractalType(FastNoiseLite::FractalType_Ridged);
-	riverNoise.SetFractalOctaves(1);
-	riverNoise.SetFractalLacunarity(1.7f);
-	riverNoise.SetFractalGain(0.53f);
-	riverNoise.SetFractalWeightedStrength(0.000f);
-
 	FastNoiseLite temperatureNoise(80085);
-	temperatureNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	temperatureNoise.SetFrequency(0.001f);
-	temperatureNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
-	temperatureNoise.SetFractalOctaves(3);
-	temperatureNoise.SetFractalLacunarity(1.3f);
-	temperatureNoise.SetFractalGain(0.32f);
-	temperatureNoise.SetFractalWeightedStrength(6.16f);
+	FastNoiseLite treesNoise(80085);
+	{
+		terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+		terrain.SetFrequency(0.001f);
+		terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
+		terrain.SetFractalOctaves(3);
+		terrain.SetFractalLacunarity(2.0f);
+		terrain.SetFractalGain(2.177f);
+		terrain.SetFractalWeightedStrength(4.8f);
+		erosia.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+		erosia.SetFrequency(0.01f);
+		erosia.SetFractalType(FastNoiseLite::FractalType_FBm);
+		erosia.SetFractalOctaves(3);
+		erosia.SetFractalLacunarity(0.91f);
+		erosia.SetFractalGain(1.34f);
+		erosia.SetFractalWeightedStrength(4.64f);
+		picksAndValies.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+		picksAndValies.SetFrequency(0.001f);
+		picksAndValies.SetFractalType(FastNoiseLite::FractalType_FBm);
+		picksAndValies.SetFractalOctaves(5);
+		picksAndValies.SetFractalLacunarity(2.9f);
+		picksAndValies.SetFractalGain(1.01f);
+		picksAndValies.SetFractalWeightedStrength(2.560f);
+		riverNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+		riverNoise.SetFrequency(0.001f);
+		riverNoise.SetFractalType(FastNoiseLite::FractalType_Ridged);
+		riverNoise.SetFractalOctaves(1);
+		riverNoise.SetFractalLacunarity(1.7f);
+		riverNoise.SetFractalGain(0.53f);
+		riverNoise.SetFractalWeightedStrength(0.000f);
+		temperatureNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+		temperatureNoise.SetFrequency(0.001f);
+		temperatureNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
+		temperatureNoise.SetFractalOctaves(3);
+		temperatureNoise.SetFractalLacunarity(1.3f);
+		temperatureNoise.SetFractalGain(0.32f);
+		temperatureNoise.SetFractalWeightedStrength(6.16f);
+		treesNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+		treesNoise.SetFrequency(0.001f);
+		treesNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
+		treesNoise.SetFractalOctaves(4);
+		treesNoise.SetFractalLacunarity(1.3f);
+		treesNoise.SetFractalGain(0.5f);
+		treesNoise.SetFractalWeightedStrength(9.0f);
+	}
 
 	const int height = maxH - minH;
 	const int dirtSize = 8;
@@ -612,7 +620,10 @@ void Chunk::generateTeren()
 			float terrainV = (t + e / 3 + pv / 18) * 18.0f / 25.0f;
 			int h = minH + terrainV * height;
 
-
+			if (h < 0)
+				h = 0;
+			else if (h >= chunkH)
+				h = chunkH-1;
 			///RIVER
 			float v = riverNoise.GetNoise(x, z);
 			river = 0.90f < v;
@@ -701,9 +712,18 @@ void Chunk::generateTeren()
 			if (!lake && !river && h > waterH)
 			{
 				int j = h;
-				if (blocks[j][i][k])
+
+ 				if (blocks[j][i][k])
 					delete blocks[j][i][k];
-				if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 469 == 0)
+				float treeV = treesNoise.GetNoise(x, z);
+				if (treeV >= 3)
+					treeV = 3;
+
+				int div = pow(-treeV + 3, 2)*50;
+				if (div <= 10)
+					div = 10;
+
+				if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % div == 0)
 				{
 					if (temperatue < -0.3)
 						blocks[j][i][k] = createBlock(14, blockX, j, blockZ);
