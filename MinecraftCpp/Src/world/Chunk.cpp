@@ -696,7 +696,13 @@ void Chunk::generateTeren()
 					blocks[j][i][k] = createBlock(4, blockX, j, blockZ);
 
 				}
-
+				if (h == waterH && (int)(picksAndValies.GetNoise(x, z) * 1000000) % 669 <= 3)
+				{
+					int n = (int)(blockX + blockZ) % 4 + 2;
+					for (int j = 1; j < n; j++)
+						if (!blocks[h + j][i][k])
+							blocks[h + j][i][k] = createBlock(22, blockX, h + j, blockZ);
+				}
 			}
 			if (lake)
 			{
@@ -736,7 +742,7 @@ void Chunk::generateTeren()
 					}
 					else
 					{
-						if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 10 >= 6)
+						if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 69 == 0)
 						{
 							int ch = rand() % 4;
 							for (int cy = 0; cy < ch; cy++)
@@ -763,8 +769,13 @@ void Chunk::generateTeren()
 						blockId = 18;
 					else if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 100 % 2 == 0)
 						blockId = 16;
-					if(blockId>-1)
+					if (blockId > -1 && !blocks[j][i][k])
 						blocks[j][i][k] = createBlock(blockId, blockX, j, blockZ);
+				}
+				else if (temperatue < -0.3 && ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 100) == 0)
+				{
+					if (!blocks[j][i][k])
+						blocks[j][i][k] = createBlock(21, blockX, j, blockZ);
 				}
 
 

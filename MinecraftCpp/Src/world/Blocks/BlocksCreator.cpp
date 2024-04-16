@@ -57,6 +57,10 @@ Block* createBlock(int i,int x,int y,int z)
 		return new Plant(i, x, y, z, 13);
 	case 20://ICE
 		return new CubeBlock(i, x, y, z, 14, 1, true);
+	case 21://Berries
+		return new Plant(i, x, y, z, 15);
+	case 22://Sugger cane
+		return new Plant(i, x, y, z, 16);
 
 	default:
 		return NULL;
