@@ -543,8 +543,6 @@ float getValueTerrain(float v)
 		return -log(-v) / 6.0f - 1;
 	if (v >= 1.0f)
 		return log(v) / 6.0f + 1;
-	if (v <= 0)
-		return v;
 	return powf(v, 3);
 }
 
@@ -558,43 +556,44 @@ void Chunk::generateTeren()
 	FastNoiseLite temperatureNoise(80085);
 	FastNoiseLite treesNoise(80085);
 	{
+		float multiplay = 0.5f;
 		terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
-		terrain.SetFrequency(0.001f);
+		terrain.SetFrequency(0.001f * multiplay);
 		terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
 		terrain.SetFractalOctaves(3);
 		terrain.SetFractalLacunarity(2.0f);
 		terrain.SetFractalGain(2.177f);
 		terrain.SetFractalWeightedStrength(4.8f);
 		erosia.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-		erosia.SetFrequency(0.01f);
+		erosia.SetFrequency(0.01f * multiplay);
 		erosia.SetFractalType(FastNoiseLite::FractalType_FBm);
 		erosia.SetFractalOctaves(3);
 		erosia.SetFractalLacunarity(0.91f);
 		erosia.SetFractalGain(1.34f);
 		erosia.SetFractalWeightedStrength(4.64f);
 		picksAndValies.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-		picksAndValies.SetFrequency(0.001f);
+		picksAndValies.SetFrequency(0.001f * multiplay);
 		picksAndValies.SetFractalType(FastNoiseLite::FractalType_FBm);
 		picksAndValies.SetFractalOctaves(5);
 		picksAndValies.SetFractalLacunarity(2.9f);
 		picksAndValies.SetFractalGain(1.01f);
 		picksAndValies.SetFractalWeightedStrength(2.560f);
 		riverNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-		riverNoise.SetFrequency(0.001f);
+		riverNoise.SetFrequency(0.001f * multiplay);
 		riverNoise.SetFractalType(FastNoiseLite::FractalType_Ridged);
 		riverNoise.SetFractalOctaves(1);
 		riverNoise.SetFractalLacunarity(1.7f);
 		riverNoise.SetFractalGain(0.53f);
 		riverNoise.SetFractalWeightedStrength(0.000f);
 		temperatureNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-		temperatureNoise.SetFrequency(0.001f);
+		temperatureNoise.SetFrequency(0.001f * multiplay);
 		temperatureNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
 		temperatureNoise.SetFractalOctaves(3);
 		temperatureNoise.SetFractalLacunarity(1.3f);
 		temperatureNoise.SetFractalGain(0.32f);
 		temperatureNoise.SetFractalWeightedStrength(6.16f);
 		treesNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-		treesNoise.SetFrequency(0.001f);
+		treesNoise.SetFrequency(0.001f * multiplay);
 		treesNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
 		treesNoise.SetFractalOctaves(4);
 		treesNoise.SetFractalLacunarity(1.3f);
