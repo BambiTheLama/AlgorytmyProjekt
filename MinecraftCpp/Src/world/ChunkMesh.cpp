@@ -137,7 +137,6 @@ ChunkMesh::~ChunkMesh()
 
 void ChunkMesh::newMesh(std::vector<int> data)
 {
-	this->data = data;
 	vao->bind();
 	vbo->setNewVertices(data);
 	vao->linkData(*vbo, 0, 1, GL_FLOAT, sizeof(int), NULL);

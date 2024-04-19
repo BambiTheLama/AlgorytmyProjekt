@@ -41,12 +41,10 @@ class Game :
     glm::vec3 cameraPos;
     Shader* shader = NULL;
     Shader* shaderShadow = NULL;
-    GameTextures* solidBlocks;
-    GameTextures* solidBlocksH;
-    GameTextures* solidBlocksN;
-    GameTextures* transBlocks;
-    GameTextures* transBlocksH;
-    GameTextures* transBlocksN;
+    GameTextures* Blocks;
+    GameTextures* BlocksH;
+    GameTextures* BlocksN;
+
 
     RenderTexture* ShadowMap = NULL;
     static Game* game;

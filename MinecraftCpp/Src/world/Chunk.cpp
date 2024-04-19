@@ -23,9 +23,33 @@
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
 std::vector<SaveChunkData*> Chunk::saveData;
+static char**** blocksID = NULL;
 
 Chunk::Chunk(int x, int y, int z)
 {
+	if (!blocksID)
+	{
+		blocksID = new char*** [chunkH];
+		for (int i = 0; i < chunkH; i++)
+		{
+			blocksID[i] = new char** [chunkW];
+			for (int j = 0; j < chunkW; j++)
+			{
+				blocksID[i][j] = new char* [chunkT];
+				for (int k = 0; k < chunkW; k++)
+				{
+					blocksID[i][j][k] = new char[10];
+				}
+			}
+
+		}
+	}
+
+
+
+
+
+
 	this->x = x;
 	this->y = y;
 	this->z = z;
@@ -90,24 +114,18 @@ Chunk::~Chunk()
 	{
 		delete blocks[j][i][k];
 	}
-	for (int i = 0; i < 6; i++)
-	{
-		delete solidMesh[i];
-		delete transMesh[i];
-	}
-	for (int i = 6; i < 10; i++)
-		delete transMesh[i];
+
+	for (int i = 0; i < 10; i++)
+		delete mesh[i];
 }
 
 void Chunk::start()
 {
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 10; i++)
 	{
-		solidMesh[i] = new ChunkMesh(i);
-		transMesh[i] = new ChunkMesh(i);
+		mesh[i] = new ChunkMesh(i);
 	}	
-	for (int i = 6; i < 10; i++)
-		transMesh[i] = new ChunkMesh(i);
+
 }
 
 void Chunk::update(float deltaTime)
@@ -169,21 +187,10 @@ void Chunk::draw(Shader* s,bool trans)
 	glm::mat4 model(1);
 	model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
 	s->setUniformMat4(model, "model");
-	if (trans)
-	{
-		for (int i = 0; i < 10; i++)
-		{
-			transMesh[i]->draw(s);
-		}
 
-	}
-	else
+	for (int i = 0; i < 10; i++)
 	{
-		for (int i = 0; i < 6; i++)
-		{
-			solidMesh[i]->draw(s);
-		}
-
+		mesh[i]->draw(s);
 	}
 
 }
@@ -433,56 +440,172 @@ void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
 
 void Chunk::genVerticesPos()
 {
-	const int vecSolidSize = 6;
-	const int vecTransSize = 10;
-	std::vector<int> verticesSolid[vecSolidSize];
-	std::vector<int> verticesTrans[vecTransSize];
+	const int vecSize = 10;
+	std::vector<int> vertices[vecSize];
 
 	GLuint lastIndexSolid = 0;
 	GLuint lastIndexTrans = 0;
+	
+	int sizeX = 0;
+	int sizeY = 0;
+	int data = 0;
+
+
+
 	forAllBlocks
-	if (blocks[j][i][k])
 	{
-		if (blocks[j][i][k]->indexSize() <= 0)
-			continue;
-		std::vector<int> vert;
-
-		if (blocks[j][i][k]->isTransparent())
+		if (blocks[j][i][k])
 		{
-			for (int w = 0; w < vecTransSize; w++)
+			for (int b = 0; b < 10; b++)
 			{
-				if (blocks[j][i][k]->isRenderedSide(w))
-				{
-					verticesTrans[w].push_back(blocks[j][i][k]->getVertex(w));
-				}
-
+				if (blocks[j][i][k]->isRenderedSide(b))
+					blocksID[j][i][k][b] = blocks[j][i][k]->getID();
+				else
+					blocksID[j][i][k][b] = -1;
 			}
+
 		}
 		else
 		{
+			for (int b = 0; b < 10; b++)
+				blocksID[j][i][k][b] = -1;
+		}
+	}
 
-			for (int w = 0; w < vecSolidSize; w++)
+	forAllBlocks
+	{
+		for (int b = 0; b < 2; b++)
+		{
+			if (blocksID[j][i][k][b] >= 0)
 			{
-
-				if (blocks[j][i][k]->isRenderedSide(w))
+				data = blocks[j][i][k]->getVertex(b);
+				for (sizeX = 0; sizeX < 7 && j + sizeX + 1 < chunkH; sizeX++)
 				{
-					verticesSolid[w].push_back(blocks[j][i][k]->getVertex(w));
+					if (blocksID[j + sizeX + 1][i][k][b] != blocksID[j][i][k][b])
+					{
+						break;
+					}
+					blocksID[j + sizeX + 1][i][k][b] = -1;
 				}
+				for (sizeY = 0; sizeY < 7 && k + sizeY + 1 < chunkT; sizeY++)
+				{
+					bool breaked = false;
+					for (int s = 0; s <= sizeX; s++)
+						if (blocksID[j + s][i][k + sizeY + 1][b] != blocksID[j][i][k][b])
+						{
+							breaked = true;
+							break;
+						}
+
+					if (breaked)
+						break;
+					else
+						for (int s = 0; s <= sizeX; s++)
+							blocksID[j + s][i][k + sizeY + 1][b] = -1;
+				}
+				blocksID[j][i][k][b] = -1;
+				data += (sizeX << 26) + (sizeY << 29);
+
+				vertices[b].push_back(data);
 
 			}
 		}
-		
-
-
-
-	}
-	for (int i = 0; i < vecSolidSize; i++)
+	for (int b = 2; b < 4; b++)
 	{
-		solidMesh[i]->newMesh(verticesSolid[i]);
-		transMesh[i]->newMesh(verticesTrans[i]);
+		if (blocksID[j][i][k][b] >= 0)
+		{
+			data = blocks[j][i][k]->getVertex(b);
+			for (sizeX = 0; sizeX < 7 && j + sizeX + 1 < chunkH; sizeX++)
+			{
+				if (blocksID[j + sizeX + 1][i][k][b] != blocksID[j][i][k][b])
+				{
+					break;
+				}
+				blocksID[j + sizeX + 1][i][k][b] = -1;
+			}
+			for (sizeY = 0; sizeY < 7 && i + sizeY + 1 < chunkW; sizeY++)
+			{
+				bool breaked = false;
+				for (int s = 0; s <= sizeX; s++)
+					if (blocksID[j + s][i + sizeY + 1][k][b] != blocksID[j][i][k][b])
+					{
+						breaked = true;
+						break;
+					}
+
+				if (breaked)
+					break;
+				else
+					for (int s = 0; s <= sizeX; s++)
+						blocksID[j + s][i + sizeY + 1][k][b] = -1;
+			}
+			blocksID[j][i][k][b] = -1;
+			data += (sizeX << 26) + (sizeY << 29);
+			vertices[b].push_back(data);
+		}
+		for (int b = 4; b < 6; b++)
+		{
+			if (blocksID[j][i][k][b] >= 0)
+			{
+				data = blocks[j][i][k]->getVertex(b);
+				for (sizeX = 0; sizeX < 7 && i + sizeX + 1 < chunkW; sizeX++)
+				{
+					if (blocksID[j][i + sizeX + 1][k][b] != blocksID[j][i][k][b])
+						break;
+					blocksID[j][i + sizeX + 1][k][b] = -1;
+				}
+				for (sizeY = 0; sizeY < 7 && k + sizeY + 1 < chunkT; sizeY++)
+				{
+					bool breaked = false;
+					for (int s = 0; s <= sizeX; s++)
+						if (blocksID[j][i + s][k + sizeY + 1][b] != blocksID[j][i][k][b])
+						{
+							breaked = true;
+							break;
+						}
+
+					if (breaked)
+						break;
+					else
+						for (int s = 0; s <= sizeX; s++)
+							blocksID[j][i + s][k + sizeY + 1][b] = -1;
+
+
+				}
+				blocksID[j][i][k][b] = -1;
+				data += (sizeX << 26) + (sizeY << 29);
+				vertices[b].push_back(data);
+			}
+		}
+		for (int b = 6; b < 10; b++)
+		{
+			if (blocksID[j][i][k][b] >= 0)
+			{
+				data = blocks[j][i][k]->getVertex(b);
+
+				for (sizeX = 0; sizeX < 8 && j + sizeX + 1 < chunkH; sizeX++)
+				{
+					if (blocksID[j + sizeX + 1][i][k][b] != blocksID[j][i][k][b])
+						break;
+					blocksID[j + sizeX + 1][i][k][b] = -1;
+				}
+
+
+				blocksID[j][i][k][b] = -1;
+				data += (sizeX << 26);
+
+				vertices[b].push_back(data);
+
+			}
+		}
 	}
-	for (int i = vecSolidSize; i < vecTransSize; i++)
-		transMesh[i]->newMesh(verticesTrans[i]);
+	}
+
+	for (int i = 0; i < vecSize; i++)
+	{
+		mesh[i]->newMesh(vertices[i]);
+	}
+
 }
 
 float getValue(float v)

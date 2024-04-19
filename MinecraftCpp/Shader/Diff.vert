@@ -13,13 +13,14 @@ uniform float time;
 
 struct getData{
 	vec3 pos;
-	vec2 text;
 	int textID;
 	bool cutY;
 	bool cutSides;
 	bool animatedUp;
 	bool animatedDown;
-};
+	int scaleF;
+	int scaleS;
+} d;
 
 out DATA
 {
@@ -30,45 +31,72 @@ out DATA
 	float bright;
 } data_out;
 
-
-
-void main()
+vec2 getTextPos(vec2 tPos)
 {
-	getData d;
-	d.pos.x  = data       & 15;			/// 0b000000000000000000000000000001111
-	d.pos.y  = data >> 4  & 255;		/// 0b000000000000000000000111111110000
-	d.pos.z  = data >> 12 & 15;			/// 0b000000000000000011110000000000000
-	d.textID = data >> 16 & 63;			/// 0b000000000011111100000000000000000
-	d.cutY = (data >> 22) == 1;	        /// 0b000000000100000000000000000000000
-	d.cutSides = (data >> 23) == 1;	    /// 0b000000001000000000000000000000000
-	d.animatedUp = (data >> 24) == 1;	/// 0b000000010000000000000000000000000
-	d.animatedDown = (data >> 25) == 1;	/// 0b000000100000000000000000000000000
+	if(dir<=1)
+	{
+		tPos.x *= d.scaleS;
+		tPos.y *= d.scaleF;
+	}
+	else if(dir <= 3)
+	{
+		tPos.x *= d.scaleS;
+		tPos.y *= d.scaleF;
+	}
+	else if(dir <= 5)
+	{
+		tPos.x *= d.scaleS;
+		tPos.y *= d.scaleF;
+	}
 
-	vec3 vPos = pos;
+	return tPos;
+}
 
+vec3 getPos(vec3 vPos)
+{
+	vec3 toRet = vPos;
+	if(dir<=1)
+	{
+		toRet.z *= d.scaleS;
+		toRet.y *= d.scaleF;
+	}
+	else if(dir <= 3)
+	{
+		toRet.x *= d.scaleS;
+		toRet.y *= d.scaleF;
+	}
+	else if(dir <= 5)
+	{
+		toRet.x *= d.scaleF;
+		toRet.z *= d.scaleS;
+	}
+	else
+	{
+		toRet.y *= d.scaleF;
+	}
 	if(d.cutY)
 	{
 		if(vPos.y >= 0.5)
-			vPos.y -= 0.1f;
+			toRet.y -= 0.1f;
 	}
 	if(d.cutSides)
 	{
 		if(dir==0)
-			vPos.x-=0.08;
+			toRet.x-=0.08;
 		else if(dir==1)
-			vPos.x+=0.08;
+			toRet.x+=0.08;
 		else if(dir==2)
-			vPos.z+=0.08;
+			toRet.z+=0.08;
 		else if(dir==3)
-			vPos.z-=0.08;
+			toRet.z-=0.08;
 
 	}
 	if(d.animatedUp)
 	{
 		if(vPos.y>0.5f)
 		{
-			vPos.z+=sin(time)/12.0f;
-			vPos.x+=sin(time)/12.0f;
+			toRet.z+=sin(time)/12.0f;
+			toRet.x+=sin(time)/12.0f;
 		}
 
 	}
@@ -76,14 +104,30 @@ void main()
 	{
 		if(vPos.y<0.5f)
 		{
-			vPos.z-=sin(time)/12.0f;
-			vPos.x-=sin(time)/12.0f;
+			toRet.z-=sin(time)/12.0f;
+			toRet.x-=sin(time)/12.0f;
 		}
 
 	}
-	vec3 currentPos = vec3(model * vec4(vPos+d.pos, 1.0f));
+	return toRet;
+}
+
+void main()
+{
+	d.pos.x  = data       & 15;				/// 0b000000000000000000000000000001111
+	d.pos.y  = data >> 4  & 255;			/// 0b000000000000000000000111111110000
+	d.pos.z  = data >> 12 & 15;				/// 0b000000000000000011110000000000000
+	d.textID = data >> 16 & 63;				/// 0b000000000011111100000000000000000
+	d.cutY = (data >> 22) == 1;				/// 0b000000000100000000000000000000000
+	d.cutSides = (data >> 23) == 1;			/// 0b000000001000000000000000000000000
+	d.animatedUp = (data >> 24) == 1;		/// 0b000000010000000000000000000000000
+	d.animatedDown = (data >> 25) == 1;		/// 0b000000100000000000000000000000000
+	d.scaleF = ((data >> 26) & 7)+1;		/// 0b000111000000000000000000000000000
+	d.scaleS = ((data >> 29) & 7)+1;		/// 0b111000000000000000000000000000000
+
+	vec3 currentPos = vec3(model * vec4(getPos(pos)+d.pos, 1.0f));
 	gl_Position = camera * vec4(currentPos, 1.0f);
-	data_out.texCoord = textPos;
+	data_out.texCoord = getTextPos(textPos);
 	data_out.currentPos = currentPos;
 	data_out.fragPosLight = lightProjection * vec4(currentPos,1.0f);
 
@@ -97,5 +141,6 @@ void main()
 		data_out.bright = 1.0;
 	else		
 		data_out.bright = 0.5;
+	data_out.bright = 1.0;
 
 }

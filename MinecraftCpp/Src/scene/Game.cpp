@@ -29,12 +29,10 @@ Game::Game(int w,int h,GLFWwindow* window)
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.frag");
 	shaderShadow = new Shader("Shader/Shadow.vert", "Shader/Shadow.frag");
 
-	solidBlocks = new GameTextures("Res/Blocks/", "Solid");
-	solidBlocksH = new GameTextures("Res/BlocksH/", "Solid");
-	solidBlocksN = new GameTextures("Res/BlocksN/", "Solid");
-	transBlocks = new GameTextures("Res/Blocks/", "Trans");
-	transBlocksH = new GameTextures("Res/BlocksH/", "Trans");
-	transBlocksN = new GameTextures("Res/BlocksN/", "Trans");
+	Blocks = new GameTextures("Res/Blocks/", "Textures");
+	BlocksH = new GameTextures("Res/BlocksH/", "Textures");
+	BlocksN = new GameTextures("Res/BlocksN/", "Textures");
+
 	shader->active();
 
 	glm::mat4 modelMat = glm::mat4(1.0f);
@@ -68,12 +66,10 @@ Game::~Game()
 
 
 	delete shader;
-	delete transBlocks;
-	delete transBlocksH;
-	delete transBlocksN;
-	delete solidBlocks;
-	delete solidBlocksH;
-	delete solidBlocksN;
+	delete Blocks;
+	delete BlocksH;
+	delete BlocksN;
+
 	delete shaderShadow;
 	game = NULL;
 	Chunk::saveBlockData();
@@ -257,25 +253,12 @@ void Game::renderScene(Shader* s,bool trans)
 	glEnable(GL_DEPTH_TEST);
 	s->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
 	s->setUniformF1(time, "time");
-	solidBlocks->setTextures(*s, "tex0");
-	solidBlocksH->setTextures(*s, "texH");
-	solidBlocksN->setTextures(*s, "texN");
+	Blocks->setTextures(*s, "tex0");
+	BlocksH->setTextures(*s, "texH");
+	BlocksN->setTextures(*s, "texN");
 	for (auto c : toDraw)
 	{
 		c->draw(s, false);
-	}
-	if (!trans)
-	{
-		glDisable(GL_DEPTH_TEST);
-		chunksMutex.unlock();
-		return;
-	}
-	transBlocks->setTextures(*s, "tex0");
-	transBlocksH->setTextures(*s, "texH");
-	transBlocksN->setTextures(*s, "texN");
-	for (auto c : toDraw)
-	{
-		c->draw(s, true);
 	}
 	glDisable(GL_DEPTH_TEST);
 	chunksMutex.unlock();

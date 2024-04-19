@@ -38,13 +38,15 @@
     "spruce_sapling",
     "cactus_top",
     "cactus_side",
-    "cactus_top",
+    "cactus_bottom",
     "water",
     "grass",
     "dandelion",
     "poppy",
     "cornflower",
-    "ice"
+    "ice",
+	"sweet_berry_bush_stage3",
+	"sugar_cane"
   ],
   "Trans": [
     "birch_leaves",
@@ -55,7 +57,7 @@
     "spruce_sapling",
     "cactus_top",
     "cactus_side",
-    "cactus_top",
+    "cactus_bottom",
     "water",
     "grass",
     "dandelion",
