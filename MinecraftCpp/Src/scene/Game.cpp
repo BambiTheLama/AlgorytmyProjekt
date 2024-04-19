@@ -258,7 +258,7 @@ void Game::renderScene(Shader* s,bool trans)
 	BlocksN->setTextures(*s, "texN");
 	for (auto c : toDraw)
 	{
-		c->draw(s, false);
+		c->draw(s);
 	}
 	glDisable(GL_DEPTH_TEST);
 	chunksMutex.unlock();

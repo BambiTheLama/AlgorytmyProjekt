@@ -49,7 +49,7 @@ public:
 
 	void update(float deltaTime);
 
-	void draw(Shader* s, bool trans=true);
+	void draw(Shader* s);
 
 	Block* getBlock(int x, int y, int z);
 

@@ -182,7 +182,7 @@ void Chunk::update(float deltaTime)
 
 }
 
-void Chunk::draw(Shader* s,bool trans)
+void Chunk::draw(Shader* s)
 {
 	glm::mat4 model(1);
 	model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
