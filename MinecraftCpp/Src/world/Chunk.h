@@ -81,8 +81,11 @@ public:
 private:
 
 	static void saveBlockData();
+
 	void setFaceing();
+
 	void genVerticesPos();
+
 	void generateTeren();
 
 	void genBiom(int x, int z, int blockX, int blockZ, int startY, int endY, float temperature);

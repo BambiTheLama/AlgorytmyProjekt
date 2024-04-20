@@ -82,7 +82,6 @@ Chunk::Chunk(int x, int y, int z)
 	}
 	setFaceing();
 
-
 	if (!data)
 		return;
 	
@@ -580,10 +579,16 @@ void Chunk::genVerticesPos()
 
 
 				}
+				data = blocks[j][i][k]->getVertex(b) | (sizeX << 26) | (sizeY << 29);
+				vertices[b].push_back(data);
+				if (blocksID[j][i][k][b] == 11)
+				{
+					printf("%d    %d////%d    %d\n", (data >> 22)&0b1, data, (blocks[j][i][k]->getVertex(b) >> 22) & 0b1, blocks[j][i][k]->getVertex(b));
+				}
 				blocksID[j][i][k][b] = -1;
 
-				data = blocks[j][i][k]->getVertex(b) + (sizeX << 26) + (sizeY << 29);
-				vertices[b].push_back(data);
+
+
 			}
 		}
 		for (int b = 6; b < 10; b++)

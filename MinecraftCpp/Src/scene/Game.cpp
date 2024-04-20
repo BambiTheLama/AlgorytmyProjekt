@@ -432,6 +432,7 @@ void Game::setFaceing(Block* b, char face)
 
 	setGenVerticesFlagAt(b->x, b->y, b->z);
 }
+
 Chunk* Game::getChunkAt(int x, int y, int z)
 {
 	for (auto c : chunks)
@@ -446,6 +447,7 @@ Chunk* Game::getChunkAt(int x, int y, int z)
 	}
 	return NULL;
 }
+
 void Game::setGenVerticesFlagAt(int x, int y, int z)
 {
 	for (auto c : chunks)
@@ -566,7 +568,7 @@ void Game::desWorld()
 	for (auto c : toSave)
 	{
 		glm::vec3 cPos = c->getLocation();
-		if (abs(camPos.x - cPos.x) > range + 1 || abs(camPos.z - cPos.z) > range + 1)
+		if (abs(camPos.x - cPos.x) > range || abs(camPos.z - cPos.z) > range)
 		{
 			bool addToDelete = true;
 			for (auto d : toDelete)
@@ -593,12 +595,10 @@ void Game::desWorld()
 
 }
 
-
 Game* getCurrentGame()
 {
 	return Game::game;
 }
-
 
 void addObjectToSave(int x, int y, int z,int ID)
 {
