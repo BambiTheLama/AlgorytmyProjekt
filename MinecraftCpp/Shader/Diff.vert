@@ -52,9 +52,8 @@ vec2 getTextPos(vec2 tPos)
 	return tPos;
 }
 
-vec3 getPos(vec3 vPos)
+vec3 scalePos(vec3 toRet)
 {
-	vec3 toRet = vPos;
 	if(dir<=1)
 	{
 		toRet.z *= d.scaleS;
@@ -74,42 +73,49 @@ vec3 getPos(vec3 vPos)
 	{
 		toRet.y *= d.scaleF;
 	}
+	return toRet;
+}
+
+vec3 getPos(vec3 vPos)
+{
+	vPos = scalePos(vPos);
+	
 	if(d.cutY)
 	{
 		if(vPos.y >= 0.5)
-			toRet.y -= 0.1f;
+			vPos.y -= 0.1f;
 	}
 	if(d.cutSides)
 	{
 		if(dir==0)
-			toRet.x-=0.08;
+			vPos.x-=0.08;
 		else if(dir==1)
-			toRet.x+=0.08;
+			vPos.x+=0.08;
 		else if(dir==2)
-			toRet.z+=0.08;
+			vPos.z+=0.08;
 		else if(dir==3)
-			toRet.z-=0.08;
+			vPos.z-=0.08;
 
 	}
 	if(d.animatedUp)
 	{
 		if(vPos.y>0.5f)
 		{
-			toRet.z+=sin(time)/12.0f;
-			toRet.x+=sin(time)/12.0f;
+			vPos.z+=sin(time)/12.0f;
+			vPos.x+=sin(time)/12.0f;
 		}
 
 	}
 	if(d.animatedDown)
 	{
-		if(vPos.y<0.5f)
+		if(vPos.y<=0.5f)
 		{
-			toRet.z-=sin(time)/12.0f;
-			toRet.x-=sin(time)/12.0f;
+			vPos.z-=sin(time)/12.0f;
+			vPos.x-=sin(time)/12.0f;
 		}
 
 	}
-	return toRet;
+	return vPos;
 }
 
 void main()
@@ -122,8 +128,8 @@ void main()
 	d.cutSides = (data >> 23) == 1;			/// 0b000000001000000000000000000000000
 	d.animatedUp = (data >> 24) == 1;		/// 0b000000010000000000000000000000000
 	d.animatedDown = (data >> 25) == 1;		/// 0b000000100000000000000000000000000
-	d.scaleF = ((data >> 26) & 7)+1;		/// 0b000111000000000000000000000000000
-	d.scaleS = ((data >> 29) & 7)+1;		/// 0b111000000000000000000000000000000
+	d.scaleF = ((data >> 26) & 7) + 1;		/// 0b000111000000000000000000000000000
+	d.scaleS = ((data >> 29) & 7) + 1;		/// 0b111000000000000000000000000000000
 
 	vec3 currentPos = vec3(model * vec4(getPos(pos)+d.pos, 1.0f));
 	gl_Position = camera * vec4(currentPos, 1.0f);

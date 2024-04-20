@@ -15,6 +15,8 @@ public:
 
 	~ChunkMesh();
 
+	void start();
+
 	void newMesh(std::vector<int> data);
 	
 	void clearMesh();

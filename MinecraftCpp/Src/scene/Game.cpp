@@ -100,6 +100,10 @@ void Game::update(float deltaTime)
 	toAddMutex.lock();
 	for (auto c : chunks)
 		c->update(deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if (glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS)
 	{
 		debug = false;
@@ -198,10 +202,7 @@ void Game::draw()
 	glm::mat4 model(1.0f);
 	shader->setUniformMat4(model, "model");
 
-	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	ShadowMap->startUse();
 
 	cameraDir = camera->getDir();
@@ -218,7 +219,7 @@ void Game::draw()
 	renderScene(shaderShadow, true);
 	ShadowMap->endUse();
 	shader->active();
-	shader->setUniformI1(debug, "isDebug");
+	shader->setUniformI1(debug, "debug");
 	glm::mat4 modelMat(1.0f);
 	shader->setUniformMat4(modelMat, "model");
 	shader->setUniformVec3(camera->getPos(), "camPos");
@@ -266,6 +267,7 @@ void Game::renderScene(Shader* s,bool trans)
 
 void Game::drawBlock(Shader* s)
 {
+	return;
 	if (b)
 	{
 		vao->bind();

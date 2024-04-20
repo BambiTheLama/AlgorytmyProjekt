@@ -111,6 +111,19 @@ static std::vector<glm::vec2> vertQuadText = {
 
 ChunkMesh::ChunkMesh(int dir)
 {
+	this->dir = dir;
+}
+
+ChunkMesh::~ChunkMesh()
+{
+	if(vbo)	
+		delete vbo;
+	if(vao)
+		delete vao;
+}
+
+void ChunkMesh::start()
+{
 	if (!vboQuad)
 	{
 		vboQuad = new VBO();
@@ -126,13 +139,6 @@ ChunkMesh::ChunkMesh(int dir)
 	vao->bind();
 	vao->linkData(*vboQuad, 1, 3, GL_FLOAT, sizeof(glm::vec3), NULL);
 	vao->linkData(*vboQuadText, 2, 2, GL_FLOAT, sizeof(glm::vec2), NULL);
-	this->dir = dir;
-}
-
-ChunkMesh::~ChunkMesh()
-{
-	delete vbo;
-	delete vao;
 }
 
 void ChunkMesh::newMesh(std::vector<int> data)

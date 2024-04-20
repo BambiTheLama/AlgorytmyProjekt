@@ -27,7 +27,7 @@ class Game :
     GLFWwindow* window;
     Block* b = NULL;
     std::vector<glm::vec2> posToGenChunk;
-    int range = 13;
+    int range = 10;
     VAO *vao;
     VBO *vbo;
     EBO *ebo;

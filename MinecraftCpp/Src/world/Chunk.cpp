@@ -45,7 +45,10 @@ Chunk::Chunk(int x, int y, int z)
 		}
 	}
 
-
+	for (int i = 0; i < 10; i++)
+	{
+		mesh[i] = new ChunkMesh(i);
+	}
 
 
 
@@ -78,6 +81,8 @@ Chunk::Chunk(int x, int y, int z)
 			generateTeren();
 	}
 	setFaceing();
+
+
 	if (!data)
 		return;
 	
@@ -123,7 +128,8 @@ void Chunk::start()
 {
 	for (int i = 0; i < 10; i++)
 	{
-		mesh[i] = new ChunkMesh(i);
+		mesh[i]->start();
+		mesh[i]->genMesh();
 	}	
 
 }
@@ -176,6 +182,8 @@ void Chunk::update(float deltaTime)
 		toAdd.clear();
 		//setFaceing();
 		genVerticesPos();
+		for (int i = 0; i < 10; i++)
+			mesh[i]->genMesh();
 
 	}
 
@@ -547,7 +555,7 @@ void Chunk::genVerticesPos()
 		{
 			if (blocksID[j][i][k][b] >= 0)
 			{
-				data = blocks[j][i][k]->getVertex(b);
+
 				for (sizeX = 0; sizeX < 7 && i + sizeX + 1 < chunkW; sizeX++)
 				{
 					if (blocksID[j][i + sizeX + 1][k][b] != blocksID[j][i][k][b])
@@ -573,7 +581,8 @@ void Chunk::genVerticesPos()
 
 				}
 				blocksID[j][i][k][b] = -1;
-				data += (sizeX << 26) + (sizeY << 29);
+
+				data = blocks[j][i][k]->getVertex(b) + (sizeX << 26) + (sizeY << 29);
 				vertices[b].push_back(data);
 			}
 		}
@@ -603,7 +612,8 @@ void Chunk::genVerticesPos()
 
 	for (int i = 0; i < vecSize; i++)
 	{
-		mesh[i]->newMesh(vertices[i]);
+		mesh[i]->clearMesh();
+		mesh[i]->addData(vertices[i]);
 	}
 
 }
@@ -848,8 +858,8 @@ void Chunk::generateTeren()
 					treeV = 3;
 
 				int div = pow(-treeV + 3, 2)*50;
-				if (div <= 10)
-					div = 10;
+				if (div <= 20)
+					div = 20;
 
 				if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % div == 0)
 				{
@@ -857,14 +867,14 @@ void Chunk::generateTeren()
 						blocks[j][i][k] = createBlock(14, blockX, j, blockZ);
 					else if (temperatue < 0.3)
 					{
-						if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 10 >= 6)
+						if ((int)(picksAndValies.GetNoise(x, z) * 10000000) % 10 >= 6)
 							blocks[j][i][k] = createBlock(12, blockX, j, blockZ);
 						else
 							blocks[j][i][k] = createBlock(13, blockX, j, blockZ);
 					}
 					else
 					{
-						if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 69 == 0)
+						if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 69 == 0)
 						{
 							int ch = rand() % 4;
 							for (int cy = 0; cy < ch; cy++)

@@ -12,9 +12,6 @@ int main()
 {
 
 	setlocale(LC_ALL, "PL");
-	Engine* e = new Engine();
-	e->start();
-
-	delete e;
+	Engine e;
 	return 0;
 }

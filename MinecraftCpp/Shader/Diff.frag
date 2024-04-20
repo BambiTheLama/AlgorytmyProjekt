@@ -11,6 +11,7 @@ uniform sampler2D tex0[63];
 uniform sampler2D texShadow;
 uniform vec3 lightDir;
 uniform int dir;
+uniform bool debug;
 
 in DATA
 {
@@ -82,7 +83,7 @@ vec3 directLight()
 		float bias = max(0.5f * (1.0f - dot(normal, lightDirection)), 0.01f);
 	
 		// Smoothens out the shadows
-		int sampleRadius = 1;
+		int sampleRadius = 3;
 		vec2 pixelSize = 1.0 / textureSize(texShadow, 0);
 		for(int y = -sampleRadius; y <= sampleRadius; y++)
 		{
@@ -110,10 +111,17 @@ vec3 directLight()
 
 void main()
 {
-	
-	if (texture(tex0[frag.textID], frag.texCoord).a < 0.1)
+	if(!debug)
+	{
+		if (texture(tex0[frag.textID], frag.texCoord).a < 0.1)
 		discard;
 
-	FragColor = vec4(directLight()*frag.bright,texture(tex0[frag.textID], frag.texCoord).a) * modelColor;
+		FragColor = vec4(directLight()*frag.bright,texture(tex0[frag.textID], frag.texCoord).a) * modelColor;
+	}
+	else
+	{
+		FragColor = vec4(1.0f);
+	}
+
 
 }

@@ -70,7 +70,7 @@ Engine::Engine()
 	RenderTexture::setUpRenderTextures();
 
 	e = this;
-
+	start();
 }
 
 Engine::~Engine()
