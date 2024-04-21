@@ -190,7 +190,6 @@
     <ClCompile Include="Src\world\Blocks\Water.cpp" />
     <ClCompile Include="Src\world\Chunk.cpp" />
     <ClCompile Include="Src\world\ChunkMesh.cpp" />
-    <ClCompile Include="Src\world\PerlinNoise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\Diff.frag" />
@@ -229,7 +228,6 @@
     <ClInclude Include="Src\world\Blocks\Water.h" />
     <ClInclude Include="Src\world\Chunk.h" />
     <ClInclude Include="Src\world\ChunkMesh.h" />
-    <ClInclude Include="Src\world\PerlinNoise.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

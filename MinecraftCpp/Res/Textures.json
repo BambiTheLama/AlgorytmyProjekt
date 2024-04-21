@@ -1,20 +1,4 @@
 {
-  "Solid": [
-    "grass_block_top",
-    "grass_block_side",
-    "dirt",
-    "stone",
-    "snow",
-    "grass_block_snow",
-    "dirt",
-    "sand",
-    "birch_log_top",
-    "birch_log",
-    "oak_log_top",
-    "oak_log",
-    "spruce_log_top",
-    "spruce_log"
-  ],
   "Textures": [
     "grass_block_top",
     "grass_block_side",
@@ -46,7 +30,21 @@
     "cornflower",
     "ice",
 	"sweet_berry_bush_stage3",
-	"sugar_cane"
+	"sugar_cane",
+	"birch_planks",
+	"oak_planks",
+	"spruce_planks",
+	"cobblestone",
+	"glass",
+	"sandstone_top",
+	"sandstone",
+	"sandstone_bottom",
+	"dirt_path_top",
+	"dirt_path_side",
+	"dirt",
+	"",
+	""
+	
   ],
   "Trans": [
     "birch_leaves",
@@ -66,5 +64,21 @@
     "ice",
 	"sweet_berry_bush_stage3",
 	"sugar_cane"
+  ],
+    "Solid": [
+    "grass_block_top",
+    "grass_block_side",
+    "dirt",
+    "stone",
+    "snow",
+    "grass_block_snow",
+    "dirt",
+    "sand",
+    "birch_log_top",
+    "birch_log",
+    "oak_log_top",
+    "oak_log",
+    "spruce_log_top",
+    "spruce_log"
   ]
 }

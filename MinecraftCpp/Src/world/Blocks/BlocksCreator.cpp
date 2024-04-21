@@ -61,7 +61,20 @@ Block* createBlock(int i,int x,int y,int z)
 		return new Plant(i, x, y, z, 29);
 	case 22://Sugger cane
 		return new Plant(i, x, y, z, 30);
-
+	case 23:///Plank 1
+		return new CubeBlock(i, x, y, z, 31);
+	case 24:///Plank 2
+		return new CubeBlock(i, x, y, z, 32);
+	case 25:///Plank 3
+		return new CubeBlock(i, x, y, z, 33);
+	case 26:///CoobleStone
+		return new CubeBlock(i, x, y, z, 34);
+	case 27:///Glass
+		return new CubeBlock(i, x, y, z, 35);
+	case 28:///SandStone
+		return new CubeBlock(i, x, y, z, 36, 3);
+	case 29://PathDirt
+		return new CubeBlock(i, x, y, z, 39, 3);
 	default:
 		return NULL;
 	}

@@ -491,29 +491,29 @@ void Game::genWorld()
 	if (posToGenChunk.size() <= 0)
 	{
 
-			for (int x = camPos.x - range; x < camPos.x + range; x++)
-				for (int z = camPos.z - range; z < camPos.z + range; z++)
-				{
-					bool breked = false;
-					toAddMutex.lock();
-					for (auto c : toAdd)
-						if (c->z == z && c->x == x)
-						{
-							breked = true;
-							break;
-						}
-					toAddMutex.unlock();
-					chunksMutex.lock();
-					for (auto c : chunks)
-						if (c->z == z && c->x == x)
-						{
-							breked = true;
-							break;
-						}
-					if (!breked)
-						posToGenChunk.push_back(glm::vec2(x, z));
-					chunksMutex.unlock();
-				}
+		for (int x = camPos.x - range; x < camPos.x + range; x++)
+			for (int z = camPos.z - range; z < camPos.z + range; z++)
+			{
+				bool breked = false;
+				toAddMutex.lock();
+				for (auto c : toAdd)
+					if (c->z == z && c->x == x)
+					{
+						breked = true;
+						break;
+					}
+				toAddMutex.unlock();
+				chunksMutex.lock();
+				for (auto c : chunks)
+					if (c->z == z && c->x == x)
+					{
+						breked = true;
+						break;
+					}
+				if (!breked)
+					posToGenChunk.push_back(glm::vec2(x, z));
+				chunksMutex.unlock();
+			}
 	}
 	if (posToGenChunk.size() <= 0)
 		return;

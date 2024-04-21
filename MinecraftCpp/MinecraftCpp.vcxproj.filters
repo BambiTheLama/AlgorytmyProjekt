@@ -78,9 +78,6 @@
     <ClCompile Include="Src\world\ChunkMesh.cpp">
       <Filter>Src\World</Filter>
     </ClCompile>
-    <ClCompile Include="Src\world\PerlinNoise.cpp">
-      <Filter>Src\World</Filter>
-    </ClCompile>
     <ClCompile Include="Src\world\Blocks\Block.cpp">
       <Filter>Src\World\Blocks</Filter>
     </ClCompile>
@@ -183,9 +180,6 @@
       <Filter>Src\World</Filter>
     </ClInclude>
     <ClInclude Include="Src\world\ChunkMesh.h">
-      <Filter>Src\World</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\world\PerlinNoise.h">
       <Filter>Src\World</Filter>
     </ClInclude>
     <ClInclude Include="Src\world\Blocks\Block.h">

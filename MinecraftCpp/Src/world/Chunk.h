@@ -2,7 +2,6 @@
 #include "Blocks/Block.h"
 #include <vector>
 #include <string>
-#include "PerlinNoise.h"
 #include "ChunkMesh.h"
 #include <json.hpp>
 #define chunkW 16
@@ -11,7 +10,6 @@
 #define minH 5
 #define maxH 256
 #define waterH 75
-//#define Laby
 //#define noSave
 
 class Game;
@@ -21,11 +19,6 @@ struct SaveChunkData {
 };
 class Chunk
 {
-#ifdef Laby
-	static PerlinNoice noise;
-	static PerlinNoice noise2;
-	static PerlinNoice noiseRiver;
-#endif // Laby
 	int x, y, z;
 	Block* blocks[chunkH][chunkW][chunkT];
 	std::vector<Block*> toDelete;
