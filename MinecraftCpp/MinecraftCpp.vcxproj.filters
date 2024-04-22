@@ -125,9 +125,6 @@
     <None Include="Shader\Shadow.frag">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shader\Shadow.vert">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="Shader\Diff.geom">
       <Filter>Shader</Filter>
     </None>

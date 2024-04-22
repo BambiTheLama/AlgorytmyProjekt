@@ -193,8 +193,9 @@ void Chunk::draw(Shader* s)
 {
 	glm::mat4 model(1);
 	model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
-	s->setUniformMat4(model, "model");
-
+	//s->setUniformMat4(model, "model");
+	s->setUniformI1(x * chunkW, "chunkX");
+	s->setUniformI1(z * chunkT, "chunkZ");
 	for (int i = 0; i < 10; i++)
 	{
 		mesh[i]->draw(s);
@@ -581,10 +582,6 @@ void Chunk::genVerticesPos()
 				}
 				data = blocks[j][i][k]->getVertex(b) | (sizeX << 26) | (sizeY << 29);
 				vertices[b].push_back(data);
-				if (blocksID[j][i][k][b] == 11)
-				{
-					printf("%d    %d////%d    %d\n", (data >> 22)&0b1, data, (blocks[j][i][k]->getVertex(b) >> 22) & 0b1, blocks[j][i][k]->getVertex(b));
-				}
 				blocksID[j][i][k][b] = -1;
 
 

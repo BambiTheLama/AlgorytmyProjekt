@@ -10,6 +10,8 @@ uniform mat4 model;
 uniform mat4 lightProjection;
 uniform int dir;
 uniform float time;
+uniform int chunkX;
+uniform int chunkZ;
 
 struct getData{
 	vec3 pos;
@@ -29,6 +31,7 @@ out DATA
 	vec4 fragPosLight;
 	flat int textID;
 	float bright;
+	bool isText2;
 } data_out;
 
 vec2 getTextPos(vec2 tPos)
@@ -125,33 +128,33 @@ vec3 getPos(vec3 vPos)
 
 void main()
 {
-	d.pos.x  = data       & 15;				/// 0b000000000000000000000000000001111
-	d.pos.y  = data >> 4  & 255;			/// 0b000000000000000000000111111110000
-	d.pos.z  = data >> 12 & 15;				/// 0b000000000000000011110000000000000
-	d.textID = data >> 16 & 63;				/// 0b000000000011111100000000000000000
-	d.cutY = (data >> 22) % 2 == 1;			/// 0b000000000100000000000000000000000
-	d.cutSides = (data >> 23) % 2 == 1;		/// 0b000000001000000000000000000000000
-	d.animatedUp = (data >> 24) % 2 == 1;	/// 0b000000010000000000000000000000000
-	d.animatedDown = (data >> 25) % 2 == 1;	/// 0b000000100000000000000000000000000
-	d.scaleF = ((data >> 26) & 7) + 1;		/// 0b000111000000000000000000000000000
-	d.scaleS = ((data >> 29) & 7) + 1;		/// 0b111000000000000000000000000000000
-
-	vec3 currentPos = vec3(model * vec4(getPos(pos)+d.pos, 1.0f));
+	d.pos.x  = data       & 15;					/// 0b000000000000000000000000000001111
+	d.pos.y  = data >> 4  & 255;				/// 0b000000000000000000000111111110000
+	d.pos.z  = data >> 12 & 15;					/// 0b000000000000000011110000000000000
+	d.textID = data >> 16 & 63;					/// 0b000000000011111100000000000000000
+	d.cutY = ((data >> 22) & 1) == 1;			/// 0b000000000100000000000000000000000
+	d.cutSides = ((data >> 23) & 1) == 1;		/// 0b000000001000000000000000000000000
+	d.animatedUp = ((data >> 24) & 1) == 1;		/// 0b000000010000000000000000000000000
+	d.animatedDown = ((data >> 25) & 1) == 1;	/// 0b000000100000000000000000000000000
+	d.scaleF = ((data >> 26) & 7) + 1;			/// 0b000111000000000000000000000000000
+	d.scaleS = ((data >> 29) & 7) + 1;			/// 0b111000000000000000000000000000000
+	//vec3 currentPos = vec3(model * vec4(getPos(pos)+d.pos, 1.0f));
+	vec3 currentPos = getPos(pos) + d.pos + vec3(chunkX,0,chunkZ);
 	gl_Position = camera * vec4(currentPos, 1.0f);
 	data_out.texCoord = getTextPos(textPos);
 	data_out.currentPos = currentPos;
 	data_out.fragPosLight = lightProjection * vec4(currentPos,1.0f);
 
-	data_out.textID = d.textID;
-
-	if(dir<=1)
-		data_out.bright = 0.82;
-	else if(dir<=3)
-		data_out.bright = 0.68;
-	else if(dir<=4)
-		data_out.bright = 1.0;
-	else		
-		data_out.bright = 0.5;
+	data_out.textID = d.textID % 32;
+	data_out.isText2 = (d.textID / 32) >= 1;
+	//if(dir<=1)
+	//	data_out.bright = 0.82;
+	//else if(dir<=3)
+	//	data_out.bright = 0.68;
+	//else if(dir<=4)
+	//	data_out.bright = 1.0;
+	//else		
+	//	data_out.bright = 0.5;
 	data_out.bright = 1.0;
 
 }

@@ -4,9 +4,12 @@ out vec4 FragColor;
 uniform vec4 modelColor;
 
 
-uniform sampler2D texN[63];
-uniform sampler2D texH[63];
-uniform sampler2D tex0[63];
+uniform sampler2D texN[32];
+uniform sampler2D texH[32];
+uniform sampler2D tex0[32];
+uniform sampler2D texN2[32];
+uniform sampler2D texH2[32];
+uniform sampler2D tex02[32];
 
 uniform sampler2D texShadow;
 uniform vec3 lightDir;
@@ -20,6 +23,7 @@ in DATA
 	vec4 fragPosLight;
 	flat int textID;
 	float bright;
+	bool isText2;
 } frag;
 
 uniform vec3 camPos;
@@ -52,11 +56,21 @@ vec3 getNormal(vec3 normal)
 
 vec3 directLight()
 {
+	vec3 normalText = texture(texN[frag.textID], frag.texCoord).rgb;
+	vec3 heightText = texture(texH[frag.textID], frag.texCoord).rgb;
+	vec3 albedoText = texture(tex0[frag.textID], frag.texCoord).rgb;
+	if(frag.isText2)
+	{
+		normalText = texture(texN2[frag.textID], frag.texCoord).rgb;
+		heightText = texture(texH2[frag.textID], frag.texCoord).rgb;
+		albedoText = texture(tex02[frag.textID], frag.texCoord).rgb;
+	}
+
 	// ambient lighting
 	float ambient = 0.50f;
 
 	// diffuse lighting
-	vec3 normal = getNormal(normalize((texture(texN[frag.textID], frag.texCoord).xyz * 2.0f - 1.0f)));
+	vec3 normal = getNormal(normalize(normalText * 2.0f - 1.0f));
 
 	//vec3 normal = vec3(1);
 	vec3 lightDirection = lightDir;
@@ -101,11 +115,11 @@ vec3 directLight()
 	//shadow=0.0f;
 	//return vec3(texture(texN[frag.textID], frag.texCoord));
 	//return (normal+1.0f)/2.0f;
-	vec3 diffuseColor = texture(tex0[frag.textID], frag.texCoord).rgb * diffuse * (1.0f - shadow) * lightColor;
-	vec3 specularColor = texture(texH[frag.textID], frag.texCoord).r * specular * (1.0f - shadow) * lightColor*0.0001f;
-	vec3 ambientColor = texture(tex0[frag.textID], frag.texCoord).rgb * ambient;
+	vec3 diffuseColor = albedoText * diffuse * (1.0f - shadow) * lightColor;
+	vec3 specularColor = heightText.r * specular * (1.0f - shadow) * lightColor*0.0001f;
+	vec3 ambientColor = albedoText * ambient;
 	if(shadow == 1)
-		return texture(tex0[frag.textID], frag.texCoord).rgb *  ambient;
+		return albedoText *  ambient;
 	return ambientColor + specularColor + diffuseColor;
 }
 

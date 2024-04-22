@@ -27,13 +27,16 @@ Game::Game(int w,int h,GLFWwindow* window)
 
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.frag");
-	shaderShadow = new Shader("Shader/Shadow.vert", "Shader/Shadow.frag");
+	shaderShadow = new Shader("Shader/Diff.vert", "Shader/Shadow.frag");
 
 	Blocks = new GameTextures("Res/Blocks/", "Textures");
 	BlocksH = new GameTextures("Res/BlocksH/", "Textures");
 	BlocksN = new GameTextures("Res/BlocksN/", "Textures");
 
 	shader->active();
+	Blocks->setTextures(*shader, "tex0");
+	BlocksH->setTextures(*shader, "texH");
+	BlocksN->setTextures(*shader, "texN");
 
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	shader->setUniformMat4(modelMat, "model");
@@ -254,9 +257,10 @@ void Game::renderScene(Shader* s,bool trans)
 	glEnable(GL_DEPTH_TEST);
 	s->setUniformVec4(glm::vec4(1, 1, 1, 1), "modelColor");
 	s->setUniformF1(time, "time");
-	Blocks->setTextures(*s, "tex0");
-	BlocksH->setTextures(*s, "texH");
-	BlocksN->setTextures(*s, "texN");
+	Blocks->bindTextures();
+	BlocksH->bindTextures();
+	BlocksN->bindTextures();
+
 	for (auto c : toDraw)
 	{
 		c->draw(s);

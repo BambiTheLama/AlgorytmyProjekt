@@ -28,7 +28,7 @@ void CubeBlock::setOneFace(int face, bool state)
 void CubeBlock::setOneFace(int face, Block* b) 
 {
 	if (transparent)
-		setOneFace(face, b->getID() == getID());
+		setOneFace(face, b->getID() != getID());
 	else
 		setOneFace(face, getDisplay(b));
 }
