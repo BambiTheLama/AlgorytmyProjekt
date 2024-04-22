@@ -31,7 +31,7 @@ Engine::Engine()
 {
 	height = 900;
 	width = 1600;
-	title = "minecraft";
+	title = "MineGL";
 
 	if (!glfwInit())
 		return;
