@@ -23,7 +23,7 @@ in DATA
 	vec4 fragPosLight;
 	flat int textID;
 	float bright;
-	bool isText2;
+	flat int isText2;
 } frag;
 
 uniform vec3 camPos;
@@ -59,7 +59,7 @@ vec3 directLight()
 	vec3 normalText = texture(texN[frag.textID], frag.texCoord).rgb;
 	vec3 heightText = texture(texH[frag.textID], frag.texCoord).rgb;
 	vec3 albedoText = texture(tex0[frag.textID], frag.texCoord).rgb;
-	if(frag.isText2)
+	if(frag.isText2 == 1)
 	{
 		normalText = texture(texN2[frag.textID], frag.texCoord).rgb;
 		heightText = texture(texH2[frag.textID], frag.texCoord).rgb;
@@ -130,7 +130,12 @@ void main()
 		if (texture(tex0[frag.textID], frag.texCoord).a < 0.1)
 		discard;
 
-		FragColor = vec4(directLight()*frag.bright,texture(tex0[frag.textID], frag.texCoord).a) * modelColor;
+		float text = texture(tex0[frag.textID], frag.texCoord).a;
+		if(frag.isText2 == 1)
+		{
+			text = texture(tex02[frag.textID], frag.texCoord).a;
+		}
+		FragColor = vec4(directLight()*frag.bright,text) * modelColor;
 	}
 	else
 	{
