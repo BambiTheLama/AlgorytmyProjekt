@@ -131,6 +131,9 @@
     <None Include="Shader\Diff.vert">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Res\Textures.json">
+      <Filter>Res</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\core\Camera.h">

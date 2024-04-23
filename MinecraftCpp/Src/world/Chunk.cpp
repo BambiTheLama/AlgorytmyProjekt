@@ -681,15 +681,144 @@ float getValueTerrain(float v)
 	return powf(v, 3);
 }
 
+void Chunk::genStone(int x, int z, int h)
+{
+	int blockX = x + this->x * (chunkW);
+	int blockZ = z + this->z * (chunkT);
+	for (int i = 0; i < h && i < chunkH; i++)
+	{
+		if (blocks[i][x][z])
+			delete blocks[i][x][z];
+		blocks[i][x][z] = createBlock(2, blockX, i, blockZ);
+	}
+}
+
+void Chunk::fillWater(int x,int z,int h,float temperature)
+{
+	int blockX = x + this->x * (chunkW);
+	int blockZ = z + this->z * (chunkT);
+	if (h < 0)
+		h = 0;
+	for (int j = h; j < waterH && j < chunkH; j++)
+	{
+		if (!blocks[j][x][z])
+			blocks[j][x][z] = createBlock(11, blockX, j, blockZ);
+	}
+	if (!blocks[waterH][x][z])
+		blocks[waterH][x][z] = createBlock((temperature <= -0.3) ? 20 : 11, blockX, waterH, blockZ);
+
+}
+
+void Chunk::genSandForWater(int x, int z,int y, int h)
+{
+	int blockX = x + this->x * (chunkW);
+	int blockZ = z + this->z * (chunkT);
+	if (y < 0)
+		y = 0;
+	for (int j = y; j <= h && j <= waterH; j++)
+	{
+		if (blocks[j][x][z])
+			delete blocks[j][x][z];
+		blocks[j][x][z] = createBlock(4, blockX, j, blockZ);
+	}
+}
+
+void Chunk::biomLayer(int x, int z, int y, int h, float temperature, float structureNoise)
+{
+	if (y < 0)
+		y = 0;
+	int blockX = x + this->x * (chunkW);
+	int blockZ = z + this->z * (chunkT);
+	int blockID = 1;
+	int blockSurfaceID = 0;
+	if (temperature >= 0.3)
+	{
+		blockSurfaceID = 4;
+		blockID = 4;
+	}
+	else if (temperature <= -0.3)
+	{
+		blockSurfaceID = 3;
+	}
+	for (int j = y; j <= h && j < chunkH; j++)
+	{
+		if (blocks[j][x][z])
+			delete blocks[j][x][z];
+		blocks[j][x][z] = createBlock(j == h ? blockSurfaceID : blockID, blockX, j, blockZ);
+	}
+
+}
+
+void Chunk::genStructures(int x, int z, int y, float temperature, float structureNoise)
+{
+	if (y < 0 || y >= chunkH || x < 0 || x >= chunkW || z < 0 || z >= chunkT)
+		return;
+	int blockX = x + this->x * (chunkW);
+	int blockZ = z + this->z * (chunkT);
+	int div = pow(-structureNoise + 3, 2) * 50;
+	if (div <= 20)
+		div = 20;
+	int value = abs(temperature) * 1000000;
+	if ((int)(value) % div == 0)
+	{
+		if (temperature < -0.3)
+			blocks[y][x][z] = createBlock(14, blockX, y, blockZ);
+		else if (temperature < 0.3)
+		{
+			if ((int)(value) % 10 >= 6)
+				blocks[y][x][z] = createBlock(12, blockX, y, blockZ);
+			else
+				blocks[y][x][z] = createBlock(13, blockX, y, blockZ);
+
+		}
+		else
+		{
+			if ((int)(value) % 69 == 0)
+			{
+				int ch = rand() % 4;
+				for (int cy = 0; cy < ch; cy++)
+				{
+					if (!blocks[y + cy][x][z])
+						blocks[y + cy][x][z] = createBlock(15, blockX, y + cy, blockZ);
+				}
+
+			}
+
+		}
+		if (blocks[y][x][z])
+			toUpdate.push_back(blocks[y][x][z]);
+
+	}
+	else if (temperature >= -0.3 && temperature <= 0.3 && ((int)(value) % 469) % 3 == 0)
+	{
+		int blockId = -1;
+		if ((int)(value) % 100 == 10)
+			blockId = 19;
+		else if ((int)(value) % 100 == 69)
+			blockId = 17;
+		else if ((int)(value) % 100 == 21)
+			blockId = 18;
+		else if ((int)(value) % 100 % 2 == 0)
+			blockId = 16;
+		if (blockId > -1 && !blocks[y][x][z])
+			blocks[y][x][z] = createBlock(blockId, blockX, y, blockZ);
+	}
+	else if (temperature < -0.3 && ((int)(value) % 100) == 0)
+	{
+		if (!blocks[y][x][z])
+			blocks[y][x][z] = createBlock(21, blockX, y, blockZ);
+	}
+}
+
 void Chunk::generateTeren()
 {
-
-	FastNoiseLite terrain(666);
-	FastNoiseLite erosia(2137);
-	FastNoiseLite picksAndValies(80085);
-	FastNoiseLite riverNoise(80085);
-	FastNoiseLite temperatureNoise(80085);
-	FastNoiseLite treesNoise(80085);
+	int seed = 2137;
+	FastNoiseLite terrain(seed);
+	FastNoiseLite erosia(seed);
+	FastNoiseLite picksAndValies(seed);
+	FastNoiseLite riverNoise(seed);
+	FastNoiseLite temperatureNoise(seed);
+	FastNoiseLite structureNoise(seed);
 	{
 		float multiplay = 0.5f;
 		terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
@@ -727,13 +856,13 @@ void Chunk::generateTeren()
 		temperatureNoise.SetFractalLacunarity(1.3f);
 		temperatureNoise.SetFractalGain(0.32f);
 		temperatureNoise.SetFractalWeightedStrength(6.16f);
-		treesNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-		treesNoise.SetFrequency(0.001f * multiplay);
-		treesNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
-		treesNoise.SetFractalOctaves(4);
-		treesNoise.SetFractalLacunarity(1.3f);
-		treesNoise.SetFractalGain(0.5f);
-		treesNoise.SetFractalWeightedStrength(9.0f);
+		structureNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+		structureNoise.SetFrequency(0.001f * multiplay);
+		structureNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
+		structureNoise.SetFractalOctaves(4);
+		structureNoise.SetFractalLacunarity(1.3f);
+		structureNoise.SetFractalGain(0.5f);
+		structureNoise.SetFractalWeightedStrength(9.0f);
 	}
 
 	const int height = maxH - minH;
@@ -743,212 +872,41 @@ void Chunk::generateTeren()
 		{
 			float x = i + this->x * (chunkW);
 			float z = k + this->z * (chunkT);
-			bool river = false;
-			bool lake = false;
-			int lakeDeep = waterH;
-			int rivDeep = 0;
 
 			float t = (getValueTerrain(terrain.GetNoise(x, z)) + 1)/2;
 			float e = getValueTerrain(erosia.GetNoise(x, z));
 			float pv = getValueTerrain(picksAndValies.GetNoise(x, z));
 			float terrainV = (t + e / 3 + pv / 18) * 18.0f / 25.0f;
 			int h = minH + terrainV * height;
-
-			if (h < 0)
-				h = 0;
-			else if (h >= chunkH)
-				h = chunkH-1;
-			///RIVER
-			float v = riverNoise.GetNoise(x, z);
-			river = 0.90f < v;
-			///RIVER WATER
-			rivDeep = (abs(0.90f - v) * 10.0f) * 9;
-			if (rivDeep > 9)
-				rivDeep = 9;
-			///RIVER SAND
-			if (v > 0.70f && !river && h >= waterH)
+			float temperatureV = temperatureNoise.GetNoise(x, z);
+			float structureV = structureNoise.GetNoise(x, z);
+			float riverV = riverNoise.GetNoise(x, z);
+			if (0.90f < riverV)
 			{
-				h = pow(1.0f-abs(0.70f - v) * 5, 2) * (h - waterH)+waterH;
-				if (h <= waterH-1)
-					h = waterH ;
-			}
-			///RIVER WATER LEVEL
-			if (river)
-			{
-				if (h >= waterH - rivDeep)
+				int rivDeep = (abs(0.90f - riverV) * 10.0f)*8;
+				if (h > waterH - rivDeep)
+				{
 					h = waterH - rivDeep;
-				if (h < 0)
-					h = 0;
-			}
-
-
-
-			const int blockX = x;
-			const int blockZ = z;
-
-			if (h <= 2)
-				h = 2;
-			for (int j = 0; j < chunkH && j < h - dirtSize; j++)
-			{
-				if (blocks[j][i][k])
-					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(2, blockX, j, blockZ);
-			}
-			int dirtStart = h - dirtSize;
-			if (dirtStart < 0)
-				dirtStart = 0;
-			int endPos = h;
-			if (endPos < waterH)
-				endPos--;
-			float temperatue = temperatureNoise.GetNoise(x, z);
-			if (h > maxH * 0.57f)
-				temperatue -= (float)h / maxH * 0.4;
-			genBiom(i,k,x, z, dirtStart, endPos, temperatue);
-
-			for (int j = endPos; j < endPos + 3 && j <= waterH && j < chunkH; j++)
-			{
-				if (blocks[j][i][k])
-					delete blocks[j][i][k];
-				blocks[j][i][k] = createBlock(4, blockX, j, blockZ);
-
-			}
-
-			if (river)
-			{
-				int start;
-				if (h >= waterH)
-					start = waterH - rivDeep - 3;
-				else
-					start = h - rivDeep - 3;
-
-				if (start < 0)
-					start = 0;
-				for (int j = start; j < h - rivDeep && j < chunkH; j++)
-				{
-					if (blocks[j][i][k])
-						delete blocks[j][i][k];
-					blocks[j][i][k] = createBlock(4, blockX, j, blockZ);
-
-				}
-				if (h == waterH && (int)(picksAndValies.GetNoise(x, z) * 1000000) % 669 <= 3)
-				{
-					int n = (int)(blockX + blockZ) % 4 + 2;
-					for (int j = 1; j < n; j++)
-						if (!blocks[h + j][i][k])
-							blocks[h + j][i][k] = createBlock(22, blockX, h + j, blockZ);
 				}
 			}
-			if (lake)
+			else if(riverV > 0.70f && h >= waterH)
 			{
-				for (int j = lakeDeep; j <= h && j < chunkH; j++)
-				{
-					if (blocks[j][i][k])
-						delete blocks[j][i][k];
-					blocks[j][i][k] = createBlock(11, blockX, j, blockZ);
-				}
-
+				h = pow(1.0f - abs(0.70f - riverV) * 5, 2) * (h - waterH) + waterH;
+				if (h <= waterH - 1)
+					h = waterH;
 			}
-
-			if (!lake && !river && h > waterH)
-			{
-				int j = h;
-
- 				if (blocks[j][i][k])
-					delete blocks[j][i][k];
-				float treeV = treesNoise.GetNoise(x, z);
-				if (treeV >= 3)
-					treeV = 3;
-
-				int div = pow(-treeV + 3, 2)*50;
-				if (div <= 20)
-					div = 20;
-
-				if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % div == 0)
-				{
-					if (temperatue < -0.3)
-						blocks[j][i][k] = createBlock(14, blockX, j, blockZ);
-					else if (temperatue < 0.3)
-					{
-						if ((int)(picksAndValies.GetNoise(x, z) * 10000000) % 10 >= 6)
-							blocks[j][i][k] = createBlock(12, blockX, j, blockZ);
-						else
-							blocks[j][i][k] = createBlock(13, blockX, j, blockZ);
-					}
-					else
-					{
-						if ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 69 == 0)
-						{
-							int ch = rand() % 4;
-							for (int cy = 0; cy < ch; cy++)
-							{
-								if (!blocks[j + cy][i][k])
-									blocks[j + cy][i][k] = createBlock(15, blockX, j + cy, blockZ);
-							}
-
-						}
-
-					}
-					if (blocks[j][i][k])
-						toUpdate.push_back(blocks[j][i][k]);
-
-				}
-				else if (temperatue >= -0.3 && temperatue <= 0.3 && ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 469) % 3 == 0)
-				{
-					int blockId = -1;
-					if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 100 == 10)
-						blockId = 19;
-					else if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 100 == 69)
-						blockId = 17;
-					else if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 100 == 21)
-						blockId = 18;
-					else if ((int)(picksAndValies.GetNoise(x, z) * 10000) % 100 % 2 == 0)
-						blockId = 16;
-					if (blockId > -1 && !blocks[j][i][k])
-						blocks[j][i][k] = createBlock(blockId, blockX, j, blockZ);
-				}
-				else if (temperatue < -0.3 && ((int)(picksAndValies.GetNoise(x, z) * 1000000) % 100) == 0)
-				{
-					if (!blocks[j][i][k])
-						blocks[j][i][k] = createBlock(21, blockX, j, blockZ);
-				}
-
-
-			}
-			for (int j = h; j < waterH && j < chunkH; j++)
-			{
-				if (!blocks[j][i][k])
-					blocks[j][i][k] = createBlock(11, blockX, j, blockZ);
-			}
-			if (!blocks[waterH][i][k])
-				blocks[waterH][i][k] = createBlock((temperatue<=-0.3)?20:11, blockX, waterH, blockZ);
+			if (h <= 0)
+				h = 1;
+			genStone(i, k, h - 7);
+			biomLayer(i, k, h - 7, h, temperatureV, structureV);
+			genSandForWater(i, k, h - 3, h);
+			fillWater(i, k, h, temperatureV);
+			if(h>waterH)
+				genStructures(i, k, h + 1, temperatureV, structureV);
 		}
 
 }
 
-void Chunk::genBiom(int x, int z,int blockX,int blockZ, int startY, int endY, float temperature)
-{
-	int blockID = 1;
-	int blockSurfaceID = 0;
-	if (temperature >= 0.3)
-	{
-		blockSurfaceID = 4;
-		blockID = 4;
-	}
-	else if (temperature <= -0.3)
-	{
-		blockSurfaceID = 3;
-	}
-
-	
-	for (int j = startY; j < endY && j < chunkH; j++)
-	{
-		if (blocks[j][x][z])
-			delete blocks[j][x][z];
-		blocks[j][x][z] = createBlock(j == endY - 1 ? blockSurfaceID : blockID, blockX, j, blockZ);
-
-
-	}
-}
 
 int getBlockX(int x)
 {

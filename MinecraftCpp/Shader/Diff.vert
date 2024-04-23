@@ -155,6 +155,6 @@ void main()
 		data_out.bright = 1.0;
 	else		
 		data_out.bright = 0.5;
-	data_out.bright = 1.0;
+	//data_out.bright = 1.0;
 
 }

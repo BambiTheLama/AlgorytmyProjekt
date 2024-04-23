@@ -15,7 +15,7 @@ void SpruceTree::update(float deltaTime)
 		return;
 	g->deleteBlock(x, y, z);
 	//return;
-	int n = (x + y + z) % 5 + 6;
+	int n = rand() % 6 + 6;
 	for (int i = 0; i < n; i++)
 	{
 		Block* b = createBlock(woodID, x, y + i, z);

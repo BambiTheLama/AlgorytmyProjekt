@@ -81,9 +81,15 @@ private:
 
 	void generateTeren();
 
-	void genBiom(int x, int z, int blockX, int blockZ, int startY, int endY, float temperature);
+	void fillWater(int x, int z, int h, float temperature);
 
+	void genSandForWater(int x, int z, int y, int h);
 
+	void genStructures(int x, int z, int y, float temperature, float structureNoise);
+
+	void genStone(int x, int z, int h);
+
+	void biomLayer(int x, int z, int y, int h, float temperature, float structureNoise);
 
 };
 
