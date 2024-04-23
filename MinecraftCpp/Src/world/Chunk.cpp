@@ -751,6 +751,9 @@ void Chunk::biomLayer(int x, int z, int y, int h, float temperature, float struc
 
 void Chunk::genStructures(int x, int z, int y, float temperature, float structureNoise)
 {
+	if (y <= waterH)
+		return;
+
 	if (y < 0 || y >= chunkH || x < 0 || x >= chunkW || z < 0 || z >= chunkT)
 		return;
 	int blockX = x + this->x * (chunkW);
@@ -759,6 +762,20 @@ void Chunk::genStructures(int x, int z, int y, float temperature, float structur
 	if (div <= 20)
 		div = 20;
 	int value = abs(temperature) * 1000000;
+	if (y == waterH + 1)
+	{
+		if (value % 169 == 0 && !blocks[y][x][z])
+		{
+			int ch = rand() % 4 + 1;
+			for (int cy = 0; cy < ch; cy++)
+			{
+				if (!blocks[y + cy][x][z])
+					blocks[y + cy][x][z] = createBlock(22, blockX, y + cy, blockZ);
+			}
+		}
+
+		return;
+	}
 	if ((int)(value) % div == 0)
 	{
 		if (temperature < -0.3)
@@ -798,7 +815,7 @@ void Chunk::genStructures(int x, int z, int y, float temperature, float structur
 			blockId = 17;
 		else if ((int)(value) % 100 == 21)
 			blockId = 18;
-		else if ((int)(value) % 100 % 2 == 0)
+		else if ((int)(value) % 25  == 0)
 			blockId = 16;
 		if (blockId > -1 && !blocks[y][x][z])
 			blocks[y][x][z] = createBlock(blockId, blockX, y, blockZ);
@@ -901,8 +918,8 @@ void Chunk::generateTeren()
 			biomLayer(i, k, h - 7, h, temperatureV, structureV);
 			genSandForWater(i, k, h - 3, h);
 			fillWater(i, k, h, temperatureV);
-			if(h>waterH)
-				genStructures(i, k, h + 1, temperatureV, structureV);
+
+			genStructures(i, k, h + 1, temperatureV, structureV);
 		}
 
 }
