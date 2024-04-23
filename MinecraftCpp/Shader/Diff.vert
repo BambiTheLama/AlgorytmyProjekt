@@ -147,14 +147,14 @@ void main()
 	data_out.fragPosLight = lightProjection * vec4(currentPos,1.0f);
 
 	data_out.textID = d.textID % 32;
-	//if(dir<=1)
-	//	data_out.bright = 0.82;
-	//else if(dir<=3)
-	//	data_out.bright = 0.68;
-	//else if(dir<=4)
-	//	data_out.bright = 1.0;
-	//else		
-	//	data_out.bright = 0.5;
+	if(dir<=1)
+		data_out.bright = 0.82;
+	else if(dir<=3)
+		data_out.bright = 0.68;
+	else if(dir<=4)
+		data_out.bright = 1.0;
+	else		
+		data_out.bright = 0.5;
 	data_out.bright = 1.0;
 
 }

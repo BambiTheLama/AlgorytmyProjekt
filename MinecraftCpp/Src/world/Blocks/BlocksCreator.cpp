@@ -14,7 +14,7 @@ Block* createBlock(int i,int x,int y,int z)
 	switch (i)
 	{
 	case 0:///Grass
-		return new CubeBlock(i, x, y, z, 38,3);
+		return new CubeBlock(i, x, y, z, 0,3);
 	case 1:///Dirt
 		return new CubeBlock(i, x, y, z, 2);
 	case 2:///Stone
