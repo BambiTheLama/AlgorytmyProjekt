@@ -49,7 +49,7 @@ public:
 
 	bool addBlock(Block* b);
 
-	bool isThisChunk(int x, int y, int z);
+	bool isThisChunk(int x, int y, int z) const;
 
 	void save();
 
@@ -78,7 +78,7 @@ private:
 
 	void genVerticesPos();
 
-	void generateTeren();
+	void generateTerrain();
 
 	void fillWater(int &x, int &z, int h, float &temperature);
 

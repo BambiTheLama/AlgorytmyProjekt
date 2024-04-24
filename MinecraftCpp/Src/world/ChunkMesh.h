@@ -10,6 +10,7 @@ class ChunkMesh
 	std::vector<int> data;
 	int elements = 0;
 	int dir = 0;
+
 public:
 	ChunkMesh(int dir);
 
@@ -29,4 +30,3 @@ public:
 
 	void draw(Shader* s);
 };
-
