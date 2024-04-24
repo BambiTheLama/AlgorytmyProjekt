@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <json.hpp>
+
 GameTextures::GameTextures(const char* path, const char* type)
 {
 	nlohmann::json j;
@@ -16,7 +17,6 @@ GameTextures::GameTextures(const char* path, const char* type)
 	if (!j.contains(type))
 		return;
 	const int n = j[type].size();
-
 	
 	for (int i = 0; i < n; i++)
 	{

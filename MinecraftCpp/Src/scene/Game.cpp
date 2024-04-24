@@ -584,12 +584,4 @@ void addObjectToSave(int x, int y, int z,int ID)
 	if (!g)
 		return;
 	Chunk* chunk = g->getChunkAt(cX, 0, cZ);
-	if (!chunk)
-	{
-
-	}
-	else
-	{
-
-	}
 }

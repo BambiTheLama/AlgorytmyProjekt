@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+
 class Texture;
 class Shader;
 class GameTextures
@@ -14,4 +15,3 @@ public:
 
 	void bindTextures();
 };
-
