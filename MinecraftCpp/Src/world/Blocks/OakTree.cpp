@@ -14,7 +14,6 @@ void OakTree::update(float deltaTime)
 	if (!g)
 		return;
 	g->deleteBlock(x, y, z);
-	//return;
 	for (int i = 0; i < 5; i++)
 	{
 		Block* b = createBlock(woodID, x, y + i, z);
@@ -44,6 +43,4 @@ void OakTree::update(float deltaTime)
 					delete b;
 			}
 	}
-
-
 }

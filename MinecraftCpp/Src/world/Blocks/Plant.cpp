@@ -12,8 +12,6 @@ void Plant::update(float deltaTime)
 
 }
 
-
-
 std::vector<GLuint> Plant::getVertex()
 {
 	int x = this->x;
@@ -52,7 +50,6 @@ std::vector<GLuint> Plant::getVertex()
 			((0b11111	 & textureID)		 << 18));
 	}
 
-
 	return vertices;
 }
 
@@ -68,9 +65,7 @@ std::vector<GLuint> Plant::getIndex()
 				4,6,5,
 				5,6,7,
 				5,7,6
-
 	};
-
 
 	return index;
 }
@@ -92,13 +87,13 @@ GLuint Plant::indexSize()
 std::vector<glm::vec3> Plant::getPos(int x, int y, int z)
 {
 	return {
-		glm::vec3(x    ,y    ,z),
-		glm::vec3(x    ,y + 1,z),
-		glm::vec3(x + 1,y    ,z + 1),
-		glm::vec3(x + 1,y + 1,z + 1),
-		glm::vec3(x + 1,y    ,z),
-		glm::vec3(x + 1,y + 1,z),
-		glm::vec3(x    ,y    ,z + 1),
-		glm::vec3(x    ,y + 1,z + 1),
+		glm::vec3(x, y, z),
+		glm::vec3(x, y + 1, z),
+		glm::vec3(x + 1, y, z + 1),
+		glm::vec3(x + 1, y + 1, z + 1),
+		glm::vec3(x + 1, y, z),
+		glm::vec3(x + 1, y + 1, z),
+		glm::vec3(x, y, z + 1),
+		glm::vec3(x, y + 1, z + 1),
 	};
 }

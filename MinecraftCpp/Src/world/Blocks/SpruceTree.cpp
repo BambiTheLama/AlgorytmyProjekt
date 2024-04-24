@@ -14,7 +14,6 @@ void SpruceTree::update(float deltaTime)
 	if (!g)
 		return;
 	g->deleteBlock(x, y, z);
-	//return;
 	int n = rand() % 6 + 6;
 	for (int i = 0; i < n; i++)
 	{

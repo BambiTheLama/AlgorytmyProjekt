@@ -1,16 +1,14 @@
 #pragma once
 #include "Block.h"
-class CubeHouse :
-    public Block
+class CubeHouse : public Block
 {
-    int woodID, plankID, florID;
+    int woodID, plankID, floorID;
 public:
-    CubeHouse(int ID, int x, int y, int z, int woodID = 0, int plankID = 0, int florID = 0);
+    CubeHouse(int ID, int x, int y, int z, int woodID = 0, int plankID = 0, int floorID = 0);
 
     virtual ~CubeHouse() {}
 
     virtual void update(float deltaTime);
-
 
     virtual void setFacing(int faces) {}
 
@@ -25,6 +23,4 @@ public:
     virtual GLuint indexSize() { return 0; }
 
     virtual bool isUpdateBlock() { return true; }
-
 };
-

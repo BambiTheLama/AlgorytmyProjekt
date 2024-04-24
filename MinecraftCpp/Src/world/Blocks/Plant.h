@@ -1,7 +1,6 @@
 #pragma once
 #include "Block.h"
-class Plant :
-    public Block
+class Plant : public Block
 {
 	int textureID;
 public:
@@ -37,7 +36,4 @@ public:
 
 private:
 	std::vector<glm::vec3> getPos(int x,int y,int z);
-
-
 };
-

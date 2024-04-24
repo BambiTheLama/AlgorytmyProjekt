@@ -1,7 +1,7 @@
 #pragma once
 #include "CubeBlock.h"
-class Water :
-    public CubeBlock
+
+class Water : public CubeBlock
 {
 public:
 	Water(int ID, int x, int y, int z, int texID) :CubeBlock(ID, x, y, z, texID, 1, true){}

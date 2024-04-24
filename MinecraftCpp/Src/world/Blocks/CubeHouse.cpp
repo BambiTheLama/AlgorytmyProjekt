@@ -2,11 +2,11 @@
 #include "../../scene/Game.h"
 #include "BlocksCreator.h"
 
-CubeHouse::CubeHouse(int ID, int x, int y, int z, int woodID, int plankID, int florID) :Block(ID, x, y, z)
+CubeHouse::CubeHouse(int ID, int x, int y, int z, int woodID, int plankID, int floorID) :Block(ID, x, y, z)
 {
 	this->woodID = woodID;
 	this->plankID = plankID;
-	this->florID = florID;
+	this->floorID = floorID;
 }
 
 void CubeHouse::update(float deltaTime)
@@ -16,7 +16,7 @@ void CubeHouse::update(float deltaTime)
 		return;
 
 	g->deleteBlock(x, y, z);
-	Block* b = createBlock(florID, x, y, z);
+	Block* b = createBlock(floorID, x, y, z);
 	if (!g->addBlock(b))
 		delete b;
 
@@ -30,13 +30,13 @@ void CubeHouse::update(float deltaTime)
 			g->deleteBlock(x - i, y, z + j);
 			g->deleteBlock(x - i, y, z - j);
 			g->deleteBlock(x + i, y, z - j);
-			if (!g->addBlock(b = createBlock(florID, x + i, y, z + j)) && b)
+			if (!g->addBlock(b = createBlock(floorID, x + i, y, z + j)) && b)
 				delete b;
-			if (!g->addBlock(b = createBlock(florID, x - i, y, z + j)) && b)
+			if (!g->addBlock(b = createBlock(floorID, x - i, y, z + j)) && b)
 				delete b;
-			if (!g->addBlock(b = createBlock(florID, x - i, y, z - j)) && b)
+			if (!g->addBlock(b = createBlock(floorID, x - i, y, z - j)) && b)
 				delete b;
-			if (!g->addBlock(b = createBlock(florID, x + i, y, z - j)) && b)
+			if (!g->addBlock(b = createBlock(floorID, x + i, y, z - j)) && b)
 				delete b;
 		}
 	for (int i = 0; i < h; i++)
@@ -103,6 +103,5 @@ void CubeHouse::update(float deltaTime)
 	if (!g->addBlock(b = createBlock(woodID, x + n - 1, y, z - n + 1)) && b)
 		delete b;
 	y -= h + 1;
-
 
 }

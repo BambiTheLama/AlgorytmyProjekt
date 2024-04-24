@@ -1,8 +1,7 @@
 #pragma once
 #include "Plant.h"
 
-class SpruceTree:
-    public Plant
+class SpruceTree : public Plant
 {
     int woodID;
     int leafID;

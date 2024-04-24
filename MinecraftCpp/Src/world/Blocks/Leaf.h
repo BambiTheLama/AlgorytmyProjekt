@@ -1,7 +1,7 @@
 #pragma once
 #include "CubeBlock.h"
-class Leaf :
-    public CubeBlock
+
+class Leaf : public CubeBlock
 {
 public:
     Leaf(int ID, int x, int y, int z, int texID);

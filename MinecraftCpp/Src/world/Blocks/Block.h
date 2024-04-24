@@ -47,4 +47,3 @@ public:
 	friend class Chunk;
 	friend class Game;
 };
-

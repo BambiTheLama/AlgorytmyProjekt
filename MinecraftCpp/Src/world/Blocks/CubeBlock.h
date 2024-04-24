@@ -2,8 +2,8 @@
 #include "Block.h"
 #include "../../core/Cube.h"
 #include "../../core/Texture.h"
-class CubeBlock :
-    public Block
+
+class CubeBlock : public Block
 {
 	Cube* cube;
 	int textureFaces;

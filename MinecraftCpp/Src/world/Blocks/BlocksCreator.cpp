@@ -7,7 +7,7 @@
 #include "Cactus.h"
 #include "SpruceTree.h"
 
-Block* createBlock(int i,int x,int y,int z)
+Block* createBlock(int i, int x, int y, int z)
 {
 	if (i <= -1)
 		return NULL;
