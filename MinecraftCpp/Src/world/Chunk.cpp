@@ -135,10 +135,6 @@ void Chunk::start()
 
 void Chunk::update(float deltaTime)
 {
-	for (auto u : toUpdate)
-	{
-		u->update(deltaTime);
-	}
 	for (auto b : toDelete)
 	{
 		if (!b)
@@ -161,6 +157,10 @@ void Chunk::update(float deltaTime)
 			toUpdate.erase(toUpdate.begin() + toRemove);
 
 		delete b;
+	}
+	for (auto u : toUpdate)
+	{
+		u->update(deltaTime);
 	}
 	for (auto b : toAdd)
 	{
@@ -749,7 +749,7 @@ void Chunk::biomLayer(int x, int z, int y, int h, float temperature, float struc
 
 }
 
-void Chunk::genStructures(int x, int z, int y, float temperature, float structureNoise)
+void Chunk::genPlants(int x, int z, int y, float temperature, float structureNoise)
 {
 	if (y <= waterH)
 		return;
@@ -825,6 +825,11 @@ void Chunk::genStructures(int x, int z, int y, float temperature, float structur
 		if (!blocks[y][x][z])
 			blocks[y][x][z] = createBlock(21, blockX, y, blockZ);
 	}
+}
+
+void Chunk::genStructures(int x, int z, int y, float temperature, float structureNoise)
+{
+
 }
 
 void Chunk::generateTeren()
@@ -919,7 +924,7 @@ void Chunk::generateTeren()
 			genSandForWater(i, k, h - 3, h);
 			fillWater(i, k, h, temperatureV);
 
-			genStructures(i, k, h + 1, temperatureV, structureV);
+			genPlants(i, k, h + 1, temperatureV, structureV);
 		}
 
 }
