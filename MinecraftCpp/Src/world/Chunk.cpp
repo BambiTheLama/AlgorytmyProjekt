@@ -116,26 +116,13 @@ void Chunk::update(float deltaTime)
 
 		blocks[by][bx][bz] = NULL;
 		game->setFacing(b->x, b->y, b->z, true);
-		int toRemove = -1;
-		for (int i = 0; i < toUpdate.size(); i++)
-			if (b == toUpdate[i])
-			{
-				toRemove = i;
-				break;
-			}
-		if (toRemove > -1)
-			toUpdate.erase(toUpdate.begin() + toRemove);
-		else
-		{
-			for (int i = 0; i < toAdd.size(); i++)
-				if (b == toAdd[i])
-				{
-					toRemove = i;
-					break;
-				}
-			if (toRemove > -1)
-				toAdd.erase(toAdd.begin() + toRemove);
-		}
+
+		auto it = std::find(toUpdate.begin(), toUpdate.end(), b);
+		if (it != toUpdate.end())
+			toUpdate.erase(it);
+		it = std::find(toAdd.begin(), toAdd.end(), b);
+		if (it != toAdd.end())
+			toAdd.erase(it);
 
 		delete b;
 	}
@@ -150,7 +137,11 @@ void Chunk::update(float deltaTime)
 		int bx = getBlockX(b->x);
 		if (!blocks[by][bx][bz])
 			blocks[by][bx][bz] = b;
-		
+		if (b->isUpdateBlock() && std::count(toUpdate.begin(), toUpdate.end(), b) <= 0)
+		{
+			toUpdate.push_back(b);
+		}
+
 	}
 	if (genVertices || toAdd.size() > 0 || toDelete.size() > 0)
 	{
@@ -213,6 +204,11 @@ void Chunk::deleteBlock(int x, int y, int z)
 		if (removeID >= 0)
 		{
 			toAdd.erase(toAdd.begin() + removeID);
+			removeID = -1;
+			auto it = std::find(toUpdate.begin(), toUpdate.end(), b);
+			if (it != toUpdate.end())
+				toUpdate.erase(it);
+
 			delete b;
 		}
 
@@ -721,8 +717,7 @@ void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structur
 				}
 			}
 		}
-		if (blocks[y][x][z])
-			toUpdate.push_back(blocks[y][x][z]);
+
 	}
 	else if (temperature >= -0.3 && temperature <= 0.3 && ((int)(value) % 469) % 3 == 0)
 	{
@@ -862,7 +857,7 @@ void Chunk::generateTerrain()
 			genSandForWater(i, k, h - 3, h);
 			fillWater(i, k, h, temperatureV);
 
-			//genPlants(i, k, h + 1, temperatureV, structureV);
+			genPlants(i, k, h + 1, temperatureV, structureV);
 			int avgH = 0;
 			for (int tx = -3; tx < 4; tx++)
 			{
