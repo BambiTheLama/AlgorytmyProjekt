@@ -87,14 +87,14 @@ void CubeHouse::update(float deltaTime)
 	g->deleteBlock(x - n + 1, y, z - n + 1);
 	g->deleteBlock(x + n - 1, y, z - n + 1);
 
-	if (!g->addBlock(b = createBlock(woodID, x + n - 1, y, z + n - 1)) && b)
-		delete b;
-	if (!g->addBlock(b = createBlock(woodID, x - n + 1, y, z + n - 1)) && b)
-		delete b;
-	if (!g->addBlock(b = createBlock(woodID, x - n + 1, y, z - n + 1)) && b)
-		delete b;
-	if (!g->addBlock(b = createBlock(woodID, x + n - 1, y, z - n + 1)) && b)
-		delete b;
+	//if (!g->addBlock(b = createBlock(woodID, x + n - 1, y, z + n - 1)) && b)
+	//	delete b;
+	//if (!g->addBlock(b = createBlock(woodID, x - n + 1, y, z + n - 1)) && b)
+	//	delete b;
+	//if (!g->addBlock(b = createBlock(woodID, x - n + 1, y, z - n + 1)) && b)
+	//	delete b;
+	//if (!g->addBlock(b = createBlock(woodID, x + n - 1, y, z - n + 1)) && b)
+	//	delete b;
 	y -= h + 1;
 
 	g->deleteBlock(x, y + 2, z - n + 1);
