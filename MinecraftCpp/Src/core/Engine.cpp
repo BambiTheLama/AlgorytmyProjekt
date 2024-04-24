@@ -65,7 +65,7 @@ Engine::Engine()
 
 
 	Font::setUpFonts();
-	Font::setScreanSize(width, height);
+	Font::setScreenSize(width, height);
 
 	RenderTexture::setUpRenderTextures();
 
@@ -130,7 +130,7 @@ void Engine::start()
 		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		game->draw();
-		Font::setScreanSize(width, height);
+		Font::setScreenSize(width, height);
 		glDisable(GL_DEPTH_TEST);
 		glCullFace(GL_FRONT);
 		glFrontFace(GL_CW);

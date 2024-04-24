@@ -38,7 +38,7 @@ private:
 
 	static void freeFonts();
 
-	static void setScreanSize(float w, float h);
+	static void setScreenSize(float w, float h);
 
 	static void setUpFonts();
 };

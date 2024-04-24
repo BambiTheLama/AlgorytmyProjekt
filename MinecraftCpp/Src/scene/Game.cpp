@@ -16,8 +16,6 @@ Game::Game(int w,int h,GLFWwindow* window)
 	Chunk::game = this;
 	cube = new Cube();
 
-
-
 	this->window = window;
 
 	vao = new VAO();
@@ -45,8 +43,6 @@ Game::Game(int w,int h,GLFWwindow* window)
 	ShadowMap->use(*shader, "texShadow");
 	camera = new Camera(w, h, 0.1f, 1000, 60, glm::vec3(0.0f, 100.0f, -1.0f));
 	game = this;
-
-
 }
 
 Game::~Game()
@@ -67,7 +63,6 @@ Game::~Game()
 
 	chunks.clear();
 
-
 	delete shader;
 	delete Blocks;
 	delete BlocksH;
@@ -80,17 +75,14 @@ Game::~Game()
 
 void Game::start()
 {
-
 	gameRunning = true;
 	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
 	worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
-	
-
 }
 
 glm::vec3 camPos;
 
-bool compareObj(Chunk* c1, Chunk* c2)
+static bool compareObj(Chunk* c1, Chunk* c2)
 {
 	return glm::distance(c1->getPos(), camPos) > glm::distance(c2->getPos(), camPos);
 }
@@ -131,7 +123,6 @@ void Game::update(float deltaTime)
 			{
 				deleteBlock(x, y, z);
 				b = NULL;
-
 			}
 			break;
 		}
@@ -177,7 +168,6 @@ void Game::update(float deltaTime)
 	}
 	toDelete.clear();
 
-
 	toDeleteMutex.unlock();
 
 	toDraw = chunks;
@@ -192,19 +182,14 @@ void Game::update(float deltaTime)
 		}
 
 	chunksMutex.unlock();
-
-
-
 }
 
 void Game::draw()
 {
-
 	camera->useCamera(*shader, "camera");
 
 	glm::mat4 model(1.0f);
 	shader->setUniformMat4(model, "model");
-
 
 	ShadowMap->startUse();
 
@@ -233,22 +218,14 @@ void Game::draw()
 
 	ShadowMap->use(*shader, "texShadow");
 
-	
-
-
-	
-
 	camera->setDir(cameraDir);
 	camera->newPos(cameraPos);
 	camera->setUseProjection(true);
 	camera->useCamera(*shader, "camera");
 	renderScene(shader,true);
 
-
 	drawBlock(shader);
 	ShadowMap->draw();
-
-	
 }
 
 void Game::renderScene(Shader* s,bool trans)
@@ -279,7 +256,6 @@ void Game::drawBlock(Shader* s)
 		model = glm::translate(model, glm::vec3(chunkPos.x, 0, chunkPos.z));
 		s->setUniformMat4(model, "model");
 
-		//glDisable(GL_DEPTH_TEST);
 		glDepthFunc(GL_EQUAL);
 		s->setUniformVec4(glm::vec4(100, 0, 100, 0.6f), "modelColor");
 		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
@@ -288,7 +264,6 @@ void Game::drawBlock(Shader* s)
 		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDepthFunc(GL_LESS);
-		//glEnable(GL_DEPTH_TEST);
 
 	}
 }
@@ -464,26 +439,17 @@ void Game::setGenVerticesFlagAt(int x, int y, int z)
 
 void Game::worldGenerateFun()
 {
-
 	while (gameRunning)
 	{
-
 		genWorld();
-
-
-
 	}
 }
 
 void Game::worldDestroyFun()
 {
-
 	while (gameRunning)
 	{
-
 		desWorld();
-
-
 	}
 }
 
@@ -494,7 +460,6 @@ void Game::genWorld()
 	camPos.z /= chunkT;
 	if (posToGenChunk.size() <= 0)
 	{
-
 		for (int x = camPos.x - range; x < camPos.x + range; x++)
 			for (int z = camPos.z - range; z < camPos.z + range; z++)
 			{
@@ -519,6 +484,7 @@ void Game::genWorld()
 				chunksMutex.unlock();
 			}
 	}
+
 	if (posToGenChunk.size() <= 0)
 		return;
 	glm::vec2 pos = posToGenChunk.back();
@@ -588,10 +554,7 @@ void Game::desWorld()
 				c->clearBlocks();
 				toDelete.push_back(c);
 			}
-
-
 		}
-
 	}
 	toSave.clear();
 	chunksMutex.unlock();

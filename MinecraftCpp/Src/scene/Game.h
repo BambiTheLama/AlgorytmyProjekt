@@ -45,12 +45,12 @@ class Game :
     GameTextures* BlocksH;
     GameTextures* BlocksN;
 
-
     RenderTexture* ShadowMap = NULL;
     static Game* game;
     float time = 0.0f;
     bool debug = false;
     bool reloadMesh = false;
+
 public:
     Game(int w,int h, GLFWwindow* window);
 
@@ -82,9 +82,8 @@ public:
 
     void setGenVerticesFlagAt(int x, int y, int z);
 
-
-
     friend Game* getCurrentGame();
+
 private:
     void worldGenerateFun();
 
