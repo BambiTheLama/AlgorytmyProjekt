@@ -115,21 +115,21 @@ std::vector<unsigned char> Cube::getBrightness()
 
 std::vector<glm::vec3> Cube::getVertexTexture(int textureSides)
 {
-#define addTexture1 textPos.push_back(glm::vec3(0, 0, 0));\
-					textPos.push_back(glm::vec3(0, 1, 0));\
-					textPos.push_back(glm::vec3(1, 0, 0));\
-					textPos.push_back(glm::vec3(1, 1, 0));
-#define addTexture2 textPos.push_back(glm::vec3(0, 0, 1));\
-					textPos.push_back(glm::vec3(0, 1, 1));\
-					textPos.push_back(glm::vec3(1, 0, 1));\
-					textPos.push_back(glm::vec3(1, 1, 1));
-#define addTexture3 textPos.push_back(glm::vec3(0, 0, 2));\
-					textPos.push_back(glm::vec3(0, 1, 2));\
-					textPos.push_back(glm::vec3(1, 0, 2));\
-					textPos.push_back(glm::vec3(1, 1, 2));
-	std::vector<glm::vec3> textPos;
+#define addTexture1 texPos.push_back(glm::vec3(0, 0, 0));\
+					texPos.push_back(glm::vec3(0, 1, 0));\
+					texPos.push_back(glm::vec3(1, 0, 0));\
+					texPos.push_back(glm::vec3(1, 1, 0));
+#define addTexture2 texPos.push_back(glm::vec3(0, 0, 1));\
+					texPos.push_back(glm::vec3(0, 1, 1));\
+					texPos.push_back(glm::vec3(1, 0, 1));\
+					texPos.push_back(glm::vec3(1, 1, 1));
+#define addTexture3 texPos.push_back(glm::vec3(0, 0, 2));\
+					texPos.push_back(glm::vec3(0, 1, 2));\
+					texPos.push_back(glm::vec3(1, 0, 2));\
+					texPos.push_back(glm::vec3(1, 1, 2));
+	std::vector<glm::vec3> texPos;
 	if (face <= 0)
-		return textPos;
+		return texPos;
 	if (checkFace(Front, face))
 	{
 		if (textureSides < 2)
@@ -190,73 +190,73 @@ std::vector<glm::vec3> Cube::getVertexTexture(int textureSides)
 		}
 	}
 
-	return textPos;
+	return texPos;
 }
-int Cube::getVertexTexture(int textID,int textureSides,char dir)
+int Cube::getVertexTexture(int texID,int textureSides,char dir)
 {
 	if (textureSides <= 1)
-		return textID;
+		return texID;
 	if (checkFace(Front, dir))
 	{
 		if (textureSides < 2)
 		{
-			return textID;
+			return texID;
 		}
 		else
 		{
-			return textID + 1;
+			return texID + 1;
 		}
 	}
 	if (checkFace(Back, dir))
 	{
 		if (textureSides < 2)
 		{
-			return textID;
+			return texID;
 		}
 		else
 		{
-			return textID + 1;
+			return texID + 1;
 		}
 	}
 	if (checkFace(Left, dir))
 	{
 		if (textureSides < 2)
 		{
-			return textID;
+			return texID;
 		}
 		else
 		{
-			return textID + 1;
+			return texID + 1;
 		}
 	}
 	if (checkFace(Right, dir))
 	{
 		if (textureSides < 2)
 		{
-			return textID;
+			return texID;
 		}
 		else
 		{
-			return textID + 1;
+			return texID + 1;
 		}
 	}
 	if (checkFace(Up, dir))
 	{
-		return textID;
+		return texID;
 	}
 	if (checkFace(Down, dir))
 	{
 		if (textureSides < 3)
 		{
-			return textID;
+			return texID;
 		}
 		else
 		{
-			return textID + 2;
+			return texID + 2;
 		}
 	}
 
-	return textID;
+	return texID;
 }
 
 std::vector<GLuint> Cube::getIndex(bool doubleSides)
@@ -331,7 +331,7 @@ std::vector<GLuint> Cube::getIndex(bool doubleSides)
 	return index;
 }
 
-std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int textID, bool doubleSides)
+std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int texID, bool doubleSides)
 {
 	std::vector<glm::vec3> text = getVertexTexture(textureSides);
 	std::vector<unsigned char> brightness = getBrightness();
@@ -348,19 +348,19 @@ std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int t
 			((0b1111	 & ((int)pos[i].z + z))		 << 12) +
 			((0b1		 & ((int)text[i].x))         << 16) +
 			((0b1		 & ((int)text[i].y))         << 17) +
-			((0b11111	 & (textID + (int)text[i].z))<< 18) +
+			((0b11111	 & (texID + (int)text[i].z))<< 18) +
 			((0b111		 & ((int)brightness[i]))	 << 23));
 	}
 
 	return vertex;
 }
 
-GLuint Cube::getVertex(int x, int y, int z, int textureSides, int textID, int dir)
+GLuint Cube::getVertex(int x, int y, int z, int textureSides, int texID, int dir)
 {
 	return (x & 0b1111) +
 		((y & 0b11111111) << 4) +
 		((z & 0b1111) << 12) +
-		((getVertexTexture(textID, textureSides, dir) & 0b111111) << 16);
+		((getVertexTexture(texID, textureSides, dir) & 0b111111) << 16);
 }
 
 GLuint Cube::indexSize()

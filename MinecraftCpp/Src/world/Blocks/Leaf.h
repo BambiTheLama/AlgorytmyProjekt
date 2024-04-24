@@ -4,7 +4,7 @@ class Leaf :
     public CubeBlock
 {
 public:
-    Leaf(int ID, int x, int y, int z, int textID);
+    Leaf(int ID, int x, int y, int z, int texID);
 
     bool getDisplay(Block* b) { return true; }
 

@@ -37,11 +37,11 @@ public:
 
 	std::vector<glm::vec3> getVertexTexture(int textureSides);
 
-	int getVertexTexture(int textID, int textureSides, char dir);
+	int getVertexTexture(int texID, int textureSides, char dir);
 
-	std::vector<GLuint> getVertex(int x, int y, int z, int textureSides, int textID,bool doubleSides=false);
+	std::vector<GLuint> getVertex(int x, int y, int z, int textureSides, int texID,bool doubleSides=false);
 
-	GLuint getVertex(int x, int y, int z, int textureSides, int textID, int dir);
+	GLuint getVertex(int x, int y, int z, int textureSides, int texID, int dir);
 
 	std::vector<GLuint> getIndex(bool doubleSides = false);
 

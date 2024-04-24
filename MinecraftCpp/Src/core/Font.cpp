@@ -143,7 +143,7 @@ void Font::drawText(std::string text, int x, int y,int size, glm::vec4 color)
 {
     shader->active();
     shader->setUniformMat4(projection, "projection");
-    shader->setUniformVec4(color, "textColor");
+    shader->setUniformVec4(color, "texColor");
 
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
@@ -190,7 +190,7 @@ void Font::drawText(std::string text, int x, int y,int size, glm::vec4 color)
                 color.g = g / 255.f;
                 color.b = b / 255.f;
                 color.a = a / 255.0f;
-                shader->setUniformVec4(color, "textColor");
+                shader->setUniformVec4(color, "texColor");
                 i = end;
                 continue;
             }

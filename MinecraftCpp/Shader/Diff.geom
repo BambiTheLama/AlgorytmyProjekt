@@ -71,9 +71,7 @@ void normalMode()
 }
 
 
-
 void main()
 {
-
     normalMode();
 }

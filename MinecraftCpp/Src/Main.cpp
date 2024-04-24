@@ -10,7 +10,6 @@ extern "C" {
 
 int main()
 {
-
 	setlocale(LC_ALL, "PL");
 	Engine e;
 	return 0;
