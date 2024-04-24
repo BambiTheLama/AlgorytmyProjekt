@@ -16,7 +16,6 @@
 #include <math.h>
 
 
-
 #define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
 							for (int i = 0; i < chunkW; i++)\
 								for (int k = 0; k < chunkT; k++)
@@ -41,7 +40,6 @@ Chunk::Chunk(int x, int y, int z)
 					blocksID[i][j][k] = new char[10];
 				}
 			}
-
 		}
 	}
 
@@ -49,9 +47,6 @@ Chunk::Chunk(int x, int y, int z)
 	{
 		mesh[i] = new ChunkMesh(i);
 	}
-
-
-
 
 	this->x = x;
 	this->y = y;
@@ -61,19 +56,13 @@ Chunk::Chunk(int x, int y, int z)
 		blocks[j][i][k] = NULL;
 	}
 
-
-
-	
 	if (!loadGame())
-		generateTeren();
+		generateTerrain();
 	
 	setFacing();
 
-
-
-	
 	if (!loadGame())
-		generateTeren();
+		generateTerrain();
 	forAllBlocks
 	{
 		if (blocks[j][i][k])
@@ -84,7 +73,6 @@ Chunk::Chunk(int x, int y, int z)
 	}
 	
 	setFacing();
-
 }
 
 Chunk::~Chunk()
@@ -169,28 +157,22 @@ void Chunk::update(float deltaTime)
 		genVertices = false;
 		toDelete.clear();
 		toAdd.clear();
-		//setFacing();
 		genVerticesPos();
 		for (int i = 0; i < 10; i++)
 			mesh[i]->genMesh();
-
 	}
-
-
 }
 
 void Chunk::draw(Shader* s)
 {
 	glm::mat4 model(1);
 	model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
-	//s->setUniformMat4(model, "model");
 	s->setUniformI1(x * chunkW, "chunkX");
 	s->setUniformI1(z * chunkT, "chunkZ");
 	for (int i = 0; i < 10; i++)
 	{
 		mesh[i]->draw(s);
 	}
-
 }
 
 Block* Chunk::getBlock(int x, int y, int z)
@@ -271,7 +253,7 @@ bool Chunk::addBlock(Block* b)
 	return false;
 }
 
-bool Chunk::isThisChunk(int x, int y, int z)
+bool Chunk::isThisChunk(int x, int y, int z) const
 {
 	x -= this->x * chunkW;
 	y -= this->y * chunkH;
@@ -325,7 +307,6 @@ void Chunk::save()
 		{
 			times++;
 		}
-		
 	}
 	json["Blocks"][b][0] = ID;
 	json["Blocks"][b][1] = times;
@@ -353,7 +334,6 @@ bool Chunk::loadGame()
 
 bool Chunk::loadGame(nlohmann::json json)
 {
-
 	if (!json.contains("Blocks") || json["Blocks"].size() <= 0)
 		return false;
 	int times = 0;
@@ -381,7 +361,6 @@ bool Chunk::loadGame(nlohmann::json json)
 				toUpdate.push_back(blocks[j][i][k]);
 		}
 	}
-
 	return true;
 }
 
@@ -406,8 +385,6 @@ void Chunk::clearBlocks()
 void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
 {
 	return;
-	
-
 }
 
 void Chunk::genVerticesPos()
@@ -422,8 +399,6 @@ void Chunk::genVerticesPos()
 	int sizeY = 0;
 	int data = 0;
 
-
-
 	forAllBlocks
 	{
 		if (blocks[j][i][k])
@@ -435,7 +410,6 @@ void Chunk::genVerticesPos()
 				else
 					blocksID[j][i][k][b] = -1;
 			}
-
 		}
 		else
 		{
@@ -698,7 +672,6 @@ void Chunk::biomLayer(int &x, int &z, int y, int h, float &temperature, float &s
 			delete blocks[j][x][z];
 		blocks[j][x][z] = createBlock(j == h ? blockSurfaceID : blockID, blockX, j, blockZ);
 	}
-
 }
 
 void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structureNoise)
@@ -722,7 +695,6 @@ void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structur
 					blocks[y + cy][x][z] = createBlock(22, blockX, y + cy, blockZ);
 			}
 		}
-
 		return;
 	}
 	if ((int)(value) % div == 0)
@@ -747,13 +719,10 @@ void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structur
 					if (!blocks[y + cy][x][z])
 						blocks[y + cy][x][z] = createBlock(15, blockX, y + cy, blockZ);
 				}
-
 			}
-
 		}
 		if (blocks[y][x][z])
 			toUpdate.push_back(blocks[y][x][z]);
-
 	}
 	else if (temperature >= -0.3 && temperature <= 0.3 && ((int)(value) % 469) % 3 == 0)
 	{
@@ -815,12 +784,12 @@ int getMapHeight(float terain,float erozja,float pv,float river)
 	return h;
 }
 
-void Chunk::generateTeren()
+void Chunk::generateTerrain()
 {
 	int seed = 2137;
 	FastNoiseLite terrain(seed);
-	FastNoiseLite erosia(seed);
-	FastNoiseLite picksAndValies(seed);
+	FastNoiseLite erosion(seed);
+	FastNoiseLite picksAndValues(seed);
 	FastNoiseLite riverNoise(seed);
 	FastNoiseLite temperatureNoise(seed);
 	FastNoiseLite structureNoise(seed);
@@ -833,20 +802,20 @@ void Chunk::generateTeren()
 		terrain.SetFractalLacunarity(2.0f);
 		terrain.SetFractalGain(2.177f);
 		terrain.SetFractalWeightedStrength(4.8f);
-		erosia.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-		erosia.SetFrequency(0.01f * multiplay);
-		erosia.SetFractalType(FastNoiseLite::FractalType_FBm);
-		erosia.SetFractalOctaves(3);
-		erosia.SetFractalLacunarity(0.91f);
-		erosia.SetFractalGain(1.34f);
-		erosia.SetFractalWeightedStrength(4.64f);
-		picksAndValies.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-		picksAndValies.SetFrequency(0.001f * multiplay);
-		picksAndValies.SetFractalType(FastNoiseLite::FractalType_FBm);
-		picksAndValies.SetFractalOctaves(5);
-		picksAndValies.SetFractalLacunarity(2.9f);
-		picksAndValies.SetFractalGain(1.01f);
-		picksAndValies.SetFractalWeightedStrength(2.560f);
+		erosion.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+		erosion.SetFrequency(0.01f * multiplay);
+		erosion.SetFractalType(FastNoiseLite::FractalType_FBm);
+		erosion.SetFractalOctaves(3);
+		erosion.SetFractalLacunarity(0.91f);
+		erosion.SetFractalGain(1.34f);
+		erosion.SetFractalWeightedStrength(4.64f);
+		picksAndValues.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+		picksAndValues.SetFrequency(0.001f * multiplay);
+		picksAndValues.SetFractalType(FastNoiseLite::FractalType_FBm);
+		picksAndValues.SetFractalOctaves(5);
+		picksAndValues.SetFractalLacunarity(2.9f);
+		picksAndValues.SetFractalGain(1.01f);
+		picksAndValues.SetFractalWeightedStrength(2.560f);
 		riverNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 		riverNoise.SetFrequency(0.001f * multiplay);
 		riverNoise.SetFractalType(FastNoiseLite::FractalType_Ridged);
@@ -879,9 +848,12 @@ void Chunk::generateTeren()
 			float z = k + this->z * (chunkT);
 
 			float t = (getValueTerrain(terrain.GetNoise(x, z)) + 1)/2;
-			float e = getValueTerrain(erosia.GetNoise(x, z));
-			float pv = getValueTerrain(picksAndValies.GetNoise(x, z));
+			float e = getValueTerrain(erosion.GetNoise(x, z));
+			float pv = getValueTerrain(picksAndValues.GetNoise(x, z));
 			float riverV = riverNoise.GetNoise(x, z);
+			
+			float terrainV = (t + e / 3 + pv / 18) * 18.0f / 25.0f;
+			int h = minH + terrainV * height;
 
 			float temperatureV = temperatureNoise.GetNoise(x, z);
 			float structureV = structureNoise.GetNoise(x, z);
@@ -900,8 +872,8 @@ void Chunk::generateTeren()
 				for (int tz = 0; tz < 3; tz++)
 				{
 					avgH += getMapHeight((getValueTerrain(terrain.GetNoise(x, z)) + 1) / 2,
-						getValueTerrain(erosia.GetNoise(x, z)),
-						getValueTerrain(picksAndValies.GetNoise(x, z)),
+						getValueTerrain(erosion.GetNoise(x, z)),
+						getValueTerrain(picksAndValues.GetNoise(x, z)),
 						riverNoise.GetNoise(x, z));
 				}
 			}

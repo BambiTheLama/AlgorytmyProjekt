@@ -17,7 +17,6 @@ CubeBlock::~CubeBlock()
 
 void CubeBlock::setFacing(int faces)
 {
-	//texture->useTexture()
 	cube->setFacing(faces);
 }
 
@@ -37,6 +36,7 @@ std::vector<GLuint> CubeBlock::getVertex()
 {
 	int x = this->x;
 	int z = this->z;
+
 	if (x >= 0)
 		x %= chunkW;
 	else
