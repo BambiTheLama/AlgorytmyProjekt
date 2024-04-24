@@ -85,6 +85,8 @@ private:
 
 	void genSandForWater(int x, int z, int y, int h);
 
+	void genPlants(int x, int z, int y, float temperature, float structureNoise);
+
 	void genStructures(int x, int z, int y, float temperature, float structureNoise);
 
 	void genStone(int x, int z, int h);
