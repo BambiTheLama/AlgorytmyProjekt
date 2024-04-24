@@ -6,7 +6,7 @@
 
 static Shader* usingShader;
 
-std::string readShader(const char* path)
+static std::string readShader(const char* path)
 {
 	std::ifstream reader(path);
 	std::string Shader;
@@ -26,11 +26,9 @@ std::string readShader(const char* path)
 	return Shader;
 }
 
-void compileErrors(unsigned int shader, const char* type)
+static void compileErrors(unsigned int shader, const char* type)
 {
-	// Stores status of compilation
 	GLint hasCompiled;
-	// Character array to store error message in
 	char infoLog[1024];
 	if (type != "PROGRAM")
 	{
@@ -51,7 +49,6 @@ void compileErrors(unsigned int shader, const char* type)
 		}
 	}
 }
-
 
 Shader::Shader(const char* vertex, const char* frag)
 {

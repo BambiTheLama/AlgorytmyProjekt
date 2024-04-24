@@ -25,7 +25,7 @@ void Cube::setOneFace(char face, bool state)
 	this->face = (f | ((char)face * state));
 }
 
-std::vector<glm::vec3> Cube::getVertexPos()
+std::vector<glm::vec3> Cube::getVertexPos() const
 {
 	std::vector<glm::vec3> vertexPos;
 	if (face <= 0)
@@ -75,7 +75,7 @@ std::vector<glm::vec3> Cube::getVertexPos()
 	return vertexPos;
 }
 
-std::vector<unsigned char> Cube::getBrightness()
+std::vector<unsigned char> Cube::getBrightness() const
 {
 	std::vector<unsigned char> brightness;
 	if (face <= 0)
@@ -113,7 +113,7 @@ std::vector<unsigned char> Cube::getBrightness()
 	return brightness;
 }
 
-std::vector<glm::vec3> Cube::getVertexTexture(int textureSides)
+std::vector<glm::vec3> Cube::getVertexTexture(int textureSides) const
 {
 #define addTexture1 texPos.push_back(glm::vec3(0, 0, 0));\
 					texPos.push_back(glm::vec3(0, 1, 0));\
@@ -259,7 +259,7 @@ int Cube::getVertexTexture(int texID,int textureSides,char dir)
 	return texID;
 }
 
-std::vector<GLuint> Cube::getIndex(bool doubleSides)
+std::vector<GLuint> Cube::getIndex(bool doubleSides) const
 {
 #define addIndicesOrder1 index.push_back(startIndex + 0);index.push_back(startIndex + 2);\
 						 index.push_back(startIndex + 1);index.push_back(startIndex + 1);\
@@ -272,7 +272,7 @@ std::vector<GLuint> Cube::getIndex(bool doubleSides)
 	if (face <= 0)
 		return index;
 	int startIndex = 0;
-
+	
 	if (checkFace(Front, face))
 	{
 		if (doubleSides)
@@ -351,7 +351,6 @@ std::vector<GLuint> Cube::getVertex(int x, int y, int z, int textureSides, int t
 			((0b11111	 & (texID + (int)text[i].z))<< 18) +
 			((0b111		 & ((int)brightness[i]))	 << 23));
 	}
-
 	return vertex;
 }
 
@@ -363,33 +362,15 @@ GLuint Cube::getVertex(int x, int y, int z, int textureSides, int texID, int dir
 		((getVertexTexture(texID, textureSides, dir) & 0b111111) << 16);
 }
 
-GLuint Cube::indexSize()
+GLuint Cube::indexSize() const
 {
 	GLuint indexS = 0;
-	if (((int)Faces::Front & (int)face) == (int)Faces::Front)
+	for (int i = 0; i < 6; i++)
 	{
-		indexS++;
+		if ((0b1 << i) & face)
+			indexS++;
 	}
-	if (((int)Faces::Back & (int)face) == (int)Faces::Back)
-	{
-		indexS++;
-	}
-	if (((int)Faces::Left & (int)face) == (int)Faces::Left)
-	{
-		indexS++;
-	}
-	if (((int)Faces::Right & (int)face) == (int)Faces::Right)
-	{
-		indexS++;
-	}
-	if (((int)Faces::Up & (int)face) == (int)Faces::Up)
-	{
-		indexS++;
-	}
-	if (((int)Faces::Down & (int)face) == (int)Faces::Down)
-	{
-		indexS++;
-	}
+	
 	indexS *= 4;
 	return indexS;
 }

@@ -7,6 +7,7 @@
 #include "../Properties.h"
 #include "Engine.h"
 
+
 static VAO *vao = NULL;
 static VBO *vbo = NULL;
 static Shader* shader = NULL;
@@ -22,7 +23,7 @@ static std::vector<glm::vec4> vertices{
 
 };
 
-void RenderTexture::setUpRenderTextures()
+void RenderTexture::setupRenderTextures()
 {
     shader = new Shader("Shader/texture.vert", "Shader/texture.frag");
     vao = new VAO();
@@ -52,7 +53,7 @@ RenderTexture::RenderTexture(int w, int h)
     this->h = h;
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    // create a color attachment texture
+
     glGenTextures(1, &texture);
     slot = Texture::textureSlot++;
     glActiveTexture(GL_TEXTURE0 + slot);
@@ -63,7 +64,6 @@ RenderTexture::RenderTexture(int w, int h)
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
-
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h); 
@@ -71,7 +71,7 @@ RenderTexture::RenderTexture(int w, int h)
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
 #ifdef DebugErrorMode
-        printf("[ERROR]: Framebuffer is not complete! %d\n");
+        printf("[ERROR]: Framebuffer is not complete!\n");
 #endif
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -105,17 +105,15 @@ void RenderTexture::use(Shader& s, const char* uniform)
     glActiveTexture(GL_TEXTURE0 + slot);
     s.setUniformI1(slot, uniform);
     glBindTexture(GL_TEXTURE_2D, texture);
-    //glUniform1i(s.getUniformLocation(uniform), 0);
-
 
 }
 
 void RenderTexture::draw()
 {
     shader->active();
-    shader->setUniformVec3(glm::vec3(0.0f, 0.1f, 0.1f), "backGroundColor");
+    shader->setUniformVec3(glm::vec3(0.0f, 0.1f, 0.1f), "backgroundColor");
     vao->bind();
-    use(*shader, "text0");
+    use(*shader, "tex0");
 
     glDisable(GL_DEPTH_TEST);
 

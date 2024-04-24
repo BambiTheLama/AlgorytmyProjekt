@@ -15,16 +15,13 @@
 #include "Font.h"
 #include "RenderTexture.h"
 
-static Shader* textShader = NULL;
-
 static Engine* e;
 
-void reside(GLFWwindow* window, int width, int height)
+void resize(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 	e->height = height;
 	e->width = width;
-	
 }
 
 Engine::Engine()
@@ -49,7 +46,7 @@ Engine::Engine()
 	}
 
 	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, reside);
+	glfwSetFramebufferSizeCallback(window, resize);
 	glfwSwapInterval(0);
 	gladLoadGL();
 	glViewport(0, 0, width, height);
@@ -62,12 +59,10 @@ Engine::Engine()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
-
-	Font::setUpFonts();
+	Font::setupFonts();
 	Font::setScreenSize(width, height);
 
-	RenderTexture::setUpRenderTextures();
+	RenderTexture::setupRenderTextures();
 
 	e = this;
 	start();
@@ -91,7 +86,6 @@ void diffViewport()
 
 void Engine::start()
 {
-
 	float lastTime = glfwGetTime();	
 	Font f("Res/ComicStans.ttf");
 	Game* game = new Game(width, height, window);
@@ -101,12 +95,11 @@ void Engine::start()
 	game->start();
 
 	float time=0;
+
 	while (!glfwWindowShouldClose(window))
 	{
-
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
-
 
 		float currentTime = glfwGetTime();
 		deltaTime = currentTime - lastTime;
@@ -114,6 +107,7 @@ void Engine::start()
 		lastTime = currentTime;
 		changeText -= deltaTime;
 		times.push_back(deltaTime);
+
 		if (changeText <= 0)
 		{
 			float dt = 0;
@@ -138,8 +132,6 @@ void Engine::start()
 		glEnable(GL_DEPTH_TEST);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-
 	}
 	delete game;
 }
-

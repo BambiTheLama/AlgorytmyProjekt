@@ -61,6 +61,29 @@ Chunk::Chunk(int x, int y, int z)
 		blocks[j][i][k] = NULL;
 	}
 
+	SaveChunkData* data = NULL;
+	int element = -1;
+	for (int i = 0; i < saveData.size(); i++)
+		if (saveData[i]->x == x && saveData[i]->y == y && saveData[i]->z == z)
+		{
+			data = saveData[i];
+			element = i;
+			break;
+		}
+	if (data)
+	{
+		saveData.erase(saveData.begin() + element);
+		if (!loadGame(data->j))
+			generateTeren();
+	}
+	else
+	{
+		if (!loadGame())
+			generateTeren();
+	}
+	setFacing();
+
+
 
 	
 	if (!loadGame())

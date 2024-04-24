@@ -60,8 +60,8 @@ void VBO::setNewVertices(std::vector<GLuint>& vertices)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLuint), vertices.data(), GL_DYNAMIC_DRAW);
-
 }
+
 void VBO::bind()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, ID);

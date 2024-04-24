@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <glm/vec4.hpp>
 #include <vector>
 #include <string>
@@ -8,6 +7,7 @@
 #include "glm/glm.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 
 struct Character {
 	unsigned int TextureID;
@@ -39,6 +39,6 @@ private:
 
 	static void setScreenSize(float w, float h);
 
-	static void setUpFonts();
+	static void setupFonts();
 };
 

@@ -4,6 +4,7 @@
 #include <iostream>
 #include "json.hpp"
 #include <fstream>
+
 extern "C" {
 	__declspec(dllexport) unsigned long long NvOptimusEnablement = 0x00000001;
 }

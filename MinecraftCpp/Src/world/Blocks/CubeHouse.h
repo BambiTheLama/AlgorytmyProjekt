@@ -11,6 +11,7 @@ public:
 
     virtual void update(float deltaTime);
 
+
     virtual void setFacing(int faces) {}
 
     virtual void setOneFace(int face, bool state = true) {}
@@ -24,5 +25,8 @@ public:
     virtual GLuint indexSize() { return 0; }
 
     virtual bool isUpdateBlock() { return true; }
+
+    virtual void setFacing(int faces);
+
 };
 
