@@ -26,7 +26,5 @@ public:
 
     virtual bool isUpdateBlock() { return true; }
 
-    virtual void setFacing(int faces);
-
 };
 
