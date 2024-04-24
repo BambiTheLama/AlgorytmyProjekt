@@ -139,8 +139,10 @@ void Game::update(float deltaTime)
 	{
 		a->start();
 		a->update(0.0f);
-		chunks.push_back(a);
 
+		auto it = std::find(chunks.begin(), chunks.end(), a);
+		if (it == chunks.end())
+			chunks.push_back(a);
 	}
 	if (toAdd.size() > 0)
 		reloadMesh = true;
@@ -149,18 +151,10 @@ void Game::update(float deltaTime)
 	toDeleteMutex.lock();
 	for (auto d : toDelete)
 	{
-		int r = -1;
-		for (int i=0;i<chunks.size();i++)
-		{
-			if (chunks[i] == d)
-			{
-				r = i;
-				delete d;
-				break;
-			}
-		}
-		if (r >= 0 && r < chunks.size())
-			chunks.erase(chunks.begin() + r);
+		auto it = std::find(chunks.begin(), chunks.end(), d);
+		if (it != chunks.end())
+			chunks.erase(it);
+		delete d;
 	}
 	if (toDelete.size() > 0)
 	{
@@ -504,9 +498,7 @@ void Game::genWorld()
 
 	if (abs(pos.x - camPos.x) <= range && abs(pos.y - camPos.z) <= range)
 	{
-
 		c = new Chunk(pos.x, 0, pos.y);
-
 	}
 
 	toAddMutex.lock();
@@ -542,15 +534,8 @@ void Game::desWorld()
 		glm::vec3 cPos = c->getLocation();
 		if (abs(camPos.x - cPos.x) > range || abs(camPos.z - cPos.z) > range)
 		{
-			bool addToDelete = true;
-			for (auto d : toDelete)
-				if (c == d)
-				{
-					addToDelete = false;
-					break;
-				}
-
-			if (addToDelete)
+			auto it = std::find(toDelete.begin(), toDelete.end(), c);
+			if (it == toDelete.end())
 			{
 				c->save();
 				c->clearBlocks();
