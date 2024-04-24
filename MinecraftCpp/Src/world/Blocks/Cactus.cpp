@@ -2,7 +2,6 @@
 
 Cactus::Cactus(int ID, int x, int y, int z, int textureID) :CubeBlock(ID, x, y, z, textureID, 3, true)
 {
-
 }
 
 GLuint Cactus::getVertex(int dir)
