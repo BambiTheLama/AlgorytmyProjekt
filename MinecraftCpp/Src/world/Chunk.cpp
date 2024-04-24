@@ -218,6 +218,22 @@ void Chunk::deleteBlock(int x, int y, int z)
 	int bz = getBlockZ(z);
 	if (bx >= 0 && bx < chunkW && by >= 0 && by < chunkH && bz >= 0 && bz < chunkT)
 	{
+
+		int removeID = -1;
+		Block* b = NULL;
+		for (int i = 0; i < toAdd.size(); i++)
+			if (toAdd[i]->x == x && toAdd[i]->y == y && toAdd[i]->z == z)
+			{
+				removeID = i;
+				b = toAdd[i];
+				break;
+			}
+		if (removeID >= 0)
+		{
+			toAdd.erase(toAdd.begin() + removeID);
+			delete b;
+		}
+
 		for (auto d : toDelete)
 			if (d == blocks[by][bx][bz])
 				return;
@@ -776,6 +792,29 @@ void Chunk::genStructures(int &x, int &z, int y, float &temperature, float &stru
 	}
 }
 
+int getMapHeight(float terain,float erozja,float pv,float river)
+{
+	int h = minH + (terain + erozja / 3 + pv / 18) * 18.0f / 25.0f * (maxH - minH);
+	if (0.90f < river)
+	{
+		int rivDeep = (abs(0.90f - river) * 10.0f) * 8;
+		if (h > waterH - rivDeep)
+		{
+			h = waterH - rivDeep;
+		}
+	}
+	else if (river > 0.70f && h >= waterH)
+	{
+		h = pow(1.0f - abs(0.70f - river) * 5, 2) * (h - waterH) + waterH;
+		if (h <= waterH - 1)
+			h = waterH;
+	}
+	if (h <= 0)
+		return 0;
+
+	return h;
+}
+
 void Chunk::generateTeren()
 {
 	int seed = 2137;
@@ -842,33 +881,30 @@ void Chunk::generateTeren()
 			float t = (getValueTerrain(terrain.GetNoise(x, z)) + 1)/2;
 			float e = getValueTerrain(erosia.GetNoise(x, z));
 			float pv = getValueTerrain(picksAndValies.GetNoise(x, z));
-			float terrainV = (t + e / 3 + pv / 18) * 18.0f / 25.0f;
-			int h = minH + terrainV * height;
+			float riverV = riverNoise.GetNoise(x, z);
+
 			float temperatureV = temperatureNoise.GetNoise(x, z);
 			float structureV = structureNoise.GetNoise(x, z);
-			float riverV = riverNoise.GetNoise(x, z);
-			if (0.90f < riverV)
-			{
-				int rivDeep = (abs(0.90f - riverV) * 10.0f)*8;
-				if (h > waterH - rivDeep)
-				{
-					h = waterH - rivDeep;
-				}
-			}
-			else if(riverV > 0.70f && h >= waterH)
-			{
-				h = pow(1.0f - abs(0.70f - riverV) * 5, 2) * (h - waterH) + waterH;
-				if (h <= waterH - 1)
-					h = waterH;
-			}
-			if (h <= 0)
-				h = 1;
+
+			int h = getMapHeight(t, e, pv, riverV);
+
 			genStone(i, k, h - 7);
 			biomLayer(i, k, h - 7, h, temperatureV, structureV);
 			genSandForWater(i, k, h - 3, h);
 			fillWater(i, k, h, temperatureV);
 
 			//genPlants(i, k, h + 1, temperatureV, structureV);
+			int avgH = 0;
+			for (int tx = 0; tx < 3; tx++)
+			{
+				for (int tz = 0; tz < 3; tz++)
+				{
+					avgH += getMapHeight((getValueTerrain(terrain.GetNoise(x, z)) + 1) / 2,
+						getValueTerrain(erosia.GetNoise(x, z)),
+						getValueTerrain(picksAndValies.GetNoise(x, z)),
+						riverNoise.GetNoise(x, z));
+				}
+			}
 			genStructures(i, k, h, temperatureV, structureV);
 		}
 

@@ -25,11 +25,17 @@ void CubeHouse::update(float deltaTime)
 
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
+			for (int k = 0; k <= h; k++)
+			{
+				g->deleteBlock(x + i, y + k, z + j);
+				g->deleteBlock(x - i, y + k, z + j);
+				g->deleteBlock(x - i, y + k, z - j);
+				g->deleteBlock(x + i, y + k, z - j);
+			}
+
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
 		{
-			g->deleteBlock(x + i, y, z + j);
-			g->deleteBlock(x - i, y, z + j);
-			g->deleteBlock(x - i, y, z - j);
-			g->deleteBlock(x + i, y, z - j);
 			if (!g->addBlock(b = createBlock(floorID, x + i, y, z + j)) && b)
 				delete b;
 			if (!g->addBlock(b = createBlock(floorID, x - i, y, z + j)) && b)
@@ -41,11 +47,6 @@ void CubeHouse::update(float deltaTime)
 		}
 	for (int i = 0; i < h; i++)
 	{
-		g->deleteBlock(x + n - 1, y + 1 + i, z + n - 1);
-		g->deleteBlock(x - n + 1, y + 1 + i, z + n - 1);
-		g->deleteBlock(x - n + 1, y + 1 + i, z - n + 1);
-		g->deleteBlock(x + n - 1, y + 1 + i, z - n + 1);
-
 		if (!g->addBlock(b = createBlock(woodID, x + n - 1, y + 1 + i, z + n - 1)) && b)
 			delete b;
 		if (!g->addBlock(b = createBlock(woodID, x - n + 1, y + 1 + i, z + n - 1)) && b)
@@ -54,19 +55,14 @@ void CubeHouse::update(float deltaTime)
 			delete b;
 		if (!g->addBlock(b = createBlock(woodID, x + n - 1, y + 1 + i, z - n + 1)) && b)
 			delete b;
-		for (int j = -n + 1; j < n; j++)
+		for (int j = -n + 2; j < n-1; j++)
 		{
-			g->deleteBlock(x + j, y + 1 + i, z + n - 1);
 			if (!g->addBlock(b = createBlock(plankID, x + j, y + 1 + i, z + n - 1)) && b)
 				delete b;
-			g->deleteBlock(x + j, y + 1 + i, z - n + 1);
 			if (!g->addBlock(b = createBlock(plankID, x + j, y + 1 + i, z - n + 1)) && b)
 				delete b;
-
-			g->deleteBlock(x + n - 1, y + 1 + i, z + j);
 			if (!g->addBlock(b = createBlock(plankID, x + n - 1, y + 1 + i, z + j)) && b)
 				delete b;
-			g->deleteBlock(x - n + 1, y + 1 + i, z + j);
 			if (!g->addBlock(b = createBlock(plankID, x - n + 1, y + 1 + i, z + j)) && b)
 				delete b;
 		}
@@ -75,10 +71,7 @@ void CubeHouse::update(float deltaTime)
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
 		{
-			g->deleteBlock(x + i, y, z + j);
-			g->deleteBlock(x - i, y, z + j);
-			g->deleteBlock(x - i, y, z - j);
-			g->deleteBlock(x + i, y, z - j);
+
 			if (!g->addBlock(b = createBlock(plankID, x + i, y, z + j)) && b)
 				delete b;
 			if (!g->addBlock(b = createBlock(plankID, x - i, y, z + j)) && b)
@@ -103,5 +96,40 @@ void CubeHouse::update(float deltaTime)
 	if (!g->addBlock(b = createBlock(woodID, x + n - 1, y, z - n + 1)) && b)
 		delete b;
 	y -= h + 1;
+
+	g->deleteBlock(x, y + 2, z - n + 1);
+	g->deleteBlock(x, y + 2, z + n - 1);
+	g->deleteBlock(x - n + 1, y + 2, z);
+	g->deleteBlock(x + n - 1, y + 2, z);
+	if (!g->addBlock(b = createBlock(27, x, y + 2, z - n + 1)) && b)
+		delete b;
+	if (!g->addBlock(b = createBlock(27, x, y + 2, z + n - 1)) && b)
+		delete b;
+	if (!g->addBlock(b = createBlock(27, x - n + 1, y + 2, z)) && b)
+		delete b;
+	if (!g->addBlock(b = createBlock(27, x + n - 1, y + 2, z)) && b)
+		delete b;
+	int dir = rand() % 4;
+	if (dir == 0)
+	{
+		g->deleteBlock(x, y + 2, z - n + 1);
+		g->deleteBlock(x, y + 1, z - n + 1);
+	}
+	else if (dir == 1)
+	{
+		g->deleteBlock(x, y + 2, z + n - 1);
+		g->deleteBlock(x, y + 1, z + n - 1);
+	}
+	else if (dir == 2)
+	{
+		g->deleteBlock(x - n + 1, y + 2, z);
+		g->deleteBlock(x - n + 1, y + 1, z);
+	}
+	else if (dir == 2)
+	{
+		g->deleteBlock(x + n - 1, y + 2, z);
+		g->deleteBlock(x + n - 1, y + 1, z);
+	}
+
 
 }

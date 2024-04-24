@@ -70,7 +70,7 @@ Block* createBlock(int i, int x, int y, int z)
 	case 26:///CoobleStone
 		return new CubeBlock(i, x, y, z, 34);
 	case 27:///Glass
-		return new CubeBlock(i, x, y, z, 35);
+		return new CubeBlock(i, x, y, z, 35, 1, true);
 	case 28:///SandStone
 		return new CubeBlock(i, x, y, z, 36, 3);
 	case 29://PathDirt
