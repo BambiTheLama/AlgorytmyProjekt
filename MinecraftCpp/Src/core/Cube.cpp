@@ -14,7 +14,7 @@ Cube::Cube()
 	face = 0b111111;
 }
 
-void Cube::setFaceing(char faces)
+void Cube::setFacing(char faces)
 {
 	this->face = faces;
 }

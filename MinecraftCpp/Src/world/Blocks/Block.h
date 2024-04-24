@@ -16,7 +16,7 @@ public:
 
 	virtual void update(float deltaTime){}
 
-	virtual void setFaceing(int faces) = 0;
+	virtual void setFacing(int faces) = 0;
 
 	virtual void setOneFace(int face, bool state = true) = 0;
 
@@ -24,13 +24,13 @@ public:
 
 	virtual std::vector<GLuint> getVertex() = 0;
 
-	virtual bool isRenderedSide(int dir) { return false; }
-
-	virtual GLuint getVertex(int dir) { return 0; }
-
 	virtual std::vector<GLuint> getIndex() = 0;
 
 	virtual GLuint indexSize() = 0;
+
+	virtual bool isRenderedSide(int dir) { return false; }
+
+	virtual GLuint getVertex(int dir) { return 0; }
 
 	virtual char faceToSetUp() { return 0; }
 

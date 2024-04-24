@@ -74,9 +74,9 @@ public:
 
     bool addBlock(Block* b);
 
-    void setFaceing(int x,int y,int z,bool display, char face = 0b111111);
+    void setFacing(int x,int y,int z,bool display, char face = 0b111111);
 
-    void setFaceing(Block* b, char face = 0b111111);
+    void setFacing(Block* b, char face = 0b111111);
 
     Chunk* getChunkAt(int x, int y, int z);
 

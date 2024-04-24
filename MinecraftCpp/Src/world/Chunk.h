@@ -32,7 +32,6 @@ class Chunk
 	bool genVertices = false;
 	bool wasCleared = false;
 	static std::string path;
-	static std::vector<SaveChunkData*> saveData;
 public:
 	Chunk(int x, int y, int z);
 
@@ -75,23 +74,23 @@ private:
 
 	static void saveBlockData();
 
-	void setFaceing();
+	void setFacing();
 
 	void genVerticesPos();
 
 	void generateTeren();
 
-	void fillWater(int x, int z, int h, float temperature);
+	void fillWater(int &x, int &z, int h, float &temperature);
 
-	void genSandForWater(int x, int z, int y, int h);
+	void genSandForWater(int &x, int &z, int y, int h);
 
-	void genPlants(int x, int z, int y, float temperature, float structureNoise);
+	void genPlants(int &x, int &z, int y, float &temperature, float &structureNoise);
 
-	void genStructures(int x, int z, int y, float temperature, float structureNoise);
+	void genStructures(int &x, int &z, int y, float &temperature, float &structureNoise);
 
-	void genStone(int x, int z, int h);
+	void genStone(int &x, int &z, int h);
 
-	void biomLayer(int x, int z, int y, int h, float temperature, float structureNoise);
+	void biomLayer(int &x, int &z, int y, int h, float &temperature, float &structureNoise);
 
 };
 

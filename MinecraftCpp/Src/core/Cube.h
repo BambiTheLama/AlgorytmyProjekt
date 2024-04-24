@@ -27,7 +27,7 @@ public:
 
 	Cube();
 
-	void setFaceing(char faces);
+	void setFacing(char faces);
 
 	void setOneFace(char face, bool state = true);
 

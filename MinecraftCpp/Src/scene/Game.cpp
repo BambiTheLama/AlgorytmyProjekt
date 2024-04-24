@@ -177,7 +177,7 @@ void Game::update(float deltaTime)
 	if (glfwGetKey(window, GLFW_KEY_TAB))
 		for (auto c : chunks)
 		{
-			c->setFaceing();
+			c->setFacing();
 			c->genVerticesFlag();
 		}
 
@@ -298,6 +298,8 @@ void Game::deleteBlock(int x,int y,int z)
 
 bool Game::addBlock(Block* b)
 {
+	if (!b)
+		return false;
 	int x = b->x;
 	int y = b->y;
 	int z = b->z;
@@ -311,9 +313,9 @@ bool Game::addBlock(Block* b)
 	return false;
 }
 
-void Game::setFaceing(int x, int y, int z, bool display, char face)
+void Game::setFacing(int x, int y, int z, bool display, char face)
 {
-#define setFaceingDef(CheckingFace,x1,y1,z1) \
+#define setFacingDef(CheckingFace,x1,y1,z1) \
 	if (checkFace(CheckingFace, face))\
 	{\
 		block = getBlockAt(x1, y1, z1);\
@@ -326,17 +328,17 @@ void Game::setFaceing(int x, int y, int z, bool display, char face)
 					
 
 	Block* block;
-	setFaceingDef(Front, x, y, z - 1)
-	setFaceingDef(Back, x, y, z + 1)
-	setFaceingDef(Left, x + 1, y, z)
-	setFaceingDef(Right, x - 1, y, z)
-	setFaceingDef(Up, x, y - 1, z)
-	setFaceingDef(Down, x, y + 1, z)
+	setFacingDef(Front, x, y, z - 1)
+	setFacingDef(Back, x, y, z + 1)
+	setFacingDef(Left, x + 1, y, z)
+	setFacingDef(Right, x - 1, y, z)
+	setFacingDef(Up, x, y - 1, z)
+	setFacingDef(Down, x, y + 1, z)
 
 	setGenVerticesFlagAt(x, y, z);
 }
 
-void Game::setFaceing(Block* b, char face)
+void Game::setFacing(Block* b, char face)
 {
 	if (!b)
 		return;

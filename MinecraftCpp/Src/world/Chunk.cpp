@@ -22,7 +22,7 @@
 								for (int k = 0; k < chunkT; k++)
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
-std::vector<SaveChunkData*> Chunk::saveData;
+
 static char**** blocksID = NULL;
 
 Chunk::Chunk(int x, int y, int z)
@@ -60,52 +60,21 @@ Chunk::Chunk(int x, int y, int z)
 	{
 		blocks[j][i][k] = NULL;
 	}
-	SaveChunkData* data = NULL;
-	int element = -1;
-	for (int i = 0; i < saveData.size(); i++)
-		if (saveData[i]->x == x && saveData[i]->y == y && saveData[i]->z == z)
-		{
-			data = saveData[i];
-			element = i;
-			break;
-		}
-	if (data)
-	{
-		saveData.erase(saveData.begin() + element);
-		if (!loadGame(data->j))
-			generateTeren();
-	}
-	else
-	{
-		if (!loadGame())
-			generateTeren();
-	}
-	setFaceing();
 
-	if (!data)
-		return;
+
 	
-	nlohmann::json j = data->j;
-
-	if (j.contains("ToAdd"))
+	if (!loadGame())
+		generateTeren();
+	forAllBlocks
 	{
-		int size = j["ToAdd"].size();
-		for (int i = 0; i < size; i++)
+		if (blocks[j][i][k])
 		{
-			int ID = j["ToAdd"][i][0];
-			int x = j["ToAdd"][i][1];
-			int y = j["ToAdd"][i][2];
-			int z = j["ToAdd"][i][3];
-			Block* b = createBlock(ID, x, y, z);
-			if (b)
-			{
-				if (!addBlock(b))
-					delete b;
-			}
+			if (blocks[j][i][k]->isUpdateBlock())
+				toUpdate.push_back(blocks[j][i][k]);
 		}
-
 	}
-	delete data;
+	
+	setFacing();
 
 }
 
@@ -135,6 +104,10 @@ void Chunk::start()
 
 void Chunk::update(float deltaTime)
 {
+	for (auto u : toUpdate)
+	{
+		u->update(deltaTime);
+	}
 	for (auto b : toDelete)
 	{
 		if (!b)
@@ -145,9 +118,9 @@ void Chunk::update(float deltaTime)
 		int bx = getBlockX(b->x);
 
 		blocks[by][bx][bz] = NULL;
-		game->setFaceing(b->x, b->y, b->z, true);
+		game->setFacing(b->x, b->y, b->z, true);
 		int toRemove = -1;
-		for(int i=0;i<toUpdate.size();i++)
+		for (int i = 0; i < toUpdate.size(); i++)
 			if (b == toUpdate[i])
 			{
 				toRemove = i;
@@ -155,18 +128,26 @@ void Chunk::update(float deltaTime)
 			}
 		if (toRemove > -1)
 			toUpdate.erase(toUpdate.begin() + toRemove);
+		else
+		{
+			for (int i = 0; i < toAdd.size(); i++)
+				if (b == toAdd[i])
+				{
+					toRemove = i;
+					break;
+				}
+			if (toRemove > -1)
+				toAdd.erase(toAdd.begin() + toRemove);
+		}
 
 		delete b;
 	}
-	for (auto u : toUpdate)
-	{
-		u->update(deltaTime);
-	}
+
 	for (auto b : toAdd)
 	{
 		if (b->faceToSetUp() <= 0)
 			continue;
-		game->setFaceing(b, b->faceToSetUp());
+		game->setFacing(b, b->faceToSetUp());
 		int by = b->y;
 		int bz = getBlockZ(b->z);
 		int bx = getBlockX(b->x);
@@ -179,7 +160,7 @@ void Chunk::update(float deltaTime)
 		genVertices = false;
 		toDelete.clear();
 		toAdd.clear();
-		//setFaceing();
+		//setFacing();
 		genVerticesPos();
 		for (int i = 0; i < 10; i++)
 			mesh[i]->genMesh();
@@ -399,50 +380,8 @@ void Chunk::clearBlocks()
 
 void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
 {
-	int cX;
-	if (x >= 0)
-		cX = x / chunkW;
-	else
-		cX = ((x) / chunkW )- 1;
-	int cY = 0;
-	int cZ;
-	if (z >= 0)
-		cZ = z / chunkT;
-	else
-		cZ = z / chunkT - 1;
-	SaveChunkData* data = NULL;
-	for (auto s : saveData)
-		if (s->x == cX && s->y == cY && s->z == cZ)
-		{
-			data = s;
-			break;
-		}
-	if (data == NULL)
-	{
-		data = new SaveChunkData();
-		saveData.push_back(data);
-		data->x = cX;
-		data->y = cY;
-		data->z = cZ;
-		std::string pathFile = fileName(cX, cY, cZ);
-		std::ifstream read(pathFile);
-		if (read.is_open())
-		{
-			read >> data->j;
-		}
-
-		read.close();
-	}
+	return;
 	
-	int size = 0;
-	if (data->j.contains("ToAdd"))
-	{
-		size = (int)data->j["ToAdd"].size();
-	}
-	data->j["ToAdd"][size][0] = ID;
-	data->j["ToAdd"][size][1] = getBlockX(x);
-	data->j["ToAdd"][size][2] = y;
-	data->j["ToAdd"][size][3] = getBlockZ(z);
 
 }
 
@@ -657,19 +596,7 @@ void genValues(float** tab)
 
 void Chunk::saveBlockData()
 {
-	for (auto s : saveData)
-	{
-		std::string path = fileName(s->x, s->y, s->z);
-		std::ofstream save(path);
-		if (save.is_open())
-		{
-			save << s->j;
-			save.close();
-		}
-		delete s;
-		
-	}
-	saveData.clear();
+
 }
 
 float getValueTerrain(float v)
@@ -681,7 +608,7 @@ float getValueTerrain(float v)
 	return powf(v, 3);
 }
 
-void Chunk::genStone(int x, int z, int h)
+void Chunk::genStone(int &x, int &z, int h)
 {
 	int blockX = x + this->x * (chunkW);
 	int blockZ = z + this->z * (chunkT);
@@ -693,7 +620,7 @@ void Chunk::genStone(int x, int z, int h)
 	}
 }
 
-void Chunk::fillWater(int x,int z,int h,float temperature)
+void Chunk::fillWater(int &x,int &z,int h,float &temperature)
 {
 	int blockX = x + this->x * (chunkW);
 	int blockZ = z + this->z * (chunkT);
@@ -709,7 +636,7 @@ void Chunk::fillWater(int x,int z,int h,float temperature)
 
 }
 
-void Chunk::genSandForWater(int x, int z,int y, int h)
+void Chunk::genSandForWater(int &x, int &z,int y, int h)
 {
 	int blockX = x + this->x * (chunkW);
 	int blockZ = z + this->z * (chunkT);
@@ -723,7 +650,7 @@ void Chunk::genSandForWater(int x, int z,int y, int h)
 	}
 }
 
-void Chunk::biomLayer(int x, int z, int y, int h, float temperature, float structureNoise)
+void Chunk::biomLayer(int &x, int &z, int y, int h, float &temperature, float &structureNoise)
 {
 	if (y < 0)
 		y = 0;
@@ -749,12 +676,9 @@ void Chunk::biomLayer(int x, int z, int y, int h, float temperature, float struc
 
 }
 
-void Chunk::genPlants(int x, int z, int y, float temperature, float structureNoise)
+void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structureNoise)
 {
-	if (y <= waterH)
-		return;
-
-	if (y < 0 || y >= chunkH || x < 0 || x >= chunkW || z < 0 || z >= chunkT)
+	if (y >= chunkH|| y <= waterH)
 		return;
 	int blockX = x + this->x * (chunkW);
 	int blockZ = z + this->z * (chunkT);
@@ -826,10 +750,21 @@ void Chunk::genPlants(int x, int z, int y, float temperature, float structureNoi
 			blocks[y][x][z] = createBlock(21, blockX, y, blockZ);
 	}
 }
-
-void Chunk::genStructures(int x, int z, int y, float temperature, float structureNoise)
+#include "Blocks/CubeHouse.h"
+void Chunk::genStructures(int &x, int &z, int y, float &temperature, float &structureNoise)
 {
+	int blockX = x + this->x * (chunkW);
+	int blockZ = z + this->z * (chunkT);
+	int value = abs(temperature) * 1000000;
+	if (((int)(value) % 10000) == 0)
+	{
+		if (y <= waterH)
+			return;
+		if (blocks[y][x][z])
+			delete blocks[y][x][z];
+		blocks[y][x][z] = new CubeHouse(0, blockX, y, blockZ, 5, 23, 26);
 
+	}
 }
 
 void Chunk::generateTeren()
@@ -924,7 +859,8 @@ void Chunk::generateTeren()
 			genSandForWater(i, k, h - 3, h);
 			fillWater(i, k, h, temperatureV);
 
-			genPlants(i, k, h + 1, temperatureV, structureV);
+			//genPlants(i, k, h + 1, temperatureV, structureV);
+			genStructures(i, k, h, temperatureV, structureV);
 		}
 
 }
@@ -946,7 +882,7 @@ int getBlockZ(int z)
 	return (chunkT - (abs(z) % chunkT)) % chunkT;
 }
 
-void Chunk::setFaceing()
+void Chunk::setFacing()
 {
 	Chunk* lChunk = game->getChunkAt(x - 1, y, z);
 	Chunk* rChunk = game->getChunkAt(x + 1, y, z);
