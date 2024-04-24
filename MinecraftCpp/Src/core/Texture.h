@@ -28,7 +28,7 @@ public:
 
 	void useTexture(Shader& shader, const char* uniform, int n = 0);
 
-	void useTexture(const char* uniform);
+	void useTexture(const char* uniform) const;
 
 	void setTextureSize(const char* uniform);
 
@@ -38,7 +38,7 @@ public:
 
 	void deleteTexture();
 
-	bool wasLoaded() { return loaded; }
+	bool wasLoaded() const { return loaded; }
 
 	friend class Engine;
 	friend class RenderTexture;

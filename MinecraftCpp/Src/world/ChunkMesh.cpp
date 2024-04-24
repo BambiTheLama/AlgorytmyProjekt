@@ -55,6 +55,7 @@ static std::vector<glm::vec3> vertQuad = {
 	glm::vec3(0,1,1),
 	glm::vec3(1,1,0),
 };
+
 static VBO* vboQuadText = NULL;
 static std::vector<glm::vec2> vertQuadText = {
 	//Front	
@@ -150,7 +151,6 @@ void ChunkMesh::newMesh(std::vector<int> data)
 	vao->unbind();
 
 	this->elements = data.size();
-
 }
 void ChunkMesh::clearMesh()
 {

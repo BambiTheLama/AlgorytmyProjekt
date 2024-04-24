@@ -7,13 +7,13 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-Camera::Camera(float width, float height, float neares, float farest, float cameraAngle, glm::vec3 position)
+Camera::Camera(float width, float height, float nearest, float farthest, float cameraAngle, glm::vec3 position)
 {
 	cameraHeight = height;
 	cameraWidth = width;
 	cameraPos = position;
-	this->farest = farest;
-	this->nearest = neares;
+	this->farthest = farthest;
+	this->nearestt = nearest;
 	this->cameraAngleDeg = cameraAngle;
 }
 
@@ -26,7 +26,7 @@ void Camera::useCamera(Shader& shader, const char* uniform)
 	if (useProjection)
 	{
 
-		projection = glm::perspective(glm::radians(cameraAngleDeg), cameraWidth / cameraHeight, nearest, farest);
+		projection = glm::perspective(glm::radians(cameraAngleDeg), cameraWidth / cameraHeight, nearestt, farthest);
 
 	}
 	else

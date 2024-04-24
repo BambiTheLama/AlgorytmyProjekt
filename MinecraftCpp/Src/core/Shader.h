@@ -7,7 +7,6 @@ class Shader
 {
 	GLuint ID;
 
-
 public:
 	Shader(const char* vertex, const char* frag);
 

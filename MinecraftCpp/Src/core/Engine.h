@@ -27,7 +27,7 @@ public:
 
 	void diffViewport();
 
-	friend void reside(GLFWwindow* window, int width, int height);
+	friend void resize(GLFWwindow* window, int width, int height);
 
 	friend void diffViewport();
 

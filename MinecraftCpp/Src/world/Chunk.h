@@ -75,7 +75,7 @@ private:
 
 	static void saveBlockData();
 
-	void setFaceing();
+	void setFacing();
 
 	void genVerticesPos();
 

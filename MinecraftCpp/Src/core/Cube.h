@@ -27,15 +27,15 @@ public:
 
 	Cube();
 
-	void setFaceing(char faces);
+	void setFacing(char faces);
 
 	void setOneFace(char face, bool state = true);
 
-	std::vector<glm::vec3> getVertexPos();
+	std::vector<glm::vec3> getVertexPos() const;
 
-	std::vector<unsigned char> getBrightness();
+	std::vector<unsigned char> getBrightness() const;
 
-	std::vector<glm::vec3> getVertexTexture(int textureSides);
+	std::vector<glm::vec3> getVertexTexture(int textureSides) const;
 
 	int getVertexTexture(int texID, int textureSides, char dir);
 
@@ -43,13 +43,13 @@ public:
 
 	GLuint getVertex(int x, int y, int z, int textureSides, int texID, int dir);
 
-	std::vector<GLuint> getIndex(bool doubleSides = false);
+	std::vector<GLuint> getIndex(bool doubleSides = false) const;
 
 	char getFaces()const { return face; }
 
 	bool hasSide(int dir) { return ((int)(0b1 << dir) & (int)face) != (int)(0b1 << dir); }
 
-	GLuint indexSize();
+	GLuint indexSize() const;
 
 	friend class Engine;
 

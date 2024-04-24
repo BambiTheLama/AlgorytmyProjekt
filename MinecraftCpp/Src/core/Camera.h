@@ -14,15 +14,15 @@ class Camera
 	float cameraSensivity = 100;
 	float cameraWidth;
 	float cameraHeight;
-	float farest;
-	float nearest;
+	float farthest;
+	float nearestt;
 	float speed = 15;
 	float maxSpeed = 100;
 	float minSpeed = 15;
 	float cameraAngleDeg = 90;
 	bool useProjection = true;
 public:
-	Camera(float width, float height, float neares, float farest,float cameraAngle=45.0f, glm::vec3 position = glm::vec3(0));
+	Camera(float width, float height, float nearest, float farthest,float cameraAngle=45.0f, glm::vec3 position = glm::vec3(0));
 
 	void useCamera(Shader& shader,const char* uniform);
 
@@ -40,7 +40,7 @@ public:
 
 	glm::vec3 getDir() const  { return cameraOrientation; }
 
-	float getRange() const { return farest; }
+	float getRange() const { return farthest; }
 
 	void setDir(glm::vec3 dir) { cameraOrientation = dir; }
 

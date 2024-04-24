@@ -14,7 +14,7 @@ public:
 
 	~CubeBlock();
 
-	virtual void setFaceing(int faces);
+	virtual void setFacing(int faces);
 
 	virtual void setOneFace(int face, bool state = true);
 

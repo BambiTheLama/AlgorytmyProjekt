@@ -11,7 +11,7 @@ public:
 
 	virtual void update(float deltaTime);
 
-	virtual void setFaceing(int faces) {}
+	virtual void setFacing(int faces) {}
 
 	virtual void setOneFace(int face, bool state = true) {}
 

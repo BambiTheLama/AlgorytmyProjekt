@@ -86,7 +86,7 @@ Font::~Font()
     }
 }
 
-int getValueFromText(std::string text, int begin, int end)
+static int getValueFromText(std::string text, int begin, int end)
 {
     int v = 0;
     for (int i = begin; i < end && i < text.size(); i++)
@@ -100,7 +100,7 @@ int getValueFromText(std::string text, int begin, int end)
     }
     return v;
 }
-int getValueStartPos(std::string text, int begin, int end)
+static int getValueStartPos(std::string text, int begin, int end)
 {
     for (int i = begin; i < end && i < text.size(); i++)
     {
@@ -111,7 +111,7 @@ int getValueStartPos(std::string text, int begin, int end)
     }
     return -1;
 }
-int getSeparatorStartPos(std::string text, int begin, int end)
+static int getSeparatorStartPos(std::string text, int begin, int end)
 {
     for (int i = begin; i < end && i < text.size(); i++)
     {
@@ -265,7 +265,7 @@ void Font::freeFonts()
     glDeleteBuffers(1, &VBO);
 }
 
-void Font::setUpFonts()
+void Font::setupFonts()
 {
     shader = new Shader("Shader/text.vert", "Shader/text.frag");
     glGenVertexArrays(1, &VAO);

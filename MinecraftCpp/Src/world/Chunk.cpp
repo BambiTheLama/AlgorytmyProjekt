@@ -80,7 +80,7 @@ Chunk::Chunk(int x, int y, int z)
 		if (!loadGame())
 			generateTeren();
 	}
-	setFaceing();
+	setFacing();
 
 	if (!data)
 		return;
@@ -145,7 +145,7 @@ void Chunk::update(float deltaTime)
 		int bx = getBlockX(b->x);
 
 		blocks[by][bx][bz] = NULL;
-		game->setFaceing(b->x, b->y, b->z, true);
+		game->setFacing(b->x, b->y, b->z, true);
 		int toRemove = -1;
 		for(int i=0;i<toUpdate.size();i++)
 			if (b == toUpdate[i])
@@ -166,7 +166,7 @@ void Chunk::update(float deltaTime)
 	{
 		if (b->faceToSetUp() <= 0)
 			continue;
-		game->setFaceing(b, b->faceToSetUp());
+		game->setFacing(b, b->faceToSetUp());
 		int by = b->y;
 		int bz = getBlockZ(b->z);
 		int bx = getBlockX(b->x);
@@ -179,7 +179,7 @@ void Chunk::update(float deltaTime)
 		genVertices = false;
 		toDelete.clear();
 		toAdd.clear();
-		//setFaceing();
+		//setFacing();
 		genVerticesPos();
 		for (int i = 0; i < 10; i++)
 			mesh[i]->genMesh();
@@ -946,7 +946,7 @@ int getBlockZ(int z)
 	return (chunkT - (abs(z) % chunkT)) % chunkT;
 }
 
-void Chunk::setFaceing()
+void Chunk::setFacing()
 {
 	Chunk* lChunk = game->getChunkAt(x - 1, y, z);
 	Chunk* rChunk = game->getChunkAt(x + 1, y, z);

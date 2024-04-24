@@ -15,10 +15,10 @@ CubeBlock::~CubeBlock()
 	delete cube;
 }
 
-void CubeBlock::setFaceing(int faces)
+void CubeBlock::setFacing(int faces)
 {
 	//texture->useTexture()
-	cube->setFaceing(faces);
+	cube->setFacing(faces);
 }
 
 void CubeBlock::setOneFace(int face, bool state)

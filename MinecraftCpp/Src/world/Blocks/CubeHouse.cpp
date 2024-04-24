@@ -30,7 +30,7 @@ void CubeHouse::update(float deltaTime)
 
 }
 
-void CubeHouse::setFaceing(int faces)
+void CubeHouse::setFacing(int faces)
 {
 
 }

@@ -12,23 +12,14 @@ std::vector<Texture*> Texture::textures;
 
 Texture::Texture(const char* path, GLenum textureType, GLenum format, GLenum pixelType,GLenum genFormat)
 {
-	//for (auto t : textures)
-	//{
-	//	if (std::string(path).compare(t->path) == 0)
-	//	{
-	//		copyData(*t);
-	//		return;
-	//	}
-	//
-	//}
 	std::string s(path);
-	if (s.size() > 4 && s.at(s.size() - 4) == '.' && s.at(s.size() - 3) == 'j' && s.at(s.size() - 2) == 'p' && s.at(s.size() - 1) == 'g')
-		format = GL_RGB;
+	if (s.size() > 4 && s.substr(s.size() - 4) == ".jpg")
+	  format = GL_RGB;
 
 	this->path = path;
 	type = textureType;
-	int numColCh;
-	unsigned char* bytes = stbi_load(path, &w, &h, &numColCh, 0);
+	int channelsNumber;
+	unsigned char* bytes = stbi_load(path, &w, &h, &channelsNumber, 0);
 	glGenTextures(1, &ID);
 	slot = textureSlot++;
 	glActiveTexture(GL_TEXTURE0 + slot);
@@ -76,7 +67,6 @@ Texture::Texture(Texture& texture)
 
 Texture::~Texture()
 {
-
 }
 
 void Texture::bind()
@@ -95,10 +85,9 @@ void Texture::useTexture(Shader& shader, const char* uniform,int n)
 	shader.active();
 	glUniform1i(shader.getUniformLocation(uniform)+n, slot);
 }
-void Texture::useTexture(const char* uniform)
+void Texture::useTexture(const char* uniform) const
 {
 	Shader* s = getUsingShader();
-	//s.active();
 	if (s)
 		s->setUniformI1(slot, uniform);
 }
@@ -111,12 +100,8 @@ void Texture::clearAllTextures()
 #define info
 		printf("[Info]: Texture destroyed succesful ID: %d\n", t->ID, t->path);
 #endif
-
 		glDeleteTextures(1, &t->ID);
-
 	}
-
-
 	textures.clear();
 }
 void Texture::copyData(Texture& texture)

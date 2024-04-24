@@ -1,6 +1,7 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "../Properties.h"
+
 VAO::VAO()
 {
 	glGenVertexArrays(1, &ID);
@@ -8,7 +9,6 @@ VAO::VAO()
 #define info
 	printf("[INFO]: Succesful Create VAO %d\n", (int)ID);
 #endif
-
 }
 
 VAO::~VAO()

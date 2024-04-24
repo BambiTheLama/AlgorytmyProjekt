@@ -11,6 +11,7 @@ class RenderTexture
 	GLenum type;
 	int w, h;
 	GLenum slot;
+
 public:
 	RenderTexture(int w, int h);
 
@@ -26,7 +27,7 @@ public:
 
 	friend class Engine;
 private:
-	static void setUpRenderTextures();
+	static void setupRenderTextures();
 
 	static void endRenderTexture();
 };
