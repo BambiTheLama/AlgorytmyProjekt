@@ -383,93 +383,41 @@ void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
 	return;
 }
 
-void Chunk::genVerticesPos()
+void Chunk::genVerticPos(int dir)
 {
-	const int vecSize = 10;
-	std::vector<int> vertices[vecSize];
-
-	GLuint lastIndexSolid = 0;
-	GLuint lastIndexTrans = 0;
-	
+	char blocksID[chunkH][chunkW][chunkT];
+	std::vector<int> vertices;
+	forAllBlocks
+	{
+		if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
+			blocksID[j][i][k] = blocks[j][i][k]->getID();
+		else
+			blocksID[j][i][k] = -1;
+	}
 	int sizeX = 0;
 	int sizeY = 0;
 	int data = 0;
-
-	forAllBlocks
+	if (dir <= 1)
 	{
-		if (blocks[j][i][k])
+		forAllBlocks
 		{
-			for (int b = 0; b < 10; b++)
-			{
-				if (blocks[j][i][k]->isRenderedSide(b))
-					blocksID[j][i][k][b] = blocks[j][i][k]->getID();
-				else
-					blocksID[j][i][k][b] = -1;
-			}
-		}
-		else
-		{
-			for (int b = 0; b < 10; b++)
-				blocksID[j][i][k][b] = -1;
-		}
-	}
-
-	forAllBlocks
-	{
-		for (int b = 0; b < 2; b++)
-		{
-			if (blocksID[j][i][k][b] >= 0)
-			{
-				data = blocks[j][i][k]->getVertex(b);
-				for (sizeX = 0; sizeX < 7 && j + sizeX + 1 < chunkH; sizeX++)
-				{
-					if (blocksID[j + sizeX + 1][i][k][b] != blocksID[j][i][k][b])
-					{
-						break;
-					}
-					blocksID[j + sizeX + 1][i][k][b] = -1;
-				}
-				for (sizeY = 0; sizeY < 7 && k + sizeY + 1 < chunkT; sizeY++)
-				{
-					bool breaked = false;
-					for (int s = 0; s <= sizeX; s++)
-						if (blocksID[j + s][i][k + sizeY + 1][b] != blocksID[j][i][k][b])
-						{
-							breaked = true;
-							break;
-						}
-
-					if (breaked)
-						break;
-					else
-						for (int s = 0; s <= sizeX; s++)
-							blocksID[j + s][i][k + sizeY + 1][b] = -1;
-				}
-				blocksID[j][i][k][b] = -1;
-				data += (sizeX << 26) + (sizeY << 29);
-
-				vertices[b].push_back(data);
-
-			}
-		}
-	for (int b = 2; b < 4; b++)
-	{
-		if (blocksID[j][i][k][b] >= 0)
-		{
-			data = blocks[j][i][k]->getVertex(b);
+			if (blocksID[j][i][k] < 0)
+				continue;
+			
+			data = blocks[j][i][k]->getVertex(dir);
 			for (sizeX = 0; sizeX < 7 && j + sizeX + 1 < chunkH; sizeX++)
 			{
-				if (blocksID[j + sizeX + 1][i][k][b] != blocksID[j][i][k][b])
+				if (blocksID[j + sizeX + 1][i][k] != blocksID[j][i][k])
 				{
 					break;
 				}
-				blocksID[j + sizeX + 1][i][k][b] = -1;
+				blocksID[j + sizeX + 1][i][k] = -1;
 			}
-			for (sizeY = 0; sizeY < 7 && i + sizeY + 1 < chunkW; sizeY++)
+			for (sizeY = 0; sizeY < 7 && k + sizeY + 1 < chunkT; sizeY++)
 			{
 				bool breaked = false;
 				for (int s = 0; s <= sizeX; s++)
-					if (blocksID[j + s][i + sizeY + 1][k][b] != blocksID[j][i][k][b])
+					if (blocksID[j + s][i][k + sizeY + 1] != blocksID[j][i][k])
 					{
 						breaked = true;
 						break;
@@ -479,79 +427,132 @@ void Chunk::genVerticesPos()
 					break;
 				else
 					for (int s = 0; s <= sizeX; s++)
-						blocksID[j + s][i + sizeY + 1][k][b] = -1;
+						blocksID[j + s][i][k + sizeY + 1] = -1;
 			}
-			blocksID[j][i][k][b] = -1;
+			blocksID[j][i][k] = -1;
 			data += (sizeX << 26) + (sizeY << 29);
-			vertices[b].push_back(data);
-		}
-		for (int b = 4; b < 6; b++)
-		{
-			if (blocksID[j][i][k][b] >= 0)
-			{
 
-				for (sizeX = 0; sizeX < 7 && i + sizeX + 1 < chunkW; sizeX++)
+			vertices.push_back(data);
+
+		
+		}
+		
+	}
+	else if (dir <= 3)
+	{
+		forAllBlocks
+		{
+			if (blocksID[j][i][k] < 0)
+				continue;
+			
+			data = blocks[j][i][k]->getVertex(dir);
+			for (sizeX = 0; sizeX < 7 && j + sizeX + 1 < chunkH; sizeX++)
+			{
+				if (blocksID[j + sizeX + 1][i][k] != blocksID[j][i][k])
 				{
-					if (blocksID[j][i + sizeX + 1][k][b] != blocksID[j][i][k][b])
-						break;
-					blocksID[j][i + sizeX + 1][k][b] = -1;
+					break;
 				}
-				for (sizeY = 0; sizeY < 7 && k + sizeY + 1 < chunkT; sizeY++)
-				{
-					bool breaked = false;
+				blocksID[j + sizeX + 1][i][k] = -1;
+			}
+			for (sizeY = 0; sizeY < 7 && i + sizeY + 1 < chunkW; sizeY++)
+			{
+				bool breaked = false;
+				for (int s = 0; s <= sizeX; s++)
+					if (blocksID[j + s][i + sizeY + 1][k] != blocksID[j][i][k])
+					{
+						breaked = true;
+						break;
+					}
+
+				if (breaked)
+					break;
+				else
 					for (int s = 0; s <= sizeX; s++)
-						if (blocksID[j][i + s][k + sizeY + 1][b] != blocksID[j][i][k][b])
-						{
-							breaked = true;
-							break;
-						}
-
-					if (breaked)
-						break;
-					else
-						for (int s = 0; s <= sizeX; s++)
-							blocksID[j][i + s][k + sizeY + 1][b] = -1;
-
-
-				}
-				data = blocks[j][i][k]->getVertex(b) | (sizeX << 26) | (sizeY << 29);
-				vertices[b].push_back(data);
-				blocksID[j][i][k][b] = -1;
-
-
-
+						blocksID[j + s][i + sizeY + 1][k] = -1;
 			}
+			blocksID[j][i][k] = -1;
+			data += (sizeX << 26) + (sizeY << 29);
+			vertices.push_back(data);
+			
 		}
-		for (int b = 6; b < 10; b++)
+	}
+	else if (dir <= 5)
+	{
+		forAllBlocks
 		{
-			if (blocksID[j][i][k][b] >= 0)
+			if (blocksID[j][i][k] < 0)
+				continue;
+			for (sizeX = 0; sizeX < 7 && i + sizeX + 1 < chunkW; sizeX++)
 			{
-				data = blocks[j][i][k]->getVertex(b);
-
-				for (sizeX = 0; sizeX < 8 && j + sizeX + 1 < chunkH; sizeX++)
-				{
-					if (blocksID[j + sizeX + 1][i][k][b] != blocksID[j][i][k][b])
+				if (blocksID[j][i + sizeX + 1][k] != blocksID[j][i][k])
+					break;
+				blocksID[j][i + sizeX + 1][k] = -1;
+			}
+			for (sizeY = 0; sizeY < 7 && k + sizeY + 1 < chunkT; sizeY++)
+			{
+				bool breaked = false;
+				for (int s = 0; s <= sizeX; s++)
+					if (blocksID[j][i + s][k + sizeY + 1] != blocksID[j][i][k])
+					{
+						breaked = true;
 						break;
-					blocksID[j + sizeX + 1][i][k][b] = -1;
-				}
+					}
 
+				if (breaked)
+					break;
+				else
+					for (int s = 0; s <= sizeX; s++)
+						blocksID[j][i + s][k + sizeY + 1] = -1;
 
-				blocksID[j][i][k][b] = -1;
-				data += (sizeX << 26);
-
-				vertices[b].push_back(data);
 
 			}
+			data = blocks[j][i][k]->getVertex(dir) | (sizeX << 26) | (sizeY << 29);
+			vertices.push_back(data);
+			blocksID[j][i][k] = -1;
+		}
+		
+
+	}
+	else
+	{
+		forAllBlocks
+		{
+			if (blocksID[j][i][k] < 0)
+				continue;
+
+			data = blocks[j][i][k]->getVertex(dir);
+
+			for (sizeX = 0; sizeX < 8 && j + sizeX + 1 < chunkH; sizeX++)
+			{
+				if (blocksID[j + sizeX + 1][i][k] != blocksID[j][i][k])
+					break;
+				blocksID[j + sizeX + 1][i][k] = -1;
+			}
+
+			blocksID[j][i][k] = -1;
+			data += (sizeX << 26);
+
+			vertices.push_back(data);
 		}
 	}
-	}
+	mesh[dir]->clearMesh();
+	mesh[dir]->addData(vertices);
+}
 
+void Chunk::genVerticesPos()
+{
+
+	const int vecSize = 10;
+
+	std::thread worker[vecSize];
 	for (int i = 0; i < vecSize; i++)
 	{
-		mesh[i]->clearMesh();
-		mesh[i]->addData(vertices[i]);
+		worker[i] = std::thread(&Chunk::genVerticPos, this, i);
 	}
-
+	for (int i = 0; i < vecSize; i++)
+		worker[i].join();
+	return;
+	
 }
 
 float getValue(float v)

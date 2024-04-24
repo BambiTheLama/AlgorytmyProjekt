@@ -76,6 +76,8 @@ private:
 
 	void setFacing();
 
+	void genVerticPos(int dir);
+
 	void genVerticesPos();
 
 	void generateTerrain();

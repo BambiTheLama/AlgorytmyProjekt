@@ -105,6 +105,8 @@ vec3 directLight()
 		shadow /= pow((sampleRadius * 2 + 1), 2);
 	
 	}
+
+
 	vec3 diffuseColor = albedoText * diffuse * (1.0f - shadow) * lightColor;
 	vec3 specularColor = heightText.r * specular * (1.0f - shadow) * lightColor*0.0001f;
 	vec3 ambientColor = albedoText * ambient;
