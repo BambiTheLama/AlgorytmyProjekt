@@ -851,9 +851,6 @@ void Chunk::generateTerrain()
 			float e = getValueTerrain(erosion.GetNoise(x, z));
 			float pv = getValueTerrain(picksAndValues.GetNoise(x, z));
 			float riverV = riverNoise.GetNoise(x, z);
-			
-			float terrainV = (t + e / 3 + pv / 18) * 18.0f / 25.0f;
-			int h = minH + terrainV * height;
 
 			float temperatureV = temperatureNoise.GetNoise(x, z);
 			float structureV = structureNoise.GetNoise(x, z);
@@ -867,9 +864,9 @@ void Chunk::generateTerrain()
 
 			//genPlants(i, k, h + 1, temperatureV, structureV);
 			int avgH = 0;
-			for (int tx = 0; tx < 3; tx++)
+			for (int tx = -3; tx < 4; tx++)
 			{
-				for (int tz = 0; tz < 3; tz++)
+				for (int tz = -3; tz < 4; tz++)
 				{
 					avgH += getMapHeight((getValueTerrain(terrain.GetNoise(x, z)) + 1) / 2,
 						getValueTerrain(erosion.GetNoise(x, z)),
@@ -877,7 +874,8 @@ void Chunk::generateTerrain()
 						riverNoise.GetNoise(x, z));
 				}
 			}
-			genStructures(i, k, h, temperatureV, structureV);
+			avgH /= 49;
+			genStructures(i, k, avgH, temperatureV, structureV);
 		}
 
 }
