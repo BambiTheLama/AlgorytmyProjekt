@@ -119,14 +119,15 @@ void main()
 {
 	if(!debug)
 	{
-		if (texture(tex0[frag.textID], frag.texCoord).a < 0.1)
-		discard;
-
 		float text = texture(tex0[frag.textID], frag.texCoord).a;
 		if(frag.isText2 == 1)
 		{
 			text = texture(tex02[frag.textID], frag.texCoord).a;
 		}
+		if (text < 0.1)
+			discard;
+
+
 		FragColor = vec4(directLight()*frag.bright,text) * modelColor;
 	}
 	else

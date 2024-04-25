@@ -22,26 +22,9 @@
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
 
-static char**** blocksID = NULL;
-
 Chunk::Chunk(int x, int y, int z)
 {
-	if (!blocksID)
-	{
-		blocksID = new char*** [chunkH];
-		for (int i = 0; i < chunkH; i++)
-		{
-			blocksID[i] = new char** [chunkW];
-			for (int j = 0; j < chunkW; j++)
-			{
-				blocksID[i][j] = new char* [chunkT];
-				for (int k = 0; k < chunkW; k++)
-				{
-					blocksID[i][j][k] = new char[10];
-				}
-			}
-		}
-	}
+
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -58,11 +41,7 @@ Chunk::Chunk(int x, int y, int z)
 
 	if (!loadGame())
 		generateTerrain();
-	
-	setFacing();
 
-	if (!loadGame())
-		generateTerrain();
 	forAllBlocks
 	{
 		if (blocks[j][i][k])
@@ -77,6 +56,8 @@ Chunk::Chunk(int x, int y, int z)
 
 Chunk::~Chunk()
 {
+	for (int i = 0; i < 10; i++)
+		delete mesh[i];
 	if (wasCleared)
 		return;
 	forAllBlocks
@@ -84,9 +65,6 @@ Chunk::~Chunk()
 	{
 		delete blocks[j][i][k];
 	}
-
-	for (int i = 0; i < 10; i++)
-		delete mesh[i];
 }
 
 void Chunk::start()
@@ -380,7 +358,7 @@ void Chunk::clearBlocks()
 
 void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
 {
-	return;
+
 }
 
 void Chunk::genVerticPos(int dir)
