@@ -16,11 +16,5 @@ public:
 
     virtual void setOneFace(int face, Block* b){}
 
-    virtual std::vector<GLuint> getVertex() { return std::vector<GLuint>(); }
-
-    virtual std::vector<GLuint> getIndex() { return std::vector<GLuint>(); }
-
-    virtual GLuint indexSize() { return 0; }
-
     virtual bool isUpdateBlock() { return true; }
 };

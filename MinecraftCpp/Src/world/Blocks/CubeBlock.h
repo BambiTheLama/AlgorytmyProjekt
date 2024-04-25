@@ -20,15 +20,11 @@ public:
 
 	virtual void setOneFace(int face, Block* b);
 
-	virtual std::vector<GLuint> getVertex();
-
 	virtual GLuint getVertex(int dir);
 
 	virtual bool isRenderedSide(int dir) { 
 		return ((int)(0b1 << (dir)) & (int)cube->getFaces()) == (0b1 << (dir));
 	}
-
-	virtual std::vector<GLuint> getIndex();
 
 	virtual char faceToSetUp() { return cube->getFaces(); }
 

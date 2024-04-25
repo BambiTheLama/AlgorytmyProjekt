@@ -16,17 +16,11 @@ public:
 
 	virtual void setOneFace(int face, Block* b) {}
 
-	virtual std::vector<GLuint> getVertex();
-
-	virtual std::vector<GLuint> getIndex();
-
 	virtual GLuint getVertex(int dir);
 
 	virtual bool isRenderedSide(int dir) {
 		return dir > 5;
 	}
-
-	virtual GLuint indexSize();
 
 	virtual char faceToSetUp() { return 0; }
 
