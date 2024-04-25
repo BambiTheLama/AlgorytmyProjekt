@@ -76,8 +76,10 @@ Game::~Game()
 void Game::start()
 {
 	gameRunning = true;
-	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
-	worldDestroyT  = std::thread(&Game::worldDestroyFun, this);
+	if(!worldGenerateT.joinable())
+		worldGenerateT = std::thread(&Game::worldGenerateFun, this);
+	if (!worldDestroyT.joinable())
+		worldDestroyT = std::thread(&Game::worldDestroyFun, this);
 }
 
 glm::vec3 camPos;
@@ -107,32 +109,19 @@ void Game::update(float deltaTime)
 	{
 		debug = true;
 	}
+	if (glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS)
+	{
+		gameRunning = false;
+
+	}
+	if (glfwGetKey(window, GLFW_KEY_F6) == GLFW_PRESS)
+	{
+		start();
+	}
 	toAddMutex.unlock();
 	glm::vec3 pos = camera->getPos();
 	glm::vec3 dir = camera->getDir();
-	int n = 0;
-	while (n < 100)
-	{
-		int x = pos.x + n * dir.x;
-		int y = pos.y + n * dir.y;
-		int z = pos.z + n * dir.z;
-		Block* b2 = getBlockAt(x, y, z);
-		if (b2 && b == b2)
-		{
-			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-			{
-				deleteBlock(x, y, z);
-				b = NULL;
-			}
-			break;
-		}
-
-		if (b2 && b != b2)
-		{
-			b = b2;
-		}
-		n++;
-	}
+	
 	
 	toAddMutex.lock();
 	for (auto a : toAdd)
@@ -144,8 +133,7 @@ void Game::update(float deltaTime)
 		if (it == chunks.end())
 			chunks.push_back(a);
 	}
-	if (toAdd.size() > 0)
-		reloadMesh = true;
+
 	toAdd.clear();
 	toAddMutex.unlock();
 	toDeleteMutex.lock();
@@ -154,12 +142,12 @@ void Game::update(float deltaTime)
 		auto it = std::find(chunks.begin(), chunks.end(), d);
 		if (it != chunks.end())
 			chunks.erase(it);
+
+		reloadChunksNextTo(d);
+
 		delete d;
 	}
-	if (toDelete.size() > 0)
-	{
-		reloadMesh = true;
-	}
+
 	toDelete.clear();
 
 	toDeleteMutex.unlock();
@@ -431,6 +419,23 @@ void Game::setGenVerticesFlagAt(int x, int y, int z)
 			c->genVerticesFlag();
 			return;
 		}
+}
+
+void Game::reloadChunksNextTo(Chunk* c)
+{
+	glm::vec3 pos = c->getLocation();
+	Chunk* chunkL = getChunkAt(pos.x - 1, pos.y, pos.z);
+	if (chunkL)
+		chunkL->reloadBlocksRight();
+	Chunk* chunkR = getChunkAt(pos.x + 1, pos.y, pos.z);
+	if (chunkR)
+		chunkR->reloadBlocksLeft();
+	Chunk* chunkF = getChunkAt(pos.x, pos.y, pos.z + 1);
+	if (chunkF)
+		chunkF->reloadBlocksBack();
+	Chunk* chunkB = getChunkAt(pos.x, pos.y, pos.z - 1);
+	if (chunkB)
+		chunkB->reloadBlocksFront();
 }
 
 void Game::worldGenerateFun()

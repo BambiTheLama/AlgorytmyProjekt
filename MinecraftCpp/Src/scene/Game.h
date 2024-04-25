@@ -82,6 +82,8 @@ public:
 
     void setGenVerticesFlagAt(int x, int y, int z);
 
+    void reloadChunksNextTo(Chunk* c);
+
     friend Game* getCurrentGame();
 
 private:

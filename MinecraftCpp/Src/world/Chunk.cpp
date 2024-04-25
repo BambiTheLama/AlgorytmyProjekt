@@ -361,6 +361,65 @@ void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
 
 }
 
+void Chunk::reloadBlocksFront()
+{
+	const int z = chunkT - 1;
+	for (int i = 0; i < chunkH; i++)
+	{
+		for (int j = 0; j < chunkW; j++)
+		{
+			if (!blocks[i][j][z])
+				continue;
+			blocks[i][j][z]->setOneFace((int)Faces::Front, true);
+		}
+	}
+	genVertices = true;
+}
+
+void Chunk::reloadBlocksBack()
+{
+
+	for (int i = 0; i < chunkH; i++)
+	{
+		for (int j = 0; j < chunkW; j++)
+		{
+			if (!blocks[i][j][0])
+				continue;
+			blocks[i][j][0]->setOneFace((int)Faces::Back, true);
+		}
+	}
+	genVertices = true;
+}
+
+void Chunk::reloadBlocksLeft()
+{
+	for (int i = 0; i < chunkH; i++)
+	{
+		for (int j = 0; j < chunkT; j++)
+		{
+			if (!blocks[i][0][j])
+				continue;
+			blocks[i][0][j]->setOneFace((int)Faces::Left, true);
+		}
+	}
+	genVertices = true;
+}
+
+void Chunk::reloadBlocksRight()
+{
+	const int x = chunkW - 1;
+	for (int i = 0; i < chunkH; i++)
+	{
+		for (int j = 0; j < chunkT; j++)
+		{
+			if (!blocks[i][x][j])
+				continue;
+			blocks[i][x][j]->setOneFace((int)Faces::Right, true);
+		}
+	}
+	genVertices = true;
+}
+
 void Chunk::genVerticPos(int dir)
 {
 	char blocksID[chunkH][chunkW][chunkT];

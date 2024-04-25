@@ -67,6 +67,14 @@ public:
 
 	static std::string fileName(int x, int y, int z) { return path + "chunk " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ".json"; }
 
+	void reloadBlocksFront();
+
+	void reloadBlocksBack();
+
+	void reloadBlocksLeft();
+
+	void reloadBlocksRight();
+
 	friend class Game;
 private:
 
