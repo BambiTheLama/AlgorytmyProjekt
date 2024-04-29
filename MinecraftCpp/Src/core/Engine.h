@@ -8,6 +8,7 @@ class Cube;
 class Shader;
 class Chunk;
 class Texture;
+class Camera;
 
 class Engine
 {
@@ -34,3 +35,5 @@ public:
 };
 
 void diffViewport();
+
+void drawCubeAt(int x, int y, int z, Camera* camera, char faces=0b111111);

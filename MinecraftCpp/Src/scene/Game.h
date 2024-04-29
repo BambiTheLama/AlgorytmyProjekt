@@ -26,8 +26,9 @@ class Game :
     Camera *camera;
     GLFWwindow* window;
     Block* b = NULL;
+    glm::vec3 blockPos;
     std::vector<glm::vec2> posToGenChunk;
-    int range = 10;
+    int range = 3;
     VAO *vao;
     VBO *vbo;
     EBO *ebo;
@@ -64,7 +65,7 @@ public:
 
     void renderScene(Shader* s, bool trans);
 
-    void drawBlock(Shader* s);
+    void drawBlock();
 
     Block* getBlockAt(int x, int y, int z);
 
@@ -81,6 +82,8 @@ public:
     Chunk* getChunkAt(int x, int y, int z);
 
     void setGenVerticesFlagAt(int x, int y, int z);
+
+    void findLookingAtBLock();
 
     void reloadChunksNextTo(Chunk* c);
 

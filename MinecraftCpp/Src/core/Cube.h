@@ -52,7 +52,3 @@ public:
 	friend class Engine;
 
 };
-
-
-
-void drawCubeAt(int x, int y, int z);

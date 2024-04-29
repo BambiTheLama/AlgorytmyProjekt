@@ -163,6 +163,11 @@ void Game::update(float deltaTime)
 			c->genVerticesFlag();
 		}
 
+	findLookingAtBLock();
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) && b)
+	{
+		deleteBlock(blockPos.x, blockPos.y, blockPos.z);
+	}
 	chunksMutex.unlock();
 }
 
@@ -206,8 +211,10 @@ void Game::draw()
 	camera->useCamera(*shader, "camera");
 	renderScene(shader,true);
 
-	drawBlock(shader);
+	drawBlock();
+
 	ShadowMap->draw();
+
 }
 
 void Game::renderScene(Shader* s,bool trans)
@@ -228,26 +235,12 @@ void Game::renderScene(Shader* s,bool trans)
 	chunksMutex.unlock();
 }
 
-void Game::drawBlock(Shader* s)
+void Game::drawBlock()
 {
-	return;
-	if (b)
-	{
-		vao->bind();
-		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(chunkPos.x, 0, chunkPos.z));
-		s->setUniformMat4(model, "model");
+	if (!b)
+		return;
+	drawCubeAt(blockPos.x, blockPos.y, blockPos.z, camera,b->getFaces());
 
-		glDepthFunc(GL_EQUAL);
-		s->setUniformVec4(glm::vec4(100, 0, 100, 0.6f), "modelColor");
-		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		s->setUniformVec4(glm::vec4(100, 100, 100, 1), "modelColor");
-		glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDepthFunc(GL_LESS);
-
-	}
 }
 
 Block* Game::getBlockAt(int x, int y, int z)
@@ -419,6 +412,23 @@ void Game::setGenVerticesFlagAt(int x, int y, int z)
 			c->genVerticesFlag();
 			return;
 		}
+}
+
+void Game::findLookingAtBLock()
+{
+	glm::vec3 cameraPos = camera->getPos();
+	glm::vec3 cameraDir = camera->getDir();
+	int i;
+	for (i = 0; i < 100; i++)
+	{
+		b = getBlockAt(cameraPos.x + cameraDir.x * i, cameraPos.y + cameraDir.y * i, cameraPos.z + cameraDir.z * i);
+		if (b)
+			break;
+	}
+	if (!b)
+		return;
+
+	blockPos = cameraPos + glm::vec3(cameraDir.x * i, cameraDir.y * i, cameraDir.z * i);
 }
 
 void Game::reloadChunksNextTo(Chunk* c)

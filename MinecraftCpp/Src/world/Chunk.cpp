@@ -195,6 +195,7 @@ void Chunk::deleteBlock(int x, int y, int z)
 				return;
 		toDelete.push_back(blocks[by][bx][bz]);
 	}
+	game->setFacing(x, y, z, true);
 }
 
 bool Chunk::addBlock(Block* b)
@@ -313,6 +314,8 @@ bool Chunk::loadGame(nlohmann::json json)
 	int times = 0;
 	int ID = 0;
 	int b = 0;
+	int chunkX = this->x * chunkW;
+	int chunkZ = this->x * chunkW;
 	forAllBlocks
 	{
 		if (times <= 0)
@@ -330,7 +333,8 @@ bool Chunk::loadGame(nlohmann::json json)
 		}
 		else
 		{
-			blocks[j][i][k] = createBlock(ID, i, j, k);
+
+			blocks[j][i][k] = createBlock(ID, chunkX + i, j, chunkZ + k);
 			if (blocks[j][i][k]->isUpdateBlock())
 				toUpdate.push_back(blocks[j][i][k]);
 		}

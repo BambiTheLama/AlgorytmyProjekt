@@ -377,7 +377,3 @@ GLuint Cube::indexSize() const
 	return indexS;
 }
 
-void drawCubeAt(int x, int y, int z)
-{
-
-}

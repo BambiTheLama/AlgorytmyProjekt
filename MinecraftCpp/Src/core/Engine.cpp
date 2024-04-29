@@ -16,6 +16,42 @@
 #include "RenderTexture.h"
 
 static Engine* e;
+static Shader* shader = NULL;
+static VAO* vao = NULL;
+static VBO* vbo = NULL;
+static EBO* ebo = NULL;
+static std::vector<GLuint> indices{
+	//BACK
+	0,2,1,
+	3,2,0,
+	//FRONT
+	4,5,6,
+	6,7,4,
+	//LEFT
+	0,1,4,
+	1,5,4,
+	//RIGHT
+	2,3,6,
+	3,7,6,
+	//DOWN
+	0,4,3,
+	3,4,7,
+	//UP
+	1,2,5,
+	2,6,5,
+
+};
+static std::vector<glm::vec3> verticesPos{
+	glm::vec3(0,0,0),
+	glm::vec3(0,1,0),
+	glm::vec3(0,1,1),
+	glm::vec3(0,0,1),
+	glm::vec3(1,0,0),
+	glm::vec3(1,1,0),
+	glm::vec3(1,1,1),
+	glm::vec3(1,0,1),
+
+};
 
 void resize(GLFWwindow* window, int width, int height)
 {
@@ -64,6 +100,16 @@ Engine::Engine()
 
 	RenderTexture::setupRenderTextures();
 
+
+	shader = new Shader("Shader/Cursor.vert", "Shader/Cursor.frag");
+	vao = new VAO();
+	vbo = new VBO();
+	ebo = new EBO();
+	vbo->setNewVertices(verticesPos);
+	vao->bind();
+	ebo->setNewIndices(indices);
+	vao->linkData(*vbo, 0, 3, GL_FLOAT, sizeof(glm::vec3), NULL);
+
 	e = this;
 	start();
 }
@@ -77,6 +123,9 @@ Engine::~Engine()
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	e = NULL;
+	delete shader;
+	delete vao;
+	delete vbo;
 }
 
 void diffViewport()
@@ -134,4 +183,50 @@ void Engine::start()
 		glfwPollEvents();
 	}
 	delete game;
+}
+
+void drawCubeAt(int x, int y, int z,Camera *camera,char faces)
+{
+	std::vector<GLuint> ind;
+	if ((faces&(char)Faces::Left)>0)
+	{
+		for (int i = 0; i < 6; i++)
+			ind.push_back(indices[i+12]);
+	}
+	if ((faces & (char)Faces::Right) > 0)
+	{
+		for (int i = 0; i < 6; i++)
+			ind.push_back(indices[i + 18]);
+	}
+	if ((faces & (char)Faces::Up) > 0)
+	{
+		for (int i = 0; i < 6; i++)
+			ind.push_back(indices[i + 30]);
+	}
+	if ((faces & (char)Faces::Down) > 0)
+	{
+		for (int i = 0; i < 6; i++)
+			ind.push_back(indices[i + 24]);
+	}
+	if ((faces & (char)Faces::Front) > 0)
+	{
+		for (int i = 0; i < 6; i++)
+			ind.push_back(indices[i + 6]);
+	}
+	if ((faces & (char)Faces::Back) > 0)
+	{
+		for (int i = 0; i < 6; i++)
+			ind.push_back(indices[i]);
+	}
+	shader->active();
+	vao->bind();
+	ebo->bind();
+	ebo->setNewIndices(ind);
+	camera->useCamera(*shader, "camera");
+	shader->setUniformVec3(glm::vec3(x, y, z), "cubePos");
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glDepthFunc(GL_EQUAL);
+	glDrawElements(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, 0);
+	glDepthFunc(GL_LESS);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
