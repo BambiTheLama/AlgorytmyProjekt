@@ -11,8 +11,9 @@
 
 Game* Game::game = NULL;
 
-Game::Game(int w,int h,GLFWwindow* window)
+Game::Game(int w,int h,GLFWwindow* window, ImGuiIO* io)
 {
+	this->io = io;
 	Chunk::game = this;
 	cube = new Cube();
 
@@ -92,7 +93,8 @@ static bool compareObj(Chunk* c1, Chunk* c2)
 void Game::update(float deltaTime)
 {
 	time += deltaTime;
-	camera->update(window, deltaTime);
+	if(!io->WantCaptureMouse)
+		camera->update(window, deltaTime);
 	chunksMutex.lock();
 	toAddMutex.lock();
 	for (auto c : chunks)
@@ -173,6 +175,11 @@ void Game::update(float deltaTime)
 
 void Game::draw()
 {
+
+	ImGui::Begin("Light");
+	ImGui::DragFloat3("LightDir", lightDir, 0.01, -1, 1, "%0.3lf", 2.1f);
+	ImGui::End();
+
 	camera->useCamera(*shader, "camera");
 
 	glm::mat4 model(1.0f);
@@ -182,7 +189,7 @@ void Game::draw()
 
 	cameraDir = camera->getDir();
 	cameraPos = camera->getPos();
-	glm::vec3 lightDir = glm::vec3(0.1, 1.0f, 1.0f);
+	glm::vec3 lightDir = glm::vec3(this->lightDir[0], this->lightDir[1], this->lightDir[2]);
 	glm::vec3 shadowMapLightDir = -lightDir;
 	camera->setDir(shadowMapLightDir);
 

@@ -6,7 +6,9 @@
 #include <thread>
 #include <mutex>
 #include "GameTextures.h"
-
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 class Texture;
 class RenderTexture;
 class Game :
@@ -28,7 +30,7 @@ class Game :
     Block* b = NULL;
     glm::vec3 blockPos;
     std::vector<glm::vec2> posToGenChunk;
-    int range = 16;
+    int range = 11;
     VAO *vao;
     VBO *vbo;
     EBO *ebo;
@@ -51,9 +53,10 @@ class Game :
     float time = 0.0f;
     bool debug = false;
     bool reloadMesh = false;
-
+    float lightDir[3];
+    ImGuiIO* io;
 public:
-    Game(int w,int h, GLFWwindow* window);
+    Game(int w,int h, GLFWwindow* window, ImGuiIO* io);
 
     ~Game();
 

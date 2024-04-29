@@ -15,6 +15,7 @@
 #include "Font.h"
 #include "RenderTexture.h"
 
+
 static Engine* e;
 static Shader* shader = NULL;
 static VAO* vao = NULL;
@@ -110,12 +111,22 @@ Engine::Engine()
 	ebo->setNewIndices(indices);
 	vao->linkData(*vbo, 0, 3, GL_FLOAT, sizeof(glm::vec3), NULL);
 
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	io = &ImGui::GetIO();
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
 	e = this;
 	start();
 }
 
 Engine::~Engine()
 {
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 	RenderTexture::endRenderTexture();
 	Font::freeFonts();
 	Texture::clearAllTextures();
@@ -137,7 +148,7 @@ void Engine::start()
 {
 	float lastTime = glfwGetTime();	
 	Font f("Res/ComicStans.ttf");
-	Game* game = new Game(width, height, window);
+	Game* game = new Game(width, height, window,io);
 	std::string fps;
 	std::vector<float> times;
 	float changeText = 0.0;
@@ -147,6 +158,7 @@ void Engine::start()
 
 	while (!glfwWindowShouldClose(window))
 	{
+
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
 
@@ -172,13 +184,22 @@ void Engine::start()
 
 		glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 		game->draw();
+
+
+
 		Font::setScreenSize(width, height);
 		glDisable(GL_DEPTH_TEST);
 		glCullFace(GL_FRONT);
 		glFrontFace(GL_CW);
 		f.drawText(fps, 0, 0, 1, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		glEnable(GL_DEPTH_TEST);
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -229,4 +250,5 @@ void drawCubeAt(int x, int y, int z,Camera *camera,char faces)
 	glDrawElements(GL_TRIANGLES, ind.size(), GL_UNSIGNED_INT, 0);
 	glDepthFunc(GL_LESS);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 }

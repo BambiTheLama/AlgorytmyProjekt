@@ -22,11 +22,11 @@
     <Filter Include="Src\World\Blocks">
       <UniqueIdentifier>{b46d9cef-8011-4d90-92e4-f8d46ea28f7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Include_Cpp">
+      <UniqueIdentifier>{dfa3a271-f7c8-4664-9321-2a90095539d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\glad.c">
-      <Filter>Src</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Main.cpp">
       <Filter>Src</Filter>
     </ClCompile>
@@ -104,6 +104,31 @@
     </ClCompile>
     <ClCompile Include="Src\world\Blocks\CubeHouse.cpp">
       <Filter>Src\World\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Blocks\StructureHalder.cpp" />
+    <ClCompile Include="Src\include_Cpp\glad.c">
+      <Filter>Src\Include_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\include_Cpp\imgui.cpp">
+      <Filter>Src\Include_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\include_Cpp\imgui_demo.cpp">
+      <Filter>Src\Include_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\include_Cpp\imgui_draw.cpp">
+      <Filter>Src\Include_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\include_Cpp\imgui_impl_glfw.cpp">
+      <Filter>Src\Include_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\include_Cpp\imgui_impl_opengl3.cpp">
+      <Filter>Src\Include_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\include_Cpp\imgui_tables.cpp">
+      <Filter>Src\Include_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\include_Cpp\imgui_widgets.cpp">
+      <Filter>Src\Include_Cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -220,5 +245,6 @@
     <ClInclude Include="Src\Properties.h">
       <Filter>Src</Filter>
     </ClInclude>
+    <ClInclude Include="Src\world\Blocks\StructureHalder.h" />
   </ItemGroup>
 </Project>
