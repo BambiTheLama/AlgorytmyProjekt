@@ -68,10 +68,10 @@ vec3 directLight()
 	float diffuse = min(max(dot(normal, lightDirection), 0.0f),0.3f);
 
 	// specular lighting
-	float specularLight = 0.01f;
+	float specularLight = 0.05f;
 	vec3 viewDirection = normalize(camPos - frag.currentPos);
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
-	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 8);
+	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 2);
 	float specular = specAmount * specularLight;
 
 
@@ -112,17 +112,18 @@ vec3 directLight()
 
 void main()
 {
-	if(!debug)
-	{
-		float text = texture(texN[frag.textID], frag.texCoord).a;
-		if (text < 0.1)
-			discard;
 
-		FragColor = vec4(directLight()*frag.bright,text) * modelColor;
+	float text = texture(texN[frag.textID], frag.texCoord).a;
+	if (text < 0.1)
+		discard;
+	if(debug)
+	{
+		vec3 normalText = (getNormal(texture(texN[frag.textID], frag.texCoord).rgb)+1)/2.0f;
+
+		FragColor = vec4(normalText,text);
 	}
 	else
-	{
-		FragColor = vec4(1.0f);
-	}
+		FragColor = vec4(directLight()*frag.bright,text);
+
 
 }

@@ -28,7 +28,7 @@ class Game :
     Block* b = NULL;
     glm::vec3 blockPos;
     std::vector<glm::vec2> posToGenChunk;
-    int range = 3;
+    int range = 16;
     VAO *vao;
     VBO *vbo;
     EBO *ebo;

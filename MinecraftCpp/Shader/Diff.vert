@@ -148,6 +148,8 @@ void main()
 		data_out.bright = 0.68;
 	else if(dir<=4)
 		data_out.bright = 1.0;
-	else		
+	else if(dir<=5)
 		data_out.bright = 0.5;
+	else 
+		data_out.bright = 1;
 }
