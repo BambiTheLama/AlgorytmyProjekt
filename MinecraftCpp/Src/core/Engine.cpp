@@ -188,12 +188,12 @@ void Engine::start()
 void drawCubeAt(int x, int y, int z,Camera *camera,char faces)
 {
 	std::vector<GLuint> ind;
-	if ((faces&(char)Faces::Left)>0)
+	if ((faces&(char)Faces::Back)>0)
 	{
 		for (int i = 0; i < 6; i++)
 			ind.push_back(indices[i+12]);
 	}
-	if ((faces & (char)Faces::Right) > 0)
+	if ((faces & (char)Faces::Front) > 0)
 	{
 		for (int i = 0; i < 6; i++)
 			ind.push_back(indices[i + 18]);
@@ -208,12 +208,12 @@ void drawCubeAt(int x, int y, int z,Camera *camera,char faces)
 		for (int i = 0; i < 6; i++)
 			ind.push_back(indices[i + 24]);
 	}
-	if ((faces & (char)Faces::Front) > 0)
+	if ((faces & (char)Faces::Right) > 0)
 	{
 		for (int i = 0; i < 6; i++)
 			ind.push_back(indices[i + 6]);
 	}
-	if ((faces & (char)Faces::Back) > 0)
+	if ((faces & (char)Faces::Left) > 0)
 	{
 		for (int i = 0; i < 6; i++)
 			ind.push_back(indices[i]);

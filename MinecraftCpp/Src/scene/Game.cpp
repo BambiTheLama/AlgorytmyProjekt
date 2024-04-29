@@ -421,7 +421,10 @@ void Game::findLookingAtBLock()
 	int i;
 	for (i = 0; i < 100; i++)
 	{
-		b = getBlockAt(cameraPos.x + cameraDir.x * i, cameraPos.y + cameraDir.y * i, cameraPos.z + cameraDir.z * i);
+		glm::vec3 pos = glm::vec3(cameraPos.x + cameraDir.x * i, cameraPos.y + cameraDir.y * i, cameraPos.z + cameraDir.z * i);
+		b = getBlockAt(pos.x, pos.y, pos.z);
+
+		
 		if (b)
 			break;
 	}
