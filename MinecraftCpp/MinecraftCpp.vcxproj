@@ -193,6 +193,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Res\Textures.json" />
+    <None Include="Shader\Cursor.frag" />
+    <None Include="Shader\Cursor.vert" />
     <None Include="Shader\Diff.frag" />
     <None Include="Shader\Diff.geom" />
     <None Include="Shader\Diff.vert" />

@@ -9,8 +9,6 @@ class Engine;
 
 enum class Faces :char
 {
-
-
 	Right = 0b000001,
 	Left  = 0b000010,
 	Back  = 0b000100,
@@ -55,3 +53,6 @@ public:
 
 };
 
+
+
+void drawCubeAt(int x, int y, int z);

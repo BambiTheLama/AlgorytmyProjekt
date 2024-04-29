@@ -43,22 +43,12 @@ GameTextures::~GameTextures()
 
 void GameTextures::setTextures(Shader& s, const char* uniform)
 {
-	for (int i = 0; i < textures.size() && i < 32; i++)
+	for (int i = 0; i < textures.size() && i < 64; i++)
 	{
 		if (!textures[i])
 			continue;
 		textures[i]->useTexture(s, uniform, i);
 		textures[i]->bind();
-	}
-	std::string u = std::string(uniform) + '2';
-	const char* cu = u.c_str();
-	puts(cu);
-	for (int i = 0; i < textures.size()-32; i++)
-	{
-		if (!textures[i])
-			continue;
-		textures[i+32]->useTexture(s, cu, i);
-		textures[i+32]->bind();
 	}
 }
 

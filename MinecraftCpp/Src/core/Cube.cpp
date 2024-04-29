@@ -9,6 +9,8 @@
 #include "Engine.h"
 #include <math.h>
 
+
+
 Cube::Cube()
 {
 	face = 0b111111;
@@ -373,4 +375,9 @@ GLuint Cube::indexSize() const
 	
 	indexS *= 4;
 	return indexS;
+}
+
+void drawCubeAt(int x, int y, int z)
+{
+
 }

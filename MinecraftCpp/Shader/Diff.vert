@@ -31,7 +31,6 @@ out DATA
 	vec4 fragPosLight;
 	flat int textID;
 	float bright;
-	flat int isText2;
 } data_out;
 
 vec2 getTexPos(vec2 tPos)
@@ -128,8 +127,7 @@ void main()
 	d.pos.x  = data       & 15;					/// 0b000000000000000000000000000001111
 	d.pos.y  = data >> 4  & 255;				/// 0b000000000000000000000111111110000
 	d.pos.z  = data >> 12 & 15;					/// 0b000000000000000011110000000000000
-	d.textID = data >> 16 & 31;					/// 0b000000000001111100000000000000000
-	data_out.isText2 = data >> 21 & 1;			/// 0b000000000010000000000000000000000
+	d.textID = data >> 16 & 63;					/// 0b000000000001111100000000000000000
 	d.cutY = ((data >> 22) & 1) == 1;			/// 0b000000000100000000000000000000000
 	d.cutSides = ((data >> 23) & 1) == 1;		/// 0b000000001000000000000000000000000
 	d.animatedUp = ((data >> 24) & 1) == 1;		/// 0b000000010000000000000000000000000
@@ -143,7 +141,7 @@ void main()
 	data_out.currentPos = currentPos;
 	data_out.fragPosLight = lightProjection * vec4(currentPos,1.0f);
 
-	data_out.textID = d.textID % 32;
+	data_out.textID = d.textID;
 	if(dir<=1)
 		data_out.bright = 0.82;
 	else if(dir<=3)

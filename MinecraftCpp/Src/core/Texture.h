@@ -12,6 +12,7 @@ class Texture
 	const char* path;
 	bool loaded = false;
 	GLenum slot;
+	GLuint64 textureHandle;
 	static std::vector<Texture*> textures;
 public:
 

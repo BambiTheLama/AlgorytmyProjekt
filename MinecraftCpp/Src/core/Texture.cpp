@@ -6,6 +6,8 @@
 #include <stb/stb_image.h>
 #include "../Properties.h"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
 
 GLuint Texture::textureSlot = 0;
 std::vector<Texture*> Texture::textures;
@@ -37,8 +39,13 @@ Texture::Texture(const char* path, GLenum textureType, GLenum format, GLenum pix
 	glGenerateMipmap(type);
 
 	stbi_image_free(bytes);
-
 	glBindTexture(type, 0);
+
+
+
+	textureHandle = glGetTextureHandleARB(ID);
+	glMakeTextureHandleResidentARB(textureHandle);
+
 	if (w <= 0 && h <= 0)
 	{
 #ifdef DebugFailMode
@@ -80,10 +87,12 @@ void Texture::unbind()
 	glBindTexture(type, 0);
 }
 
-void Texture::useTexture(Shader& shader, const char* uniform,int n)
+void Texture::useTexture(Shader& shader, const char* uniform, int n)
 {
 	shader.active();
-	glUniform1i(shader.getUniformLocation(uniform)+n, slot);
+	//glUniform1i(shader.getUniformLocation(uniform)+n, slot);
+	glUniformHandleui64ARB(shader.getUniformLocation(uniform) + n, textureHandle);
+
 }
 void Texture::useTexture(const char* uniform) const
 {
@@ -101,6 +110,7 @@ void Texture::clearAllTextures()
 		printf("[Info]: Texture destroyed succesful ID: %d\n", t->ID, t->path);
 #endif
 		glDeleteTextures(1, &t->ID);
+		glMakeTextureHandleNonResidentARB(t->textureHandle);
 	}
 	textures.clear();
 }
@@ -125,6 +135,7 @@ void Texture::deleteTexture()
 			printf("[Info]: Texture destroyed succesful ID: %d, [%s]\n", t->ID, t->path);
 #endif
 			glDeleteTextures(1, &t->ID);
+			glMakeTextureHandleNonResidentARB(t->textureHandle);
 			break;
 		}
 		i++;

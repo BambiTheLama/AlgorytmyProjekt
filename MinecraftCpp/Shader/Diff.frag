@@ -1,15 +1,12 @@
 #version 330 core
+#extension GL_ARB_bindless_texture: require
 
 out vec4 FragColor;
 uniform vec4 modelColor;
 
-
-uniform sampler2D texN[32];
-uniform sampler2D texH[32];
-uniform sampler2D tex0[32];
-uniform sampler2D texN2[32];
-uniform sampler2D texH2[32];
-uniform sampler2D tex02[32];
+layout(bindless_sampler) uniform sampler2D texN[64];
+layout(bindless_sampler) uniform sampler2D texH[64];
+layout(bindless_sampler) uniform sampler2D tex0[64];
 
 uniform sampler2D texShadow;
 uniform vec3 lightDir;
@@ -24,7 +21,6 @@ in DATA
 	vec4 fragPosLight;
 	flat int textID;
 	float bright;
-	flat int isText2;
 } frag;
 
 uniform vec3 camPos;
@@ -60,12 +56,7 @@ vec3 directLight()
 	vec3 normalText = texture(texN[frag.textID], frag.texCoord).rgb;
 	vec3 heightText = texture(texH[frag.textID], frag.texCoord).rgb;
 	vec3 albedoText = texture(tex0[frag.textID], frag.texCoord).rgb;
-	if(frag.isText2 == 1)
-	{
-		normalText = texture(texN2[frag.textID], frag.texCoord).rgb;
-		heightText = texture(texH2[frag.textID], frag.texCoord).rgb;
-		albedoText = texture(tex02[frag.textID], frag.texCoord).rgb;
-	}
+
 
 	// ambient lighting
 	float ambient = 0.50f;
@@ -77,7 +68,7 @@ vec3 directLight()
 	float diffuse = min(max(dot(normal, lightDirection), 0.0f),0.3f);
 
 	// specular lighting
-	float specularLight = 0.0075f;
+	float specularLight = 0.01f;
 	vec3 viewDirection = normalize(camPos - frag.currentPos);
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 8);
@@ -109,7 +100,7 @@ vec3 directLight()
 
 
 	vec3 diffuseColor = albedoText * diffuse * (1.0f - shadow) * lightColor;
-	vec3 specularColor = heightText.r * specular * (1.0f - shadow) * lightColor;
+	vec3 specularColor = albedoText*heightText.r * specular * (1.0f - shadow) * lightColor;
 	vec3 ambientColor = albedoText * ambient;
 
 
@@ -123,14 +114,9 @@ void main()
 {
 	if(!debug)
 	{
-		float text = texture(tex0[frag.textID], frag.texCoord).a;
-		if(frag.isText2 == 1)
-		{
-			text = texture(tex02[frag.textID], frag.texCoord).a;
-		}
+		float text = texture(texN[frag.textID], frag.texCoord).a;
 		if (text < 0.1)
 			discard;
-
 
 		FragColor = vec4(directLight()*frag.bright,text) * modelColor;
 	}

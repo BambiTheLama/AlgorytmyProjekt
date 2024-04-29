@@ -134,6 +134,12 @@
     <None Include="Res\Textures.json">
       <Filter>Res</Filter>
     </None>
+    <None Include="Shader\Cursor.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\Cursor.vert">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\core\Camera.h">
