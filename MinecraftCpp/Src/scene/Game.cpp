@@ -177,7 +177,8 @@ void Game::draw()
 {
 
 	ImGui::Begin("Light");
-	ImGui::DragFloat3("LightDir", lightDir, 0.01, -1, 1, "%0.3lf", 2.1f);
+	ImGui::DragFloat3("LightDir", lightDir, 0.01, -1, 1);
+	ImGui::ColorEdit3("LightColor", lightColor);
 	ImGui::End();
 
 	camera->useCamera(*shader, "camera");
@@ -205,7 +206,7 @@ void Game::draw()
 	glm::mat4 modelMat(1.0f);
 	shader->setUniformMat4(modelMat, "model");
 	shader->setUniformVec3(camera->getPos(), "camPos");
-	shader->setUniformVec3(glm::vec3(1.0f, 1.0f, 1.0f), "lightColor");
+	shader->setUniformVec3(glm::vec3(lightColor[0], lightColor[1], lightColor[2]), "lightColor");
 	camera->useCamera(*shader, "lightProjection");
 	shader->setUniformVec3(lightDir, "lightDir");
 	shader->setUniformVec3(shadowMapLightDir, "shadowMapLightDir");

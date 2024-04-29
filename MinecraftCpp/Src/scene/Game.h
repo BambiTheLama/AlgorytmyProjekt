@@ -53,7 +53,8 @@ class Game :
     float time = 0.0f;
     bool debug = false;
     bool reloadMesh = false;
-    float lightDir[3];
+    float lightDir[3] = { 0,1,1 };
+    float lightColor[3] = { 1,1,1 };
     ImGuiIO* io;
 public:
     Game(int w,int h, GLFWwindow* window, ImGuiIO* io);
