@@ -105,7 +105,6 @@
     <ClCompile Include="Src\world\Blocks\CubeHouse.cpp">
       <Filter>Src\World\Blocks</Filter>
     </ClCompile>
-    <ClCompile Include="Src\world\Blocks\StructureHalder.cpp" />
     <ClCompile Include="Src\include_Cpp\glad.c">
       <Filter>Src\Include_Cpp</Filter>
     </ClCompile>
@@ -129,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="Src\include_Cpp\imgui_widgets.cpp">
       <Filter>Src\Include_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\world\Blocks\StructureHalder.cpp">
+      <Filter>Src\World\Blocks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -245,6 +247,8 @@
     <ClInclude Include="Src\Properties.h">
       <Filter>Src</Filter>
     </ClInclude>
-    <ClInclude Include="Src\world\Blocks\StructureHalder.h" />
+    <ClInclude Include="Src\world\Blocks\StructureHalder.h">
+      <Filter>Src\World\Blocks</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

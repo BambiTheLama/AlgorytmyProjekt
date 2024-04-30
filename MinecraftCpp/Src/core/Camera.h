@@ -18,7 +18,7 @@ class Camera
 	float nearestt;
 	float speed = 15;
 	float maxSpeed = 100;
-	float minSpeed = 15;
+	float minSpeed = 20;
 	float cameraAngleDeg = 90;
 	bool useProjection = true;
 public:

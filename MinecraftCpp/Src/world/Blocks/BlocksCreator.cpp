@@ -6,11 +6,12 @@
 #include "Water.h"
 #include "Cactus.h"
 #include "SpruceTree.h"
+#include "StructureHalder.h"
 
 Block* createBlock(int i, int x, int y, int z)
 {
 	if (i <= -1)
-		return NULL;
+		return createStructure(-i, x, y, z);
 	switch (i)
 	{
 	case 0:///Grass
@@ -80,3 +81,43 @@ Block* createBlock(int i, int x, int y, int z)
 	return NULL;
 }
 
+StructureHalder* createStructure(int i, int x, int y, int z)
+{
+	StructureHalder* structure;
+	switch (i)
+	{
+	case 1:
+		structure = new StructureHalder(-i, x, y, z, 5, 5, 5);
+		for (int x = 0; x < 5; x++)
+			for (int z = 0; z < 5; z++)
+				structure->setBlock(x, 0, z, 26);
+		for (int x = 1; x < 4; x++)
+			for (int y = 1; y < 5; y++)
+			{
+				structure->setBlock(x, y, 0, 23);
+				structure->setBlock(x, y, 4, 23);
+				structure->setBlock(0, y, x, 23);
+				structure->setBlock(4, y, x, 23);
+			}
+		for (int x = 1; x < 4; x++)
+			for (int z = 1; z < 4; z++)
+				structure->setBlock(x, 4, z, 23);
+		for (int y = 1; y < 5; y++)
+		{
+			structure->setBlock(0, y, 0, 5);
+			structure->setBlock(0, y, 4, 5);
+			structure->setBlock(4, y, 0, 5);
+			structure->setBlock(4, y, 4, 5);
+		}
+		structure->setBlock(0, 2, 2, 27);
+		structure->setBlock(4, 2, 2, 27);
+		structure->setBlock(2, 2, 0, 27);
+
+		structure->setBlock(2, 2, 4, 1000000000);
+		structure->setBlock(2, 1, 4, 1000000000);
+
+		return structure;
+
+	}
+	return NULL;
+}

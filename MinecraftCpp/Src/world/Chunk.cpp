@@ -789,7 +789,7 @@ void Chunk::genStructures(int &x, int &z, int y, float &temperature, float &stru
 			return;
 		if (blocks[y][x][z])
 			delete blocks[y][x][z];
-		blocks[y][x][z] = new CubeHouse(0, blockX, y, blockZ, 5, 23, 26);
+		blocks[y][x][z] = createStructure(1, blockX, y, blockZ);
 
 	}
 }
