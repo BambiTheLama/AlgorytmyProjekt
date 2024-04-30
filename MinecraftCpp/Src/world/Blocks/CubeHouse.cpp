@@ -101,35 +101,18 @@ void CubeHouse::update(float deltaTime)
 	g->deleteBlock(x, y + 2, z + n - 1);
 	g->deleteBlock(x - n + 1, y + 2, z);
 	g->deleteBlock(x + n - 1, y + 2, z);
-	//if (!g->addBlock(b = createBlock(27, x, y + 2, z - n + 1)) && b)
-	//	delete b;
-	//if (!g->addBlock(b = createBlock(27, x, y + 2, z + n - 1)) && b)
-	//	delete b;
-	//if (!g->addBlock(b = createBlock(27, x - n + 1, y + 2, z)) && b)
-	//	delete b;
-	//if (!g->addBlock(b = createBlock(27, x + n - 1, y + 2, z)) && b)
-	//	delete b;
-	int dir = rand() % 4;
-	if (dir == 0)
-	{
-		g->deleteBlock(x, y + 2, z - n + 1);
-		g->deleteBlock(x, y + 1, z - n + 1);
-	}
-	else if (dir == 1)
-	{
-		g->deleteBlock(x, y + 2, z + n - 1);
-		g->deleteBlock(x, y + 1, z + n - 1);
-	}
-	else if (dir == 2)
-	{
-		g->deleteBlock(x - n + 1, y + 2, z);
-		g->deleteBlock(x - n + 1, y + 1, z);
-	}
-	else if (dir == 2)
-	{
-		g->deleteBlock(x + n - 1, y + 2, z);
-		g->deleteBlock(x + n - 1, y + 1, z);
-	}
+	if (!g->addBlock(b = createBlock(27, x, y + 2, z - n + 1)) && b)
+		delete b;
+	if (!g->addBlock(b = createBlock(27, x, y + 2, z + n - 1)) && b)
+		delete b;
+	if (!g->addBlock(b = createBlock(27, x - n + 1, y + 2, z)) && b)
+		delete b;
+	if (!g->addBlock(b = createBlock(27, x + n - 1, y + 2, z)) && b)
+		delete b;
+
+	g->deleteBlock(x, y + 2, z - n + 1);
+	g->deleteBlock(x, y + 1, z - n + 1);
+	
 
 
 }

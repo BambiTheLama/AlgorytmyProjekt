@@ -24,16 +24,15 @@ std::string Chunk::path = "World/";
 
 Chunk::Chunk(int x, int y, int z)
 {
-
+	this->x = x;
+	this->y = y;
+	this->z = z;
 
 	for (int i = 0; i < 10; i++)
 	{
 		mesh[i] = new ChunkMesh(i);
 	}
 
-	this->x = x;
-	this->y = y;
-	this->z = z;
 	forAllBlocks
 	{
 		blocks[j][i][k] = NULL;
@@ -107,9 +106,8 @@ void Chunk::update(float deltaTime)
 
 	for (auto b : toAdd)
 	{
-		if (b->faceToSetUp() <= 0)
-			continue;
-		game->setFacing(b, b->faceToSetUp());
+		if (b->faceToSetUp() > 0)
+			game->setFacing(b, b->faceToSetUp());
 		int by = b->y;
 		int bz = getBlockZ(b->z);
 		int bx = getBlockX(b->x);
@@ -119,6 +117,7 @@ void Chunk::update(float deltaTime)
 		{
 			toUpdate.push_back(b);
 		}
+
 
 	}
 	if (genVertices || toAdd.size() > 0 || toDelete.size() > 0)
@@ -333,10 +332,7 @@ bool Chunk::loadGame(nlohmann::json json)
 		}
 		else
 		{
-
 			blocks[j][i][k] = createBlock(ID, chunkX + i, j, chunkZ + k);
-			if (blocks[j][i][k]->isUpdateBlock())
-				toUpdate.push_back(blocks[j][i][k]);
 		}
 	}
 	return true;

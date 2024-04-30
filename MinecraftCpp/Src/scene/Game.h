@@ -30,7 +30,7 @@ class Game :
     Block* b = NULL;
     glm::vec3 blockPos;
     std::vector<glm::vec2> posToGenChunk;
-    int range = 11;
+    int range = 8;
     VAO *vao;
     VBO *vbo;
     EBO *ebo;

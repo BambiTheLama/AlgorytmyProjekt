@@ -172,14 +172,46 @@ void Game::update(float deltaTime)
 	}
 	chunksMutex.unlock();
 }
-
+#include "../world/Blocks/BlocksCreator.h"
+#include "../world/Blocks/StructureHalder.h"
 void Game::draw()
 {
 
-	ImGui::Begin("Light");
+	bool spawn = false;
+	static int posToSpawn[3] = { 0,100,0 };
+	static int rot = 0;
+	static int blockID = 0;
+	ImGui::Begin(" ");
 	ImGui::DragFloat3("LightDir", lightDir, 0.01, -1, 1);
 	ImGui::ColorEdit3("LightColor", lightColor);
+	ImGui::DragInt("ChunkRange", &range, 1, 1, 32);
+	ImGui::Checkbox("Spawn Structure", &spawn);
+	ImGui::DragInt3("Pos to Spawn", posToSpawn);
+	ImGui::DragInt("Times to Rot", &rot, 1, 0, 3);
+	ImGui::DragInt("Block Id", &blockID, 1, 0, 20);
+	ImGui::Text("%lf %lf %lf", cameraPos.x, cameraPos.y, cameraPos.z);
 	ImGui::End();
+
+
+	if (spawn)
+	{
+
+
+		StructureHalder* str = new StructureHalder(0, posToSpawn[0], posToSpawn[1], posToSpawn[2], 10, 10, 10);
+		for (int i = 0; i < 5; i++)
+		{
+			str->setBlock(0, 0, i, 2);
+			str->setBlock(i, 0, 0, 3);
+			str->setBlock(0, i, 0, 4);
+			str->setBlock(i, i, i, 1);
+		}
+		for (int i = 0; i < rot; i++)
+			str->rotate();
+		deleteBlock(posToSpawn[0], posToSpawn[1], posToSpawn[2]);
+		if (!addBlock(str))
+			delete str;
+
+	}
 
 	camera->useCamera(*shader, "camera");
 
