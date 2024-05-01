@@ -8,6 +8,7 @@ class ChunkMesh
 	VAO* vao = NULL;
 	VBO* vbo = NULL;
 	std::vector<int> data;
+
 	int elements = 0;
 	int dir = 0;
 

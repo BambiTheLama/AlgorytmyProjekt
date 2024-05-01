@@ -1,8 +1,9 @@
 #version 330 core
 
-layout (location = 0) in int data;
-layout (location = 1) in vec3 pos;
-layout (location = 2) in vec2 texPos;
+
+layout (location = 0) in vec3 pos;
+layout (location = 1) in vec2 texPos;
+layout (location = 2) in int data;
 
 uniform vec4 modelColor;
 uniform mat4 camera;
@@ -127,7 +128,7 @@ void main()
 	d.pos.x  = data       & 15;					/// 0b000000000000000000000000000001111
 	d.pos.y  = data >> 4  & 255;				/// 0b000000000000000000000111111110000
 	d.pos.z  = data >> 12 & 15;					/// 0b000000000000000011110000000000000
-	d.textID = data >> 16 & 63;					/// 0b000000000001111100000000000000000
+	d.textID = data >> 16 & 63;					/// 0b000000000011111100000000000000000
 	d.cutY = ((data >> 22) & 1) == 1;			/// 0b000000000100000000000000000000000
 	d.cutSides = ((data >> 23) & 1) == 1;		/// 0b000000001000000000000000000000000
 	d.animatedUp = ((data >> 24) & 1) == 1;		/// 0b000000010000000000000000000000000

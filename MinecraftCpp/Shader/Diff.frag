@@ -81,7 +81,7 @@ vec3 directLight()
 	{
 		lightCoords = (lightCoords + 1.0f) / 2.0f;
 		float currentDepth = lightCoords.z;
-		float bias = max(0.5f * (1.0f - dot(normal, lightDirection)), 0.0075f);
+		float bias = max(0.5f * (1.0f - dot(normal, lightDirection)), 0.005f);
 	
 		int sampleRadius = 3;
 		vec2 pixelSize = 1.0 / textureSize(texShadow, 0);
@@ -100,7 +100,7 @@ vec3 directLight()
 
 
 	vec3 diffuseColor = albedoText * diffuse * (1.0f - shadow) * lightColor;
-	vec3 specularColor = heightText.r * specular * (1.0f - shadow) * albedoText;
+	vec3 specularColor = albedoText * heightText.r * specular * (1.0f - shadow) * albedoText * lightColor;
 	vec3 ambientColor = albedoText * ambient;
 
 

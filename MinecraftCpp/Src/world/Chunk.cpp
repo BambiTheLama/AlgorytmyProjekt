@@ -40,15 +40,6 @@ Chunk::Chunk(int x, int y, int z)
 
 	if (!loadGame())
 		generateTerrain();
-
-	forAllBlocks
-	{
-		if (blocks[j][i][k])
-		{
-			if (blocks[j][i][k]->isUpdateBlock())
-				toUpdate.push_back(blocks[j][i][k]);
-		}
-	}
 	
 	setFacing();
 }
@@ -332,7 +323,7 @@ bool Chunk::loadGame(nlohmann::json json)
 		}
 		else
 		{
-			blocks[j][i][k] = createBlock(ID, chunkX + i, j, chunkZ + k);
+			setBlockAt(createBlock(ID, chunkX + i, j, chunkZ + k), i,j,k);
 		}
 	}
 	return true;
@@ -638,7 +629,7 @@ float getValueTerrain(float v)
 		return -log(-v) / 6.0f - 1;
 	if (v >= 1.0f)
 		return log(v) / 6.0f + 1;
-	return powf(v, 3);
+	return v;
 }
 
 void Chunk::genStone(int &x, int &z, int h)
@@ -649,7 +640,7 @@ void Chunk::genStone(int &x, int &z, int h)
 	{
 		if (blocks[i][x][z])
 			delete blocks[i][x][z];
-		blocks[i][x][z] = createBlock(2, blockX, i, blockZ);
+		setBlockAt(createBlock(2, blockX, i, blockZ), x, i, z);
 	}
 }
 
@@ -662,10 +653,10 @@ void Chunk::fillWater(int &x,int &z,int h,float &temperature)
 	for (int j = h; j < waterH && j < chunkH; j++)
 	{
 		if (!blocks[j][x][z])
-			blocks[j][x][z] = createBlock(11, blockX, j, blockZ);
+			setBlockAt(createBlock(11, blockX, j, blockZ), x, j, z);
 	}
 	if (!blocks[waterH][x][z])
-		blocks[waterH][x][z] = createBlock((temperature <= -0.3) ? 20 : 11, blockX, waterH, blockZ);
+		setBlockAt(createBlock((temperature <= -0.3) ? 20 : 11, blockX, waterH, blockZ), x, waterH, z);
 
 }
 
@@ -679,7 +670,7 @@ void Chunk::genSandForWater(int &x, int &z,int y, int h)
 	{
 		if (blocks[j][x][z])
 			delete blocks[j][x][z];
-		blocks[j][x][z] = createBlock(4, blockX, j, blockZ);
+		setBlockAt(createBlock(4, blockX, j, blockZ), x, j, z);
 	}
 }
 
@@ -704,8 +695,17 @@ void Chunk::biomLayer(int &x, int &z, int y, int h, float &temperature, float &s
 	{
 		if (blocks[j][x][z])
 			delete blocks[j][x][z];
-		blocks[j][x][z] = createBlock(j == h ? blockSurfaceID : blockID, blockX, j, blockZ);
+		setBlockAt(createBlock(j == h ? blockSurfaceID : blockID, blockX, j, blockZ), x, j, z);
 	}
+}
+
+void Chunk::setBlockAt(Block* b, int x, int y, int z)
+{
+	blocks[y][x][z] = b;
+	if (!b)
+		return;
+	if (b->isUpdateBlock())
+		toUpdate.push_back(b);
 }
 
 void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structureNoise)
@@ -726,7 +726,7 @@ void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structur
 			for (int cy = 0; cy < ch; cy++)
 			{
 				if (!blocks[y + cy][x][z])
-					blocks[y + cy][x][z] = createBlock(22, blockX, y + cy, blockZ);
+					setBlockAt(createBlock(22, blockX, y + cy, blockZ), x, y + cy, z);
 			}
 		}
 		return;
@@ -734,13 +734,13 @@ void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structur
 	if ((int)(value) % div == 0)
 	{
 		if (temperature < -0.3)
-			blocks[y][x][z] = createBlock(14, blockX, y, blockZ);
+			setBlockAt(createBlock(14, blockX, y, blockZ), x, y, z);
 		else if (temperature < 0.3)
 		{
 			if ((int)(value) % 10 >= 6)
-				blocks[y][x][z] = createBlock(12, blockX, y, blockZ);
+				setBlockAt(createBlock(12, blockX, y, blockZ), x, y, z);
 			else
-				blocks[y][x][z] = createBlock(13, blockX, y, blockZ);
+				setBlockAt(createBlock(13, blockX, y, blockZ), x, y, z);
 
 		}
 		else
@@ -748,10 +748,10 @@ void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structur
 			if ((int)(value) % 69 == 0)
 			{
 				int ch = rand() % 4;
-				for (int cy = 0; cy < ch; cy++)
+				for (int cy = 0; cy < ch && y + cy < chunkH; cy++)
 				{
 					if (!blocks[y + cy][x][z])
-						blocks[y + cy][x][z] = createBlock(15, blockX, y + cy, blockZ);
+						setBlockAt(createBlock(15, blockX, y + cy, blockZ), x, y + cy, z);
 				}
 			}
 		}
@@ -769,12 +769,12 @@ void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structur
 		else if ((int)(value) % 25  == 0)
 			blockId = 16;
 		if (blockId > -1 && !blocks[y][x][z])
-			blocks[y][x][z] = createBlock(blockId, blockX, y, blockZ);
+			setBlockAt(createBlock(blockId, blockX, y, blockZ), x, y, z);
 	}
 	else if (temperature < -0.3 && ((int)(value) % 100) == 0)
 	{
 		if (!blocks[y][x][z])
-			blocks[y][x][z] = createBlock(21, blockX, y, blockZ);
+			setBlockAt(createBlock(21, blockX, y, blockZ), x, y, z);
 	}
 }
 #include "Blocks/CubeHouse.h"
@@ -789,7 +789,7 @@ void Chunk::genStructures(int &x, int &z, int y, float &temperature, float &stru
 			return;
 		if (blocks[y][x][z])
 			delete blocks[y][x][z];
-		blocks[y][x][z] = createStructure(1, blockX, y, blockZ);
+		setBlockAt(createStructure(1, blockX, y, blockZ), x, y, z);
 
 	}
 }

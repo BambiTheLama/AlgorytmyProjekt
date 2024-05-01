@@ -100,6 +100,8 @@ private:
 
 	void biomLayer(int &x, int &z, int y, int h, float &temperature, float &structureNoise);
 
+	void setBlockAt(Block* b,int x, int y, int z);
+
 };
 
 int getBlockX(int x);

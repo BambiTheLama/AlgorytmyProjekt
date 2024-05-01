@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../core/RenderTexture.h"
 #include <algorithm>
+#include <windows.h> 
 
 Game* Game::game = NULL;
 
@@ -187,7 +188,8 @@ void Game::draw()
 	ImGui::Checkbox("Spawn Block", &spawn);
 	ImGui::DragInt3("Pos to Spawn", posToSpawn);
 	ImGui::DragInt("Block Id", &blockID, 1);
-	ImGui::Text("%lf %lf %lf", cameraPos.x, cameraPos.y, cameraPos.z);
+	ImGui::Checkbox("StopGenDestyWorld", &stopGenDestyWorld);
+	ImGui::Text("Camera Pos [x,y,z] %lf %lf %lf", cameraPos.x, cameraPos.y, cameraPos.z);
 	ImGui::End();
 
 
@@ -485,7 +487,10 @@ void Game::worldGenerateFun()
 {
 	while (gameRunning)
 	{
-		genWorld();
+		if (!stopGenDestyWorld)
+			genWorld();
+		else
+			Sleep(1);
 	}
 }
 
@@ -493,7 +498,10 @@ void Game::worldDestroyFun()
 {
 	while (gameRunning)
 	{
-		desWorld();
+		if (!stopGenDestyWorld)
+			desWorld();
+		else
+			Sleep(1);
 	}
 }
 
@@ -561,12 +569,11 @@ void Game::desWorld()
 	camPos.x /= chunkW;
 	camPos.y /= chunkH;
 	camPos.z /= chunkT;
-	
+	int range = this->range + 1;
 	chunksMutex.lock();
 	for (auto c : chunks)
 	{
-		glm::vec3 cPos = c->getLocation();
-		if (abs(camPos.x - cPos.x) > range + 1 || abs(camPos.z - cPos.z) > range + 1)
+		if (abs(camPos.x - c->x) > range || abs(camPos.z - c->z) > range)
 		{
 			toSave.push_back(c);
 		}
@@ -579,8 +586,7 @@ void Game::desWorld()
 	camPos.z /= chunkT;
 	for (auto c : toSave)
 	{
-		glm::vec3 cPos = c->getLocation();
-		if (abs(camPos.x - cPos.x) > range || abs(camPos.z - cPos.z) > range)
+		if (abs(camPos.x - c->x) > range || abs(camPos.z - c->z) > range)
 		{
 			auto it = std::find(toDelete.begin(), toDelete.end(), c);
 			if (it == toDelete.end())

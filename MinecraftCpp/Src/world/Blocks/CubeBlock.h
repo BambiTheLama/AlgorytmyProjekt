@@ -23,7 +23,7 @@ public:
 	virtual GLuint getVertex(int dir);
 
 	virtual bool isRenderedSide(int dir) { 
-		return ((int)(0b1 << (dir)) & (int)cube->getFaces()) == (0b1 << (dir));
+		return ((0b1 << (dir)) & cube->getFaces()) > 0;
 	}
 
 	virtual char faceToSetUp() { return cube->getFaces(); }
