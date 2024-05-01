@@ -414,7 +414,7 @@ void Chunk::reloadBlocksRight()
 void Chunk::genVerticPos(int dir)
 {
 	char blocksID[chunkH][chunkW][chunkT];
-	std::vector<int> vertices;
+	std::vector<glm::uvec2> vertices;
 	forAllBlocks
 	{
 		if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
@@ -424,7 +424,9 @@ void Chunk::genVerticPos(int dir)
 	}
 	int sizeX = 0;
 	int sizeY = 0;
-	int data = 0;
+	glm::uvec2 data = glm::uvec2(0, 0);
+	const int firstSize = 63;
+	const int secendSize = 31;
 	if (dir <= 1)
 	{
 		forAllBlocks
@@ -433,7 +435,7 @@ void Chunk::genVerticPos(int dir)
 				continue;
 			
 			data = blocks[j][i][k]->getVertex(dir);
-			for (sizeX = 0; sizeX < 7 && j + sizeX + 1 < chunkH; sizeX++)
+			for (sizeX = 0; sizeX < firstSize && j + sizeX + 1 < chunkH; sizeX++)
 			{
 				if (blocksID[j + sizeX + 1][i][k] != blocksID[j][i][k])
 				{
@@ -441,7 +443,7 @@ void Chunk::genVerticPos(int dir)
 				}
 				blocksID[j + sizeX + 1][i][k] = -1;
 			}
-			for (sizeY = 0; sizeY < 7 && k + sizeY + 1 < chunkT; sizeY++)
+			for (sizeY = 0; sizeY < secendSize && k + sizeY + 1 < chunkT; sizeY++)
 			{
 				bool breaked = false;
 				for (int s = 0; s <= sizeX; s++)
@@ -458,7 +460,7 @@ void Chunk::genVerticPos(int dir)
 						blocksID[j + s][i][k + sizeY + 1] = -1;
 			}
 			blocksID[j][i][k] = -1;
-			data += (sizeX << 26) + (sizeY << 29);
+			data.y += (sizeX << 21) + (sizeY << 27);
 
 			vertices.push_back(data);
 
@@ -474,7 +476,7 @@ void Chunk::genVerticPos(int dir)
 				continue;
 			
 			data = blocks[j][i][k]->getVertex(dir);
-			for (sizeX = 0; sizeX < 7 && j + sizeX + 1 < chunkH; sizeX++)
+			for (sizeX = 0; sizeX < firstSize && j + sizeX + 1 < chunkH; sizeX++)
 			{
 				if (blocksID[j + sizeX + 1][i][k] != blocksID[j][i][k])
 				{
@@ -482,7 +484,7 @@ void Chunk::genVerticPos(int dir)
 				}
 				blocksID[j + sizeX + 1][i][k] = -1;
 			}
-			for (sizeY = 0; sizeY < 7 && i + sizeY + 1 < chunkW; sizeY++)
+			for (sizeY = 0; sizeY < secendSize && i + sizeY + 1 < chunkW; sizeY++)
 			{
 				bool breaked = false;
 				for (int s = 0; s <= sizeX; s++)
@@ -499,7 +501,7 @@ void Chunk::genVerticPos(int dir)
 						blocksID[j + s][i + sizeY + 1][k] = -1;
 			}
 			blocksID[j][i][k] = -1;
-			data += (sizeX << 26) + (sizeY << 29);
+			data.y += (sizeX << 21) + (sizeY << 27);
 			vertices.push_back(data);
 			
 		}
@@ -510,13 +512,13 @@ void Chunk::genVerticPos(int dir)
 		{
 			if (blocksID[j][i][k] < 0)
 				continue;
-			for (sizeX = 0; sizeX < 7 && i + sizeX + 1 < chunkW; sizeX++)
+			for (sizeX = 0; sizeX < firstSize && i + sizeX + 1 < chunkW; sizeX++)
 			{
 				if (blocksID[j][i + sizeX + 1][k] != blocksID[j][i][k])
 					break;
 				blocksID[j][i + sizeX + 1][k] = -1;
 			}
-			for (sizeY = 0; sizeY < 7 && k + sizeY + 1 < chunkT; sizeY++)
+			for (sizeY = 0; sizeY < secendSize && k + sizeY + 1 < chunkT; sizeY++)
 			{
 				bool breaked = false;
 				for (int s = 0; s <= sizeX; s++)
@@ -534,7 +536,8 @@ void Chunk::genVerticPos(int dir)
 
 
 			}
-			data = blocks[j][i][k]->getVertex(dir) | (sizeX << 26) | (sizeY << 29);
+			data = blocks[j][i][k]->getVertex(dir);
+			data.y += (sizeX << 21) + (sizeY << 27);
 			vertices.push_back(data);
 			blocksID[j][i][k] = -1;
 		}
@@ -550,7 +553,7 @@ void Chunk::genVerticPos(int dir)
 
 			data = blocks[j][i][k]->getVertex(dir);
 
-			for (sizeX = 0; sizeX < 8 && j + sizeX + 1 < chunkH; sizeX++)
+			for (sizeX = 0; sizeX < firstSize && j + sizeX + 1 < chunkH; sizeX++)
 			{
 				if (blocksID[j + sizeX + 1][i][k] != blocksID[j][i][k])
 					break;
@@ -558,8 +561,7 @@ void Chunk::genVerticPos(int dir)
 			}
 
 			blocksID[j][i][k] = -1;
-			data += (sizeX << 26);
-
+			data.y += (sizeX << 21);
 			vertices.push_back(data);
 		}
 	}

@@ -20,15 +20,13 @@ public:
 
 	virtual void setOneFace(int face, Block* b);
 
-	virtual GLuint getVertex(int dir);
+	virtual glm::uvec2 getVertex(int dir);
 
 	virtual bool isRenderedSide(int dir) { 
 		return ((0b1 << (dir)) & cube->getFaces()) > 0;
 	}
 
 	virtual char faceToSetUp() { return cube->getFaces(); }
-
-	GLuint indexSize();
 
 	virtual bool isTransparent() { return transparent; }
 

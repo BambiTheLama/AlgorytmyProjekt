@@ -142,11 +142,11 @@ void ChunkMesh::start()
 	vao->linkData(*vboQuadText, 1, 2, GL_FLOAT, sizeof(glm::vec2), NULL);
 }
 
-void ChunkMesh::newMesh(std::vector<int> data)
+void ChunkMesh::newMesh(std::vector<glm::uvec2> data)
 {
 	vao->bind();
 	vbo->setNewVertices(data);
-	vao->linkData(*vbo, 2, 1, GL_FLOAT, sizeof(int), NULL);
+	vao->linkData(*vbo, 2, 2, GL_FLOAT, sizeof(glm::uvec2), NULL);
 	glVertexAttribDivisor(2, 1);
 	vao->unbind();
 
@@ -158,7 +158,7 @@ void ChunkMesh::clearMesh()
 	data.clear();
 }
 
-void ChunkMesh::addData(std::vector<int> data)
+void ChunkMesh::addData(std::vector<glm::uvec2> data)
 {
 	this->data.insert(this->data.end(), data.begin(), data.end());
 }
@@ -167,7 +167,7 @@ void ChunkMesh::genMesh()
 {
 	vao->bind();
 	vbo->setNewVertices(data);
-	vao->linkData(*vbo, 2, 1, GL_FLOAT, sizeof(int), NULL);
+	vao->linkData(*vbo, 2, 2, GL_FLOAT, sizeof(glm::uvec2), NULL);
 	glVertexAttribDivisor(2, 1);
 	vao->unbind();
 	this->elements = data.size();

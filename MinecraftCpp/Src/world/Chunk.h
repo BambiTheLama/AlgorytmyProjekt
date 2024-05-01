@@ -4,9 +4,9 @@
 #include <string>
 #include "ChunkMesh.h"
 #include <json.hpp>
-#define chunkW 16
+#define chunkW 32
 #define chunkH 256
-#define chunkT 16
+#define chunkT 32
 #define minH 5
 #define maxH 256
 #define waterH 75

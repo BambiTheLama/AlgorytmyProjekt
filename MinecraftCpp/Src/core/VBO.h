@@ -24,6 +24,8 @@ public:
 
 	void setNewVertices(std::vector<int>& vertices);
 
+	void setNewVertices(std::vector<glm::uvec2>& vertices);
+
 	void setNewVertices(std::vector<float>& vertices);
 
 	void setNewVertices(std::vector<GLuint>& vertices);

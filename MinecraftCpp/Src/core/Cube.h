@@ -29,25 +29,13 @@ public:
 
 	void setOneFace(char face, bool state = true);
 
-	std::vector<glm::vec3> getVertexPos() const;
-
-	std::vector<unsigned char> getBrightness() const;
-
-	std::vector<glm::vec3> getVertexTexture(int textureSides) const;
-
 	int getVertexTexture(int texID, int textureSides, char dir);
 
-	std::vector<GLuint> getVertex(int x, int y, int z, int textureSides, int texID,bool doubleSides=false);
-
 	GLuint getVertex(int x, int y, int z, int textureSides, int texID, int dir);
-
-	std::vector<GLuint> getIndex(bool doubleSides = false) const;
 
 	char getFaces()const { return face; }
 
 	bool hasSide(int dir) { return ((int)(0b1 << dir) & (int)face) != (int)(0b1 << dir); }
-
-	GLuint indexSize() const;
 
 	friend class Engine;
 

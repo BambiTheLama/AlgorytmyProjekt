@@ -3,7 +3,7 @@
 
 layout (location = 0) in vec3 pos;
 layout (location = 1) in vec2 texPos;
-layout (location = 2) in int data;
+layout (location = 2) in uvec2 data;
 
 uniform vec4 modelColor;
 uniform mat4 camera;
@@ -125,16 +125,20 @@ vec3 getPos(vec3 vPos)
 
 void main()
 {
-	d.pos.x  = data       & 15;					/// 0b000000000000000000000000000001111
-	d.pos.y  = data >> 4  & 255;				/// 0b000000000000000000000111111110000
-	d.pos.z  = data >> 12 & 15;					/// 0b000000000000000011110000000000000
-	d.textID = data >> 16 & 63;					/// 0b000000000011111100000000000000000
-	d.cutY = ((data >> 22) & 1) == 1;			/// 0b000000000100000000000000000000000
-	d.cutSides = ((data >> 23) & 1) == 1;		/// 0b000000001000000000000000000000000
-	d.animatedUp = ((data >> 24) & 1) == 1;		/// 0b000000010000000000000000000000000
-	d.animatedDown = ((data >> 25) & 1) == 1;	/// 0b000000100000000000000000000000000
-	d.scaleF = ((data >> 26) & 7) + 1;			/// 0b000111000000000000000000000000000
-	d.scaleS = ((data >> 29) & 7) + 1;			/// 0b111000000000000000000000000000000
+	int tmpData = int(data.x);
+	d.pos.x  = (tmpData)        & 31;					/// 0b00000000000000000000000000011111
+	d.pos.y  = (tmpData) >> 5   & 255;					/// 0b00000000000000000001111111100000
+	d.pos.z  = (tmpData) >> 13  & 31;					/// 0b00000000000000111110000000000000
+	d.textID = (tmpData) >> 18  & 63;					/// 0b00000000111111000000000000000000
+
+
+	tmpData = int(data.y);
+	d.cutY = (tmpData & 1) == 1;						/// 0b00000000000000000000000000000001
+	d.cutSides = ((tmpData >> 1) & 1) == 1;				/// 0b00000000000000000000000000000010
+	d.animatedUp = ((tmpData >> 2) & 1) == 1;			/// 0b00000000000000000000000000000100
+	d.animatedDown = ((tmpData >> 3) & 1) == 1;			/// 0b00000000000000000000000000001000
+	d.scaleF = ((tmpData >> 21) & 63) + 1;				/// 0b00000111111000000000000000000000
+	d.scaleS = ((tmpData >> 27) & 31) + 1;				/// 0b11111000000000000000000000000000
 
 	vec3 currentPos = getPos(pos) + d.pos + vec3(chunkX,0,chunkZ);
 	gl_Position = camera * vec4(currentPos, 1.0f);

@@ -32,7 +32,7 @@ void CubeBlock::setOneFace(int face, Block* b)
 		setOneFace(face, getDisplay(b));
 }
 
-GLuint CubeBlock::getVertex(int dir)
+glm::uvec2 CubeBlock::getVertex(int dir)
 {
 	int x = this->x;
 	int z = this->z;
@@ -44,10 +44,5 @@ GLuint CubeBlock::getVertex(int dir)
 		z %= chunkT;
 	else
 		z = (chunkT - (abs(z) % chunkT)) % chunkT;
-	return cube->getVertex(x, y, z, textureFaces, textureID, 0b1 << (dir));
-}
-
-GLuint CubeBlock::indexSize()
-{
-	return cube->indexSize();
+	return glm::uvec2(cube->getVertex(x, y, z, textureFaces, textureID, 0b1 << (dir)), 0);
 }

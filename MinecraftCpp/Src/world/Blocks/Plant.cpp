@@ -12,13 +12,12 @@ void Plant::update(float deltaTime)
 
 }
 
-GLuint Plant::getVertex(int dir)
+glm::uvec2 Plant::getVertex(int dir)
 {
-	return (x & 0b1111) +
-		((y & 0b11111111) << 4) +
-		((z & 0b1111) << 12) +
-		((textureID & 0b111111) << 16)+ 
-		(0b1 << 24);
+	return glm::uvec2((x & 0b11111) +
+		((y & 0b11111111) << 5) +
+		((z & 0b11111) << 13) +
+		((textureID & 0b111111) << 18), 4);
 }
 
 std::vector<glm::vec3> Plant::getPos(int x, int y, int z)

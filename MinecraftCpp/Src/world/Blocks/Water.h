@@ -10,6 +10,6 @@ public:
 
 	virtual void setOneFace(int face, Block* b) { setOneFace(face, false); }
 
-	virtual GLuint getVertex(int dir);
+	virtual glm::uvec2 getVertex(int dir);
 };
 

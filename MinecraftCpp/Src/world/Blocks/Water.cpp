@@ -1,6 +1,6 @@
 #include "Water.h"
 
-GLuint Water::getVertex(int dir)
+glm::uvec2 Water::getVertex(int dir)
 {
-	return CubeBlock::getVertex(dir) + (1 << 22);
+	return glm::uvec2(CubeBlock::getVertex(dir).x, 1);
 }

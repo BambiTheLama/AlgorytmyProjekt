@@ -7,7 +7,7 @@ class ChunkMesh
 {
 	VAO* vao = NULL;
 	VBO* vbo = NULL;
-	std::vector<int> data;
+	std::vector<glm::uvec2> data;
 
 	int elements = 0;
 	int dir = 0;
@@ -19,15 +19,15 @@ public:
 
 	void start();
 
-	void newMesh(std::vector<int> data);
+	void newMesh(std::vector<glm::uvec2> data);
 	
 	void clearMesh();
 
-	void addData(std::vector<int> data);
+	void addData(std::vector<glm::uvec2> data);
 
 	void genMesh();
 
-	std::vector<int> getData() { return data; }
+	std::vector<glm::uvec2> getData() { return data; }
 
 	void draw(Shader* s);
 };

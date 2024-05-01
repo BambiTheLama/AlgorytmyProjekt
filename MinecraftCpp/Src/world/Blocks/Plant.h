@@ -16,7 +16,7 @@ public:
 
 	virtual void setOneFace(int face, Block* b) {}
 
-	virtual GLuint getVertex(int dir);
+	virtual glm::uvec2 getVertex(int dir);
 
 	virtual bool isRenderedSide(int dir) {
 		return dir > 5;

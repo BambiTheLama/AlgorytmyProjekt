@@ -24,7 +24,7 @@ public:
 
 	virtual bool isRenderedSide(int dir) { return false; }
 
-	virtual GLuint getVertex(int dir) { return 0; }
+	virtual glm::uvec2 getVertex(int dir) { return glm::uvec2(0, 0); }
 
 	virtual char faceToSetUp() { return 0; }
 

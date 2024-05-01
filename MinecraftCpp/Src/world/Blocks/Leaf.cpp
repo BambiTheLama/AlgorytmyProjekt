@@ -4,7 +4,7 @@ Leaf::Leaf(int ID, int x, int y, int z, int texID) :CubeBlock(ID, x, y, z,texID,
 {
 }
 
-GLuint Leaf::getVertex(int dir)
+glm::uvec2 Leaf::getVertex(int dir)
 {
-	return CubeBlock::getVertex(dir) + (0b11 << 24);
+	return glm::uvec2(CubeBlock::getVertex(dir).x, 12);
 }
