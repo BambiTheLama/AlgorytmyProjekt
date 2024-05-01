@@ -40,8 +40,8 @@ Chunk::Chunk(int x, int y, int z)
 
 	if (!loadGame())
 		generateTerrain();
-	
-	setFacing();
+	if (toAdd.size() <= 0 && toDelete.size() <= 0)
+		setFacing();
 }
 
 Chunk::~Chunk()
