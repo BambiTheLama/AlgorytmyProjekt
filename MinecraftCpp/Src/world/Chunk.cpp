@@ -413,15 +413,7 @@ void Chunk::reloadBlocksRight()
 
 void Chunk::genVerticPos(int dir)
 {
-	char blocksID[chunkH][chunkW][chunkT];
 	std::vector<glm::uvec2> vertices;
-	forAllBlocks
-	{
-		if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
-			blocksID[j][i][k] = blocks[j][i][k]->getID();
-		else
-			blocksID[j][i][k] = -1;
-	}
 	int sizeX = 0;
 	int sizeY = 0;
 	glm::uvec2 data = glm::uvec2(0, 0);
@@ -429,141 +421,195 @@ void Chunk::genVerticPos(int dir)
 	const int secendSize = 31;
 	if (dir <= 1)
 	{
-		forAllBlocks
+		int blocksID[chunkH][chunkT];
+		for (int i = 0; i < chunkW; i++)
 		{
-			if (blocksID[j][i][k] < 0)
-				continue;
-			
-			data = blocks[j][i][k]->getVertex(dir);
-			for (sizeX = 0; sizeX < firstSize && j + sizeX + 1 < chunkH; sizeX++)
-			{
-				if (blocksID[j + sizeX + 1][i][k] != blocksID[j][i][k])
+			for (int j = 0; j < chunkH; j++)
+				for (int k = 0; k < chunkT; k++)
 				{
-					break;
+					
+					if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
+						blocksID[j][k] = blocks[j][i][k]->getID();
+					else
+						blocksID[j][k] = -1;
 				}
-				blocksID[j + sizeX + 1][i][k] = -1;
-			}
-			for (sizeY = 0; sizeY < secendSize && k + sizeY + 1 < chunkT; sizeY++)
-			{
-				bool breaked = false;
-				for (int s = 0; s <= sizeX; s++)
-					if (blocksID[j + s][i][k + sizeY + 1] != blocksID[j][i][k])
+			for (int j = 0; j < chunkH; j++)
+				for (int k = 0; k < chunkT; k++) 
+				{
+					if (blocksID[j][k] < 0)
+						continue;
+					data = blocks[j][i][k]->getVertex(dir);
+
+
+					for (sizeX = 0; sizeX < firstSize && j + sizeX + 1 < chunkH; sizeX++)
 					{
-						breaked = true;
-						break;
+						if (blocksID[j + sizeX + 1][k] != blocksID[j][k])
+						{
+							break;
+						}
+						blocksID[j + sizeX + 1][k] = -1;
 					}
+					for (sizeY = 0; sizeY < secendSize && k + sizeY + 1 < chunkT; sizeY++)
+					{
+						bool breaked = false;
+						for (int s = 0; s <= sizeX; s++)
+							if (blocksID[j + s][k + sizeY + 1] != blocksID[j][k])
+							{
+								breaked = true;
+								break;
+							}
 
-				if (breaked)
-					break;
-				else
-					for (int s = 0; s <= sizeX; s++)
-						blocksID[j + s][i][k + sizeY + 1] = -1;
-			}
-			blocksID[j][i][k] = -1;
-			data.y += (sizeX << 21) + (sizeY << 27);
+						if (breaked)
+							break;
+						else
+							for (int s = 0; s <= sizeX; s++)
+								blocksID[j + s][k + sizeY + 1] = -1;
+					}
+					blocksID[j][k] = -1;
+					data.y += (sizeX << 21) + (sizeY << 27);
 
-			vertices.push_back(data);
+					vertices.push_back(data);
+				}
 
-		
 		}
 		
 	}
 	else if (dir <= 3)
 	{
-		forAllBlocks
+		int blocksID[chunkH][chunkW];
+		for (int k = 0; k < chunkT; k++)
 		{
-			if (blocksID[j][i][k] < 0)
-				continue;
-			
-			data = blocks[j][i][k]->getVertex(dir);
-			for (sizeX = 0; sizeX < firstSize && j + sizeX + 1 < chunkH; sizeX++)
-			{
-				if (blocksID[j + sizeX + 1][i][k] != blocksID[j][i][k])
+			for (int j = 0; j < chunkH; j++)
+				for (int i = 0; i < chunkW; i++)
 				{
-					break;
+					if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
+						blocksID[j][i] = blocks[j][i][k]->getID();
+					else
+						blocksID[j][i] = -1;
 				}
-				blocksID[j + sizeX + 1][i][k] = -1;
-			}
-			for (sizeY = 0; sizeY < secendSize && i + sizeY + 1 < chunkW; sizeY++)
-			{
-				bool breaked = false;
-				for (int s = 0; s <= sizeX; s++)
-					if (blocksID[j + s][i + sizeY + 1][k] != blocksID[j][i][k])
-					{
-						breaked = true;
-						break;
-					}
+			for (int j = 0; j < chunkH; j++)
+				for (int i = 0; i < chunkW; i++)
+				{
+					if (blocksID[j][i] < 0)
+						continue;
 
-				if (breaked)
-					break;
-				else
-					for (int s = 0; s <= sizeX; s++)
-						blocksID[j + s][i + sizeY + 1][k] = -1;
-			}
-			blocksID[j][i][k] = -1;
-			data.y += (sizeX << 21) + (sizeY << 27);
-			vertices.push_back(data);
-			
+					data = blocks[j][i][k]->getVertex(dir);
+					for (sizeX = 0; sizeX < firstSize && j + sizeX + 1 < chunkH; sizeX++)
+					{
+						if (blocksID[j + sizeX + 1][i] != blocksID[j][i])
+						{
+							break;
+						}
+						blocksID[j + sizeX + 1][i] = -1;
+					}
+					for (sizeY = 0; sizeY < secendSize && i + sizeY + 1 < chunkW; sizeY++)
+					{
+						bool breaked = false;
+						for (int s = 0; s <= sizeX; s++)
+							if (blocksID[j + s][i + sizeY + 1] != blocksID[j][i])
+							{
+								breaked = true;
+								break;
+							}
+
+						if (breaked)
+							break;
+						else
+							for (int s = 0; s <= sizeX; s++)
+								blocksID[j + s][i + sizeY + 1] = -1;
+					}
+					blocksID[j][i] = -1;
+					data.y += (sizeX << 21) + (sizeY << 27);
+					vertices.push_back(data);
+				}
 		}
+
+
 	}
 	else if (dir <= 5)
 	{
-		forAllBlocks
+		int blocksID[chunkW][chunkT];
+
+		for (int j = 0; j < chunkH; j++)
 		{
-			if (blocksID[j][i][k] < 0)
-				continue;
-			for (sizeX = 0; sizeX < firstSize && i + sizeX + 1 < chunkW; sizeX++)
-			{
-				if (blocksID[j][i + sizeX + 1][k] != blocksID[j][i][k])
-					break;
-				blocksID[j][i + sizeX + 1][k] = -1;
-			}
-			for (sizeY = 0; sizeY < secendSize && k + sizeY + 1 < chunkT; sizeY++)
-			{
-				bool breaked = false;
-				for (int s = 0; s <= sizeX; s++)
-					if (blocksID[j][i + s][k + sizeY + 1] != blocksID[j][i][k])
+			for (int k = 0; k < chunkT; k++)
+				for (int i = 0; i < chunkW; i++)
+				{
+					if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
+						blocksID[i][k] = blocks[j][i][k]->getID();
+					else
+						blocksID[i][k] = -1;
+				}
+			for (int k = 0; k < chunkT; k++)
+				for (int i = 0; i < chunkW; i++)
+				{
+					if (blocksID[i][k] < 0)
+						continue;
+					for (sizeX = 0; sizeX < firstSize && i + sizeX + 1 < chunkW; sizeX++)
 					{
-						breaked = true;
-						break;
+						if (blocksID[i + sizeX + 1][k] != blocksID[i][k])
+							break;
+						blocksID[i + sizeX + 1][k] = -1;
 					}
+					for (sizeY = 0; sizeY < secendSize && k + sizeY + 1 < chunkT; sizeY++)
+					{
+						bool breaked = false;
+						for (int s = 0; s <= sizeX; s++)
+							if (blocksID[i + s][k + sizeY + 1] != blocksID[i][k])
+							{
+								breaked = true;
+								break;
+							}
 
-				if (breaked)
-					break;
-				else
-					for (int s = 0; s <= sizeX; s++)
-						blocksID[j][i + s][k + sizeY + 1] = -1;
+						if (breaked)
+							break;
+						else
+							for (int s = 0; s <= sizeX; s++)
+								blocksID[i + s][k + sizeY + 1] = -1;
 
 
-			}
-			data = blocks[j][i][k]->getVertex(dir);
-			data.y += (sizeX << 21) + (sizeY << 27);
-			vertices.push_back(data);
-			blocksID[j][i][k] = -1;
+					}
+					data = blocks[j][i][k]->getVertex(dir);
+					data.y += (sizeX << 21) + (sizeY << 27);
+					vertices.push_back(data);
+					blocksID[i][k] = -1;
+				}
 		}
-		
 
 	}
 	else
 	{
-		forAllBlocks
-		{
-			if (blocksID[j][i][k] < 0)
-				continue;
-
-			data = blocks[j][i][k]->getVertex(dir);
-
-			for (sizeX = 0; sizeX < firstSize && j + sizeX + 1 < chunkH; sizeX++)
+		int blocksID[chunkH];
+		for (int k = 0; k < chunkT; k++)
+			for (int i = 0; i < chunkW; i++)
 			{
-				if (blocksID[j + sizeX + 1][i][k] != blocksID[j][i][k])
-					break;
-				blocksID[j + sizeX + 1][i][k] = -1;
-			}
+				for (int j = 0; j < chunkH; j++)
+				{
+					if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
+						blocksID[j] = blocks[j][i][k]->getID();
+					else
+						blocksID[j] = -1;
+				}
+				for (int j = 0; j < chunkH; j++)
+				{
+					if (blocksID[j] < 0)
+						continue;
 
-			blocksID[j][i][k] = -1;
-			data.y += (sizeX << 21);
-			vertices.push_back(data);
-		}
+					data = blocks[j][i][k]->getVertex(dir);
+
+					for (sizeX = 0; sizeX < firstSize && j + sizeX + 1 < chunkH; sizeX++)
+					{
+						if (blocksID[j + sizeX + 1] != blocksID[j])
+							break;
+						blocksID[j + sizeX + 1] = -1;
+					}
+
+					blocksID[j] = -1;
+					data.y += (sizeX << 21);
+					vertices.push_back(data);
+				}
+				
+			}
 	}
 	mesh[dir]->clearMesh();
 	mesh[dir]->addData(vertices);
