@@ -427,14 +427,13 @@ void Chunk::genVerticPos(int dir)
 			for (int j = 0; j < chunkH; j++)
 				for (int k = 0; k < chunkT; k++)
 				{
-					
 					if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
 						blocksID[j][k] = blocks[j][i][k]->getID();
 					else
 						blocksID[j][k] = -1;
 				}
-			for (int j = 0; j < chunkH; j++)
-				for (int k = 0; k < chunkT; k++) 
+			for (int k = 0; k < chunkT; k++)
+				for (int j = 0; j < chunkH; j++)
 				{
 					if (blocksID[j][k] < 0)
 						continue;
@@ -469,6 +468,7 @@ void Chunk::genVerticPos(int dir)
 					data.y += (sizeX << 21) + (sizeY << 27);
 
 					vertices.push_back(data);
+					j += sizeX;
 				}
 
 		}
@@ -487,8 +487,8 @@ void Chunk::genVerticPos(int dir)
 					else
 						blocksID[j][i] = -1;
 				}
-			for (int j = 0; j < chunkH; j++)
-				for (int i = 0; i < chunkW; i++)
+			for (int i = 0; i < chunkW; i++)
+				for (int j = 0; j < chunkH; j++)
 				{
 					if (blocksID[j][i] < 0)
 						continue;
@@ -521,6 +521,7 @@ void Chunk::genVerticPos(int dir)
 					blocksID[j][i] = -1;
 					data.y += (sizeX << 21) + (sizeY << 27);
 					vertices.push_back(data);
+					j += sizeX;
 				}
 		}
 
@@ -573,6 +574,7 @@ void Chunk::genVerticPos(int dir)
 					data.y += (sizeX << 21) + (sizeY << 27);
 					vertices.push_back(data);
 					blocksID[i][k] = -1;
+					i += sizeX;
 				}
 		}
 
@@ -607,6 +609,7 @@ void Chunk::genVerticPos(int dir)
 					blocksID[j] = -1;
 					data.y += (sizeX << 21);
 					vertices.push_back(data);
+					j += sizeX;
 				}
 				
 			}
