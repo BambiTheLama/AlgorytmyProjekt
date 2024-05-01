@@ -9,7 +9,7 @@
 #include "../core/RenderTexture.h"
 #include <algorithm>
 #include <windows.h> 
-
+//#include <experimental/filesystem>
 Game* Game::game = NULL;
 
 Game::Game(int w,int h,GLFWwindow* window, ImGuiIO* io)
@@ -179,6 +179,8 @@ void Game::draw()
 {
 
 	bool spawn = false;
+	bool genNewWorld = false;
+	static int seed = Chunk::seed;
 	static int posToSpawn[3] = { 0,100,0 };
 	static int blockID = 0;
 	ImGui::Begin(" ");
@@ -190,19 +192,22 @@ void Game::draw()
 	ImGui::DragInt("Block Id", &blockID, 1);
 	ImGui::Checkbox("StopGenDestyWorld", &stopGenDestyWorld);
 	ImGui::Text("Camera Pos [x,y,z] %lf %lf %lf", cameraPos.x, cameraPos.y, cameraPos.z);
+	ImGui::DragInt("Seed", &seed, 1, 0, 1000000);
+	ImGui::Checkbox("Gen new world", &genNewWorld);
 	ImGui::End();
 
 
 	if (spawn)
 	{
-
-
 		Block* b = createBlock(blockID, posToSpawn[0], posToSpawn[1], posToSpawn[2]);
 
 		deleteBlock(posToSpawn[0], posToSpawn[1], posToSpawn[2]);
 		if (!addBlock(b))
 			delete b;
-
+	}
+	if (genNewWorld)
+	{
+		Chunk::seed = seed;
 	}
 
 	camera->useCamera(*shader, "camera");
@@ -481,6 +486,21 @@ void Game::reloadChunksNextTo(Chunk* c)
 	Chunk* chunkB = getChunkAt(pos.x, pos.y, pos.z - 1);
 	if (chunkB)
 		chunkB->reloadBlocksFront();
+}
+
+void Game::clearChunks()
+{
+	for (auto c : toAdd)
+		delete c;
+	for (auto c : chunks)
+	{
+		delete c;
+	}
+	chunks.clear();
+	toAdd.clear();
+	toSave.clear();
+	toDelete.clear();
+	toDraw.clear();
 }
 
 void Game::worldGenerateFun()

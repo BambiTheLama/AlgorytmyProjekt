@@ -92,6 +92,8 @@ public:
 
     void reloadChunksNextTo(Chunk* c);
 
+    void clearChunks();
+
     friend Game* getCurrentGame();
 
 private:

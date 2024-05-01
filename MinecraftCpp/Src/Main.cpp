@@ -11,7 +11,6 @@ extern "C" {
 
 int main()
 {
-	const char* t = "000000000000000000000";
 	setlocale(LC_ALL, "PL");
 	Engine e;
 	return 0;

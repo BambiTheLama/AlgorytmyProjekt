@@ -21,7 +21,7 @@
 								for (int k = 0; k < chunkT; k++)
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
-
+int Chunk::seed = 2137;
 Chunk::Chunk(int x, int y, int z)
 {
 	this->x = x;
@@ -870,7 +870,7 @@ int getMapHeight(float terain,float erozja,float pv,float river)
 
 void Chunk::generateTerrain()
 {
-	int seed = 2137;
+
 	FastNoiseLite terrain(seed);
 	FastNoiseLite erosion(seed);
 	FastNoiseLite picksAndValues(seed);

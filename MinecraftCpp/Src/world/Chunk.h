@@ -27,6 +27,7 @@ class Chunk
 	std::vector<Block*> toDraw;
 	ChunkMesh* mesh[10];
 	static Game* game;
+	static int seed;
 	bool genVertices = false;
 	bool wasCleared = false;
 	static std::string path;
