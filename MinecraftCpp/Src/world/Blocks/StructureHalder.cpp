@@ -74,8 +74,8 @@ void StructureHalder::rotate()
 			{
 				structureTmp[t - 1 - j + i * t + k * w * t] = structure[i + j * w + k * w * t];
 			}
-	int tmp = h;
-	h = t;
+	int tmp = w;
+	w = t;
 	t = tmp;
 	delete structure;
 	structure = structureTmp;

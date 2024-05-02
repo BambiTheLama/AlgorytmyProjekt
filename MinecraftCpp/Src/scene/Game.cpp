@@ -183,6 +183,8 @@ void Game::draw()
 	bool spawn = false;
 	bool genVillige = false;
 	static int seed = Chunk::seed;
+	static int rotate = 0;
+	static int rangeVilige = 2;
 	static int posToSpawn[3] = { 0,100,0 };
 	static int blockID = 0;
 	ImGui::Begin(" ");
@@ -192,15 +194,24 @@ void Game::draw()
 	ImGui::Checkbox("Spawn Block", &spawn);
 	ImGui::DragInt3("Pos to Spawn", posToSpawn);
 	ImGui::DragInt("Block Id", &blockID, 1);
+	ImGui::DragInt("Rotate", &rotate, 1, 0, 3);
 	ImGui::Checkbox("StopGenDestyWorld", &stopGenDestyWorld);
 	ImGui::Text("Camera Pos [x,y,z] %lf %lf %lf", cameraPos.x, cameraPos.y, cameraPos.z);
 	ImGui::Checkbox("Gen Villige", &genVillige);
+	ImGui::DragInt("Vilige range", &rangeVilige, 1, 0, 15);
+	
 	ImGui::End();
 
 
 	if (spawn)
 	{
 		Block* b = createBlock(blockID, posToSpawn[0], posToSpawn[1], posToSpawn[2]);
+		StructureHalder* s = dynamic_cast<StructureHalder*>(b);
+		if (s)
+		{
+			for (int i = 0; i < rotate; i++)
+				s->rotate();
+		}
 
 		deleteBlock(posToSpawn[0], posToSpawn[1], posToSpawn[2]);
 		if (!addBlock(b))
@@ -208,24 +219,27 @@ void Game::draw()
 	}
 	if (genVillige)
 	{
-		Tile** t = generateVilage(10, 10);
-		for (int x = 0; x < 10; x++)
-			for (int z = 0; z < 10; z++)
+		Tile** t = generateVilage(rangeVilige);
+		for (int x = 0; x < rangeVilige; x++)
+			for (int z = 0; z < rangeVilige; z++)
 			{
-				if (t[x + z * 10])
+				if (t[x + z * rangeVilige])
 				{
-					Tile* tile = t[x + z * 10];
-					StructureHalder* str = createStructure(tile->ID, posToSpawn[0] + x * 9, posToSpawn[1], posToSpawn[2] + z * 9);
-					for (int i = 0; i < tile->rotate; i++)
+					Tile* tile = t[x + z * rangeVilige];
+					StructureHalder* str = createStructure(tile->ID, posToSpawn[0] + x * StructureTileSize, posToSpawn[1], posToSpawn[2] + z * StructureTileSize);
+					if (!str)
+						continue;
+					for (int i = 0; i < (tile->rotate)%4; i++)
 						str->rotate();
 					if (!addBlock(str))
 						delete str;
 				}
 			}
 
-		for (auto i = 0; i < 100; i++)
+		for (auto i = 0; i < rangeVilige * rangeVilige; i++)
 			if (t[i])
 				delete t[i];
+		delete t;
 	}
 
 	camera->useCamera(*shader, "camera");
