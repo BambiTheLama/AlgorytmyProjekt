@@ -5,6 +5,7 @@ class StructureHalder :
 {
     int* structure;
     int w, h,t;
+    int timesToRotate = 0;
 public:
     StructureHalder(int ID, int x, int y, int z, int w, int h, int t);
 
@@ -27,5 +28,7 @@ public:
     virtual void setOneFace(int face, Block* b) {}
 
     virtual bool isUpdateBlock() { return true; }
+
+    int getTimeRotated() { return timesToRotate; }
 };
 

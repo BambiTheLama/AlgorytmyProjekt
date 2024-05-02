@@ -385,7 +385,7 @@ void Chunk::clearBlocks()
 	toUpdate.clear();
 }
 
-void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
+void Chunk::saveBlockToChunk(int x, int y, int z, int ID,int rotate)
 {
 	int cx=0;
 	int cy=0;
@@ -437,11 +437,9 @@ void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
 	{
 		n = saveData->j["ToAddBlock"].size();
 	}
-	int bx = getBlockX(x);
-	int by = y;
-	int bz = getBlockZ(z);
+
 	nlohmann::json j;
-	saveBlockToJson(j, bx, by, bz, ID);
+	saveBlockToJson(j, x, y, z, ID, rotate);
 	saveData->j["ToAddBlock"][n] = j;
 }
 
@@ -762,20 +760,22 @@ void genValues(float** tab)
 		}
 }
 
-void Chunk::saveBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID)
+void Chunk::saveBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID, int& rotate)
 {
 	j[0] = ID;
 	j[1] = x;
 	j[2] = y;
 	j[3] = z;
+	j[4] = rotate;
 }
 
-void Chunk::readBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID)
+void Chunk::readBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID, int& rotate)
 {
 	ID = j[0];
 	x = j[1];
 	y = j[2];
 	z = j[3];
+	rotate = j[4];
 }
 
 void Chunk::saveBlockData()
@@ -1212,9 +1212,25 @@ void Chunk::readDataFromDataFile(SaveChunkData* saveData)
 	nlohmann::json j = saveData->j["ToAddBlock"];
 	for (int i = 0; i < j.size(); i++)
 	{
-		int x, y, z, ID;
-		readBlockToJson(j[i], x, y, z, ID);
+		int x, y, z, ID, rotate;
+		readBlockToJson(j[i], x, y, z, ID, rotate);
 		deleteBlock(x, y, z);
-		addBlock(createBlock(ID, x, y, z));
+		
+		if (ID < 0)
+		{
+			StructureHalder* structure = createStructure(-ID, x, y, z);
+			if (structure)
+			{
+				for (int i = 0; i < rotate; i++)
+					structure->rotate();
+				addBlock(structure);
+			}
+
+		}
+		else
+		{
+			addBlock(createBlock(ID, x, y, z));
+		}
+
 	}
 }

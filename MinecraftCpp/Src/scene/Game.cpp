@@ -361,7 +361,16 @@ bool Game::addBlock(Block* b)
 	for (auto a : toAdd)
 		if (a->isThisChunk(x, y, z))
 			return a->addBlock(b);
-	Chunk::saveBlockToChunk(x, y, z, b->ID);
+	if (b->ID < 0)
+	{
+		StructureHalder* heandler = dynamic_cast<StructureHalder*>(b);
+		Chunk::saveBlockToChunk(x, y, z, heandler->ID, heandler->getTimeRotated());
+	}
+	else
+	{
+		Chunk::saveBlockToChunk(x, y, z, b->ID);
+	}
+
 	return false;
 }
 

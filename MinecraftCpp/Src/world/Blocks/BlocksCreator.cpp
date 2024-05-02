@@ -165,14 +165,14 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 		break;
 	}
 	case 6:{
-		structure = new StructureHalder(-i, x, y, z, w, 10, t);
+		structure = new StructureHalder(-i, x, y, z, w, 8, t);
 		for (int z = t / 2 + 1; z < t; z++)
 			for (int x = w / 2 - 1; x < w / 2 + 2; x++)
 				structure->setBlock(x, 0, z, 29);
 
 		for (int z = t / 2 - 3; z < t / 2 + 4; z++)
 		{
-			for (int x = 1; x < w - 1; x++)
+			for (int x = 1; x < w - 2; x++)
 				structure->setBlock(x, 0, z, 26);
 			for (int y = 1; y < 4; y++)
 			{
@@ -182,7 +182,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 
 		}
 		for (int y = 1; y < 4; y++)
-			for (int x = 1; x < w-1; x++)
+			for (int x = 1; x < w-2; x++)
 			{
 				structure->setBlock(x, y, t/2-3, 23);
 				structure->setBlock(x, y, t/2+3, 23);
@@ -198,11 +198,56 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 			structure->setBlock(x + w / 2, 2, t / 2 + 3, 27);
 
 		}
-		for (int y = 0; y < 3; y++)
+		for (int y = 0; y < 4; y++)
 			for (int z = t / 2 - 4 + y; z < t / 2 + 5 - y; z++)
 				for (int x = y; x < w - y ; x++)
 					structure->setBlock(x, 4 + y, z, 26);
 
+		break;
+	}
+	case 7: {
+		structure = new StructureHalder(-i, x, y, z, w, 8, t);
+		for (int z = t / 2 + 1; z < t; z++)
+			for (int x = w / 2 - 1; x < w / 2 + 2; x++)
+				structure->setBlock(x, 0, z, 29);
+
+		for (int z = 1; z < t -2; z++)
+		{
+			for (int x = 3; x < w - 3; x++)
+				structure->setBlock(x, 0, z, 26);
+			for (int y = 1; y < 5; y++)
+			{
+				structure->setBlock(3, y, z, 26);
+				structure->setBlock(w - 4, y, z, 26);
+			}
+
+		}
+		for (int y = 1; y < 5; y++)
+			for (int x = 3; x < w - 4; x++)
+			{
+				structure->setBlock(x, y, 1, 26);
+				structure->setBlock(x, y, t-3, 26);
+			}
+
+		for (int z = 1; z < t - 2; z++)
+			for (int x = 3; x < w - 3; x++)
+				structure->setBlock(x, 5, z, 26);
+
+
+		for (int z = 3; z < t - 4; z++)
+			for (int y = 2; y < 4; y++)
+			{
+				structure->setBlock(3, y, z, 27);
+				structure->setBlock(w - 4, y, z, 27);
+			}
+		for (int y = 2; y < 4; y++)
+			for (int x = 5; x < w - 5; x++)
+			{
+				structure->setBlock(x, y, 1, 27);
+			}
+
+		structure->setBlock(w / 2, 1, t - 3, 100000);
+		structure->setBlock(w / 2, 2, t - 3, 100000);
 		break;
 	}
 

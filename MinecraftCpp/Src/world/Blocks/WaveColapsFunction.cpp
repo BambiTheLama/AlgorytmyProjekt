@@ -23,7 +23,7 @@ void Tile::rotateTile()
 	right = tmp;
 }
 
-bool Tile::canConnect(Dir dir, Tile& tile)
+bool Tile::canConnect(Dir dir, Tile tile)
 {
 	if (bilding && tile.bilding)
 		return false;
@@ -70,6 +70,12 @@ static std::vector<Tile> allPosibleTiles{
 	Tile(6,0,1,0,0,3,true),
 
 
+	Tile(7,0,1,0,0,0,true),
+	Tile(7,0,1,0,0,1,true),
+	Tile(7,0,1,0,0,2,true),
+	Tile(7,0,1,0,0,3,true),
+
+
 };
 
 struct PosiblesTiles
@@ -112,7 +118,7 @@ static void genPosibleTiles(Tile** tiles, int r, PosiblesTiles* t)
 		std::vector<int> posibleIDTmp;
 		for(auto p:posibleID)
 		{
-			if (allPosibleTiles[p].up == tileUp->down)
+			if (tileUp->canConnect(Dir::Down, allPosibleTiles[p]))
 				posibleIDTmp.push_back(p);
 		}
 		posibleID = posibleIDTmp;
@@ -122,7 +128,7 @@ static void genPosibleTiles(Tile** tiles, int r, PosiblesTiles* t)
 		std::vector<int> posibleIDTmp;
 		for (auto p : posibleID)
 		{
-			if (allPosibleTiles[p].down == tileDown->up)
+			if (tileDown->canConnect(Dir::Up, allPosibleTiles[p]))
 				posibleIDTmp.push_back(p);
 		}
 		posibleID = posibleIDTmp;
@@ -132,7 +138,7 @@ static void genPosibleTiles(Tile** tiles, int r, PosiblesTiles* t)
 		std::vector<int> posibleIDTmp;
 		for (auto p : posibleID)
 		{
-			if (allPosibleTiles[p].left == tileLeft->right)
+			if (tileLeft->canConnect(Dir::Right, allPosibleTiles[p]))
 				posibleIDTmp.push_back(p);
 		}
 		posibleID = posibleIDTmp;
@@ -142,7 +148,7 @@ static void genPosibleTiles(Tile** tiles, int r, PosiblesTiles* t)
 		std::vector<int> posibleIDTmp;
 		for (auto p : posibleID)
 		{
-			if (allPosibleTiles[p].right == tileRight->left)
+			if (tileRight->canConnect(Dir::Left, allPosibleTiles[p]))
 				posibleIDTmp.push_back(p);
 		}
 		posibleID = posibleIDTmp;

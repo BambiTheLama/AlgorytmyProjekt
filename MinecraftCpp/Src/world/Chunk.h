@@ -67,7 +67,7 @@ public:
 
 	void clearBlocks();
 
-	static void saveBlockToChunk(int x, int y, int z, int ID);
+	static void saveBlockToChunk(int x, int y, int z, int ID, int rotate = 0);
 
 	static std::string fileName(int x, int y, int z) { return path + "chunk " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ".json"; }
 
@@ -81,9 +81,9 @@ public:
 
 	friend class Game;
 private:
-	static void saveBlockToJson(nlohmann::json &j,int &x, int &y, int &z, int &ID);
+	static void saveBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID, int &rotate);
 
-	static void readBlockToJson(nlohmann::json& j, int &x, int &y, int &z, int &ID);
+	static void readBlockToJson(nlohmann::json& j, int &x, int &y, int &z, int &ID, int &rotate);
 
 	static void saveBlockData();
 

@@ -79,6 +79,7 @@ void StructureHalder::rotate()
 	t = tmp;
 	delete structure;
 	structure = structureTmp;
+	timesToRotate++;
 }
 
 void StructureHalder::setBlock(int x, int y,int z, int ID)
