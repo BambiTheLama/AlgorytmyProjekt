@@ -31,6 +31,7 @@ class Chunk
 	bool genVertices = false;
 	bool wasCleared = false;
 	static std::string path;
+	static std::vector<SaveChunkData*> data;
 public:
 	Chunk(int x, int y, int z);
 
@@ -49,6 +50,8 @@ public:
 	bool addBlock(Block* b);
 
 	bool isThisChunk(int x, int y, int z) const;
+
+	bool isBlockAt(int x, int y, int z);
 
 	void save();
 
@@ -78,10 +81,19 @@ public:
 
 	friend class Game;
 private:
+	static void saveBlockToJson(nlohmann::json &j,int &x, int &y, int &z, int &ID);
+
+	static void readBlockToJson(nlohmann::json& j, int &x, int &y, int &z, int &ID);
 
 	static void saveBlockData();
 
+	static bool hasDataToRead(int x, int y, int z);
+
+	static SaveChunkData* getChunkData(int x, int y, int z);
+
 	void setFacing();
+
+	void readDataFromDataFile(SaveChunkData* saveData);
 
 	void genVerticPos(int dir);
 

@@ -9,6 +9,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+
 class Texture;
 class RenderTexture;
 class Game :
@@ -77,6 +78,8 @@ public:
     glm::vec3 getChunkPos(int x, int y, int z);
 
     void deleteBlock(int x, int y, int z);
+
+    bool isBlockAt(int x, int y, int z);
 
     bool addBlock(Block* b);
 

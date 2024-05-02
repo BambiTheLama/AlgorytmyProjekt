@@ -83,41 +83,85 @@ Block* createBlock(int i, int x, int y, int z)
 
 StructureHalder* createStructure(int i, int x, int y, int z)
 {
-	StructureHalder* structure;
+	StructureHalder* structure = NULL;
 	switch (i)
 	{
-	case 1:
-		structure = new StructureHalder(-i, x, y, z, 5, 5, 5);
-		for (int x = 0; x < 5; x++)
-			for (int z = 0; z < 5; z++)
+	case 1:{
+
+		structure = new StructureHalder(-i, x, y, z, 9, 5, 9);
+		for (int x = 2; x < 7; x++)
+			for (int z = 2; z < 7; z++)
 				structure->setBlock(x, 0, z, 26);
-		for (int x = 1; x < 4; x++)
+		for (int x = 3; x < 6; x++)
 			for (int y = 1; y < 5; y++)
 			{
-				structure->setBlock(x, y, 0, 23);
-				structure->setBlock(x, y, 4, 23);
-				structure->setBlock(0, y, x, 23);
-				structure->setBlock(4, y, x, 23);
+				structure->setBlock(x, y, 2, 23);
+				structure->setBlock(x, y, 6, 23);
+				structure->setBlock(2, y, x, 23);
+				structure->setBlock(6, y, x, 23);
 			}
-		for (int x = 1; x < 4; x++)
-			for (int z = 1; z < 4; z++)
+		for (int x = 3; x < 6; x++)
+			for (int z = 3; z < 6; z++)
 				structure->setBlock(x, 4, z, 23);
 		for (int y = 1; y < 5; y++)
 		{
-			structure->setBlock(0, y, 0, 5);
-			structure->setBlock(0, y, 4, 5);
-			structure->setBlock(4, y, 0, 5);
-			structure->setBlock(4, y, 4, 5);
+			structure->setBlock(2, y, 2, 5);
+			structure->setBlock(2, y, 6, 5);
+			structure->setBlock(6, y, 2, 5);
+			structure->setBlock(6, y, 6, 5);
 		}
-		structure->setBlock(0, 2, 2, 27);
+		structure->setBlock(2, 2, 4, 27);
+		structure->setBlock(6, 2, 4, 27);
 		structure->setBlock(4, 2, 2, 27);
-		structure->setBlock(2, 2, 0, 27);
 
-		structure->setBlock(2, 2, 4, 1000000000);
-		structure->setBlock(2, 1, 4, 1000000000);
-
-		return structure;
-
+		structure->setBlock(4, 2, 6, 1000000000);
+		structure->setBlock(4, 1, 6, 1000000000);
+		for (int z = 7; z < 9; z++)
+			for (int x = 3; x < 6; x++)
+				structure->setBlock(x, 0, z, 29);
+		break;
 	}
-	return NULL;
+	case 2:{
+		structure = new StructureHalder(-i, x, y, z, 9, 1, 9);
+
+		for (int z = 0; z < 9; z++)
+			for (int x = 3; x < 6; x++)
+				structure->setBlock(x, 0, z, 29);
+		break;
+	}
+	case 3: {
+		structure = new StructureHalder(-i, x, y, z, 9, 1, 9);
+		for (int z = 0; z < 9; z++)
+			for (int x = 3; x < 6; x++)
+				structure->setBlock(x, 0, z, 29);
+		for (int z = 3; z < 6; z++)
+			for (int x = 5; x < 9; x++)
+				structure->setBlock(x, 0, z, 29);
+		break;
+	}
+	case 4: {
+		structure = new StructureHalder(-i, x, y, z, 9, 1, 9);
+
+		for (int z = 0; z < 5; z++)
+			for (int x = 3; x < 6; x++)
+				structure->setBlock(x, 0, z, 29);
+		for (int z = 3; z < 6; z++)
+			for (int x = 3; x < 9; x++)
+				structure->setBlock(x, 0, z, 29);
+		break;
+	}
+	case 5: {
+		structure = new StructureHalder(-i, x, y, z, 9, 1, 9);
+
+		for (int z = 0; z < 9; z++)
+			for (int x = 3; x < 6; x++)
+			{
+				structure->setBlock(x, 0, z, 29);
+				structure->setBlock(z, 0, x, 29);
+			}
+
+		break;
+	}
+	}
+	return structure;
 }

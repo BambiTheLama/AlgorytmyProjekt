@@ -22,6 +22,8 @@
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
 int Chunk::seed = 2137;
+std::vector<SaveChunkData*> Chunk::data;
+
 Chunk::Chunk(int x, int y, int z)
 {
 	this->x = x;
@@ -37,9 +39,25 @@ Chunk::Chunk(int x, int y, int z)
 	{
 		blocks[j][i][k] = NULL;
 	}
+	SaveChunkData* saveData = getChunkData(x, y, z);
+	if (saveData)
+	{
+		if (!loadGame(saveData->j))
+			generateTerrain();
+		auto iterator = std::find(data.begin(), data.end(), saveData);
+		data.erase(iterator);
+		readDataFromDataFile(saveData);
+		setFacing();
+		delete saveData;
+		return;
+	}
+	else
+	{
+		if (!loadGame())
+			generateTerrain();
+	}
+	
 
-	if (!loadGame())
-		generateTerrain();
 	if (toAdd.size() <= 0 && toDelete.size() <= 0)
 		setFacing();
 }
@@ -64,11 +82,19 @@ void Chunk::start()
 		mesh[i]->start();
 		mesh[i]->genMesh();
 	}	
-
+	SaveChunkData* data = getChunkData(x, y, z);
+	if (data)
+	{
+		auto it = std::find(this->data.begin(), this->data.end(), data);
+		this->data.erase(it);
+		readDataFromDataFile(data);
+		delete data;
+	}
 }
 
 void Chunk::update(float deltaTime)
 {
+
 	for (auto u : toUpdate)
 	{
 		u->update(deltaTime);
@@ -226,6 +252,18 @@ bool Chunk::isThisChunk(int x, int y, int z) const
 	return x >= 0 && x < chunkW && y >= 0 && y < chunkH && z >= 0 && z < chunkT;
 }
 
+bool Chunk::isBlockAt(int x, int y, int z)
+{
+	int bx = getBlockX(x);
+	int by = y;
+	int bz = getBlockZ(z);
+	if (bx >= 0 && bx < chunkW && by >= 0 && by < chunkH && bz >= 0 && bz < chunkT)
+	{
+		return blocks[by][bx][bz];
+	}
+	return false;
+}
+
 void Chunk::save()
 {
 #ifdef noSave
@@ -349,7 +387,62 @@ void Chunk::clearBlocks()
 
 void Chunk::saveBlockToChunk(int x, int y, int z, int ID)
 {
+	int cx=0;
+	int cy=0;
+	int cz=0;
+	if (x >= 0)
+	{
+		cx = x / chunkW;
+	}
+	else
+	{
+		cx = x / chunkW -1;
+	}
+	if (y >= 0)
+	{
+		cy = y / chunkH;
+	}
+	else
+	{
+		cy = y / chunkH - 1;
+	}
+	if (z >= 0)
+	{
+		cz = z / chunkT;
+	}
+	else
+	{
+		cz = z / chunkT - 1;
+	}
+	SaveChunkData* saveData = getChunkData(cx, cy, cz);
+	if(!saveData)
+	{
+		SaveChunkData* data = new SaveChunkData();
+		data->x = cx;
+		data->y = cy;
+		data->z = cz;
+		std::ifstream reader;
+		reader.open(fileName(cx, cy, cz));
+		if (reader.is_open())
+		{
+			reader >> data->j;
+			reader.close();
+		}
+		saveData = data;
+		Chunk::data.push_back(data);
+	}
 
+	int n = 0;
+	if (saveData->j.contains("ToAddBlock"))
+	{
+		n = saveData->j["ToAddBlock"].size();
+	}
+	int bx = getBlockX(x);
+	int by = y;
+	int bz = getBlockZ(z);
+	nlohmann::json j;
+	saveBlockToJson(j, bx, by, bz, ID);
+	saveData->j["ToAddBlock"][n] = j;
 }
 
 void Chunk::reloadBlocksFront()
@@ -669,9 +762,49 @@ void genValues(float** tab)
 		}
 }
 
+void Chunk::saveBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID)
+{
+	j[0] = ID;
+	j[1] = x;
+	j[2] = y;
+	j[3] = z;
+}
+
+void Chunk::readBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID)
+{
+	ID = j[0];
+	x = j[1];
+	y = j[2];
+	z = j[3];
+}
+
 void Chunk::saveBlockData()
 {
+	std::ofstream s;
+	for (auto d : data)
+	{
+		s.open(fileName(d->x, d->y, d->z));
+		if (s.is_open())
+		{
+			s << d->j;
+			s.close();
+		}
+		delete d;
+	}
+	data.clear();
+}
 
+bool Chunk::hasDataToRead(int x, int y, int z)
+{
+	return getChunkData(x, y, z);
+}
+
+SaveChunkData* Chunk::getChunkData(int x, int y, int z)
+{
+	for (auto d : data)
+		if (x == d->x && y == d->y && z == d->z)
+			return d;
+	return NULL;
 }
 
 float getValueTerrain(float v)
@@ -828,25 +961,27 @@ void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structur
 			setBlockAt(createBlock(21, blockX, y, blockZ), x, y, z);
 	}
 }
-#include "Blocks/CubeHouse.h"
+
 void Chunk::genStructures(int &x, int &z, int y, float &temperature, float &structureNoise)
 {
 	int blockX = x + this->x * (chunkW);
 	int blockZ = z + this->z * (chunkT);
 	int value = abs(temperature) * 1000000;
-	if (((int)(value) % 10000) == 0)
+	if (((int)(value) % 4567) == 0)
 	{
 		if (y <= waterH)
 			return;
 		if (blocks[y][x][z])
 			delete blocks[y][x][z];
-		setBlockAt(createStructure(1, blockX, y, blockZ), x, y, z);
+
+		setBlockAt(createStructure(((value) % 162)%10+1, blockX, y, blockZ), x, y, z);
 
 	}
 }
 
 int getMapHeight(float terain,float erozja,float pv,float river)
 {
+	return waterH + 1;
 	int h = minH + (terain + erozja / 3 + pv / 18) * 18.0f / 25.0f * (maxH - minH);
 	if (0.90f < river)
 	{
@@ -959,11 +1094,10 @@ void Chunk::generateTerrain()
 				}
 			}
 			avgH /= 49;
-			genStructures(i, k, avgH, temperatureV, structureV);
+			//genStructures(i, k, avgH, temperatureV, structureV);
 		}
 
 }
-
 
 int getBlockX(int x)
 {
@@ -1071,4 +1205,16 @@ void Chunk::setFacing()
 		fChunk->genVerticesFlag();
 	if (bChunk)
 		bChunk->genVerticesFlag();
+}
+
+void Chunk::readDataFromDataFile(SaveChunkData* saveData)
+{
+	nlohmann::json j = saveData->j["ToAddBlock"];
+	for (int i = 0; i < j.size(); i++)
+	{
+		int x, y, z, ID;
+		readBlockToJson(j[i], x, y, z, ID);
+		deleteBlock(x, y, z);
+		addBlock(createBlock(ID, x, y, z));
+	}
 }

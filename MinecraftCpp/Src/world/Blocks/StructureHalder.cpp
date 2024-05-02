@@ -26,6 +26,31 @@ void StructureHalder::update(float deltaTime)
 	int startX = x - w / 2;
 	int startZ = z - t / 2;
 	Block* b;
+	if (h < 0)
+	{
+		for (int i = 0; i < w; i++)
+			for (int j = 0; j < t; j++)
+			{
+				int blockId = structure[i + j * w];
+				if (blockId < 0)
+					continue;
+				int h = y - 5;
+				
+				for (; h < chunkH; h++)
+				{
+					if (!g->isBlockAt(startX + i, h, startZ + j))
+					{
+						h--;
+						break;
+					}
+				}
+				g->deleteBlock(startX + i, h, startZ + j);
+				b = createBlock(blockId, startX + i, h, startZ + j);
+				if (!g->addBlock(b) && b)
+					delete b;
+			}
+		return;
+	}
 	for (int i = 0; i < w; i++)
 		for (int j = 0; j < t; j++)
 			for (int k = 0; k < h; k++)

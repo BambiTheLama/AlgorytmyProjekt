@@ -171,15 +171,17 @@ void Game::update(float deltaTime)
 	{
 		deleteBlock(blockPos.x, blockPos.y, blockPos.z);
 	}
+
 	chunksMutex.unlock();
 }
 #include "../world/Blocks/BlocksCreator.h"
+#include "../world/Blocks/WaveColapsFunction.h"
 
 void Game::draw()
 {
 
 	bool spawn = false;
-	bool genNewWorld = false;
+	bool genVillige = false;
 	static int seed = Chunk::seed;
 	static int posToSpawn[3] = { 0,100,0 };
 	static int blockID = 0;
@@ -192,8 +194,7 @@ void Game::draw()
 	ImGui::DragInt("Block Id", &blockID, 1);
 	ImGui::Checkbox("StopGenDestyWorld", &stopGenDestyWorld);
 	ImGui::Text("Camera Pos [x,y,z] %lf %lf %lf", cameraPos.x, cameraPos.y, cameraPos.z);
-	ImGui::DragInt("Seed", &seed, 1, 0, 1000000);
-	ImGui::Checkbox("Gen new world", &genNewWorld);
+	ImGui::Checkbox("Gen Villige", &genVillige);
 	ImGui::End();
 
 
@@ -205,9 +206,26 @@ void Game::draw()
 		if (!addBlock(b))
 			delete b;
 	}
-	if (genNewWorld)
+	if (genVillige)
 	{
-		Chunk::seed = seed;
+		Tile** t = generateVilage(10, 10);
+		for (int x = 0; x < 10; x++)
+			for (int z = 0; z < 10; z++)
+			{
+				if (t[x + z * 10])
+				{
+					Tile* tile = t[x + z * 10];
+					StructureHalder* str = createStructure(tile->ID, posToSpawn[0] + x * 9, posToSpawn[1], posToSpawn[2] + z * 9);
+					for (int i = 0; i < tile->rotate; i++)
+						str->rotate();
+					if (!addBlock(str))
+						delete str;
+				}
+			}
+
+		for (auto i = 0; i < 100; i++)
+			if (t[i])
+				delete t[i];
 	}
 
 	camera->useCamera(*shader, "camera");
@@ -306,6 +324,14 @@ void Game::deleteBlock(int x,int y,int z)
 	for (auto c : chunks)
 		if (c->isThisChunk(x, y, z))
 			c->deleteBlock(x,y,z);
+}
+
+bool Game::isBlockAt(int x, int y, int z)
+{
+	for (auto c : chunks)
+		if (c->isThisChunk(x, y, z))
+			return c->isBlockAt(x, y, z);
+	return false;
 }
 
 bool Game::addBlock(Block* b)
@@ -571,10 +597,24 @@ void Game::genWorld()
 		}
 	toAddMutex.unlock();
 	Chunk* c = NULL;
-
+	
 	if (abs(pos.x - camPos.x) <= range && abs(pos.y - camPos.z) <= range)
 	{
-		c = new Chunk(pos.x, 0, pos.y);
+		chunksMutex.lock();
+		bool hasData = Chunk::hasDataToRead(pos.x, 0, pos.y);
+		if (hasData)
+		{
+			c = new Chunk(pos.x, 0, pos.y);
+			chunksMutex.unlock();
+		}
+		else
+		{
+			chunksMutex.unlock();
+			c = new Chunk(pos.x, 0, pos.y);
+		}
+
+
+
 	}
 
 	toAddMutex.lock();
