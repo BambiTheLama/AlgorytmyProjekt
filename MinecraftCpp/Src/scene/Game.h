@@ -48,6 +48,8 @@ class Game :
     GameTextures* Blocks;
     GameTextures* BlocksH;
     GameTextures* BlocksN;
+    Texture* watherTexture;
+    Texture* watherTexture2;
 
     RenderTexture* ShadowMap = NULL;
     static Game* game;

@@ -14,9 +14,10 @@ class Texture
 	GLenum slot;
 	GLuint64 textureHandle;
 	static std::vector<Texture*> textures;
+	bool bindless;
 public:
 
-	Texture(const char* path, GLenum textureType = GL_TEXTURE_2D,
+	Texture(const char* path, bool bindless = false, GLenum textureType = GL_TEXTURE_2D,
 		GLenum format = GL_RGBA, GLenum pixelType = GL_UNSIGNED_BYTE, GLenum genFormat = GL_RGBA);
 
 	Texture(Texture& texture);

@@ -11,5 +11,5 @@ glm::uvec2 Cactus::getVertex(int dir)
         return CubeBlock::getVertex(dir);
     }
 
-    return glm::uvec2(CubeBlock::getVertex(dir).x, 2);
+    return CubeBlock::getVertex(dir) + glm::uvec2(0, 2);
 }

@@ -31,5 +31,7 @@ public:
 	virtual bool isTransparent() { return transparent; }
 
 	virtual char getFaces()const { return cube->getFaces(); }
+
+	virtual bool isLiquid() { return false; }
 };
 

@@ -32,6 +32,8 @@ Game::Game(int w,int h,GLFWwindow* window, ImGuiIO* io)
 	Blocks = new GameTextures("Res/Blocks/", "Textures");
 	BlocksH = new GameTextures("Res/BlocksH/", "Textures");
 	BlocksN = new GameTextures("Res/BlocksN/", "Textures");
+	watherTexture = new Texture("Res/Water/Water.png");
+	watherTexture2 = new Texture("Res/Water/Water_C.png");
 
 	shader->active();
 	Blocks->setTextures(*shader, "tex0");
@@ -69,6 +71,8 @@ Game::~Game()
 	delete Blocks;
 	delete BlocksH;
 	delete BlocksN;
+	delete watherTexture;
+	delete watherTexture2;
 
 	delete shaderShadow;
 	game = NULL;
@@ -267,6 +271,10 @@ void Game::draw()
 	renderScene(shaderShadow, true);
 	ShadowMap->endUse();
 	shader->active();
+	watherTexture->useTexture(*shader, "watherTex0");
+	watherTexture->bind();
+	watherTexture2->useTexture(*shader, "watherTex1");
+	watherTexture2->bind();
 	shader->setUniformI1(debug, "debug");
 	glm::mat4 modelMat(1.0f);
 	shader->setUniformMat4(modelMat, "model");

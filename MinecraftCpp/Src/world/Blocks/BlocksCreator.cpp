@@ -37,7 +37,7 @@ Block* createBlock(int i, int x, int y, int z)
 	case 10:
 		return new Leaf(i, x, y, z, 18);
 	case 11:///WATER
-		return new Water(i, x, y, z, 23);
+		return new Water(i, x, y, z, 23, 1, true);
 	case 12:///Sapling 1
 		return new OakTree(i, x, y, z, 11);
 	case 13:///Sapling 2

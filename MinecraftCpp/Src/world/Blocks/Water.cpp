@@ -2,5 +2,5 @@
 
 glm::uvec2 Water::getVertex(int dir)
 {
-	return glm::uvec2(CubeBlock::getVertex(dir).x, 1);
+	return CubeBlock::getVertex(dir) + glm::uvec2(0, 1 + (liquid ? 32: 0));
 }

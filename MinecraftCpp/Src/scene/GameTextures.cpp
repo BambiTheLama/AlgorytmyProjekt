@@ -21,7 +21,7 @@ GameTextures::GameTextures(const char* path, const char* type)
 	for (int i = 0; i < n; i++)
 	{
 		std::string p = std::string(path) + std::string(j[type][i]) + ".png";
-		Texture* t = new Texture(p.c_str());
+		Texture* t = new Texture(p.c_str(),true);
 		if (!t->wasLoaded())
 		{
 			delete t;

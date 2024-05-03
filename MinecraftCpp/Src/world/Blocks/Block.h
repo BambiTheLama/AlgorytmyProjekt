@@ -9,6 +9,7 @@ class Block
 	int ID;
 protected:
 	int x, y, z;
+	char underWather = 0;
 public:
 	Block(int ID, int x, int y, int z);
 
@@ -37,6 +38,10 @@ public:
 	virtual bool getDisplay(Block* b) { return b->isTransparent() != isTransparent(); }
 
 	virtual bool isUpdateBlock() { return false; }
+
+	void setFaceUnderWather(int face) { underWather = ((~face) & underWather) + face; }
+
+	virtual bool isLiquid() { return false; }
 
 	friend class Chunk;
 	friend class Game;

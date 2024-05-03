@@ -12,8 +12,9 @@
 GLuint Texture::textureSlot = 0;
 std::vector<Texture*> Texture::textures;
 
-Texture::Texture(const char* path, GLenum textureType, GLenum format, GLenum pixelType,GLenum genFormat)
+Texture::Texture(const char* path,bool bindless, GLenum textureType, GLenum format, GLenum pixelType,GLenum genFormat)
 {
+	this->bindless = bindless;
 	std::string s(path);
 	if (s.size() > 4 && s.substr(s.size() - 4) == ".jpg")
 	  format = GL_RGB;
@@ -64,6 +65,7 @@ Texture::Texture(const char* path, GLenum textureType, GLenum format, GLenum pix
 		textures.push_back(new Texture(*this));
 		loaded = true;
 	}
+	
 
 }
 
@@ -78,27 +80,41 @@ Texture::~Texture()
 
 void Texture::bind()
 {
+	if (bindless)
+		return;
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(type, ID);
 }
 
 void Texture::unbind()
 {
+	if (bindless)
+		return;
 	glBindTexture(type, 0);
 }
 
 void Texture::useTexture(Shader& shader, const char* uniform, int n)
 {
 	shader.active();
-	//glUniform1i(shader.getUniformLocation(uniform)+n, slot);
-	glUniformHandleui64ARB(shader.getUniformLocation(uniform) + n, textureHandle);
+	if(bindless)
+		glUniformHandleui64ARB(shader.getUniformLocation(uniform) + n, textureHandle);
+	else
+		glUniform1i(shader.getUniformLocation(uniform) + n, slot);
+
 
 }
 void Texture::useTexture(const char* uniform) const
 {
 	Shader* s = getUsingShader();
 	if (s)
-		s->setUniformI1(slot, uniform);
+	{
+		if (bindless)
+			glUniformHandleui64ARB(s->getUniformLocation(uniform), textureHandle);
+		else
+			glUniform1i(s->getUniformLocation(uniform), slot);
+
+	}
+
 }
 
 void Texture::clearAllTextures()

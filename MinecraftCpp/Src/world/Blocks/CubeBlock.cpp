@@ -23,6 +23,10 @@ void CubeBlock::setFacing(int faces)
 void CubeBlock::setOneFace(int face, bool state)
 {
 	cube->setOneFace(face, state);
+	if (!state && underWather > 0)
+	{
+		underWather = (~face) & underWather + face * state;
+	}
 }
 void CubeBlock::setOneFace(int face, Block* b) 
 {
@@ -30,6 +34,9 @@ void CubeBlock::setOneFace(int face, Block* b)
 		setOneFace(face, b->getID() != getID());
 	else
 		setOneFace(face, getDisplay(b));
+	if(b->isLiquid())
+		setFaceUnderWather(face);
+
 }
 
 glm::uvec2 CubeBlock::getVertex(int dir)
@@ -44,5 +51,6 @@ glm::uvec2 CubeBlock::getVertex(int dir)
 		z %= chunkT;
 	else
 		z = (chunkT - (abs(z) % chunkT)) % chunkT;
-	return glm::uvec2(cube->getVertex(x, y, z, textureFaces, textureID, 0b1 << (dir)), 0);
+	int d = 0b1 << (dir);
+	return glm::uvec2(cube->getVertex(x, y, z, textureFaces, textureID, d), (underWather & d) > 0 ? 16 : 0);
 }

@@ -4,15 +4,20 @@
 out vec4 FragColor;
 uniform vec4 modelColor;
 
-layout(bindless_sampler) uniform sampler2D texN[64];
-layout(bindless_sampler) uniform sampler2D texH[64];
-layout(bindless_sampler) uniform sampler2D tex0[64];
+layout (bindless_sampler) uniform sampler2D texN[64];
+layout (bindless_sampler) uniform sampler2D texH[64];
+layout (bindless_sampler) uniform sampler2D tex0[64];
 
+
+uniform sampler2D watherTex1;
+uniform sampler2D watherTex0;
 uniform sampler2D texShadow;
+
 uniform vec3 lightDir;
 uniform int dir;
 uniform bool debug;
 uniform bool normalsMode;
+uniform float time;
 
 in DATA
 {
@@ -21,6 +26,7 @@ in DATA
 	vec4 fragPosLight;
 	flat int textID;
 	float bright;
+	flat bool underWather;
 } frag;
 
 uniform vec3 camPos;
@@ -51,9 +57,23 @@ vec3 getNormal(vec3 normal)
 	return normal;
 }
 
+vec3 getNormalColor()
+{
+	vec3 color=vec3(0);
+	int samples=0;
+	vec2 pixelSize = 1.0 / textureSize(texN[frag.textID], 0);
+
+	for(int i=-samples;i<=samples;i++)
+		for(int j=-samples;j<=samples;j++)
+		{
+			color += texture(texN[frag.textID], frag.texCoord+pixelSize*vec2(i,j)).rgb;
+		}
+	return color/pow((samples * 2 + 1), 2);
+}
+
 vec3 directLight()
 {
-	vec3 normalText = texture(texN[frag.textID], frag.texCoord).rgb;
+	vec3 normalText = getNormalColor();
 	vec3 heightText = texture(texH[frag.textID], frag.texCoord).rgb;
 	vec3 albedoText = texture(tex0[frag.textID], frag.texCoord).rgb;
 
@@ -98,15 +118,27 @@ vec3 directLight()
 	
 	}
 
-
 	vec3 diffuseColor = albedoText * diffuse * (1.0f - shadow) * lightColor;
 	vec3 specularColor = albedoText * heightText.r * specular * (1.0f - shadow) * albedoText * lightColor;
 	vec3 ambientColor = albedoText * ambient;
+	if(frag.underWather)
+	{
+		float t = (time/16-int(time/16));
+		vec3 watherColor=texture(watherTex0, frag.texCoord+t).rgb/3;
+		vec3 watherWhiteSpotsColor=texture(watherTex1, frag.texCoord+t).rgb;
+		vec3 watherRedSpotsColor = vec3(texture(watherTex1, frag.texCoord+t+0.02).r,0,0);
+		vec3 watherGreenSpotsColor = vec3(0,texture(watherTex1, frag.texCoord+t+0.04).g,0);
+		vec3 watherBlueSpotsColor = vec3(0,0,texture(watherTex1, frag.texCoord+t+0.06).b);
+		ambientColor += watherColor+watherWhiteSpotsColor+watherRedSpotsColor+watherGreenSpotsColor+watherBlueSpotsColor;
+		specularColor*=watherColor;
+		diffuseColor*=watherColor;
+	}
 
 
 
 	if(shadow == 1)
 		return albedoText *  ambient;
+	
 	return ambientColor + specularColor + diffuseColor;
 }
 
@@ -118,12 +150,12 @@ void main()
 		discard;
 	if(debug)
 	{
-		vec3 normalText = (getNormal(texture(texN[frag.textID], frag.texCoord).rgb)+1)/2.0f;
+		vec3 normalText = (getNormal(getNormalColor())+1)/2;
 
 		FragColor = vec4(normalText,text);
 	}
 	else
-		FragColor = vec4(directLight()*frag.bright,text);
+		FragColor = vec4(min(directLight()*frag.bright,1.0f),text);
 
 
 }

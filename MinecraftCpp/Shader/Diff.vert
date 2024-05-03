@@ -32,6 +32,7 @@ out DATA
 	vec4 fragPosLight;
 	flat int textID;
 	float bright;
+	flat bool underWather;
 } data_out;
 
 vec2 getTexPos(vec2 tPos)
@@ -131,18 +132,24 @@ void main()
 	d.pos.z  = (tmpData) >> 13  & 31;					/// 0b00000000000000111110000000000000
 	d.textID = (tmpData) >> 18  & 63;					/// 0b00000000111111000000000000000000
 
-
+	bool liquid;
 	tmpData = int(data.y);
 	d.cutY = (tmpData & 1) == 1;						/// 0b00000000000000000000000000000001
 	d.cutSides = ((tmpData >> 1) & 1) == 1;				/// 0b00000000000000000000000000000010
 	d.animatedUp = ((tmpData >> 2) & 1) == 1;			/// 0b00000000000000000000000000000100
 	d.animatedDown = ((tmpData >> 3) & 1) == 1;			/// 0b00000000000000000000000000001000
+	data_out.underWather = ((tmpData >> 4) & 1) == 1;	/// 0b00000000000000000000000000010000
+	liquid = ((tmpData >> 5) & 1) == 1;					/// 0b00000000000000000000000000100000
 	d.scaleF = ((tmpData >> 21) & 63) + 1;				/// 0b00000111111000000000000000000000
 	d.scaleS = ((tmpData >> 27) & 31) + 1;				/// 0b11111000000000000000000000000000
 
 	vec3 currentPos = getPos(pos) + d.pos + vec3(chunkX,0,chunkZ);
 	gl_Position = camera * vec4(currentPos, 1.0f);
-	data_out.texCoord = getTexPos(texPos);
+
+	if(liquid)
+		data_out.texCoord = getTexPos(texPos)+time/8-int(time/8);
+	else
+		data_out.texCoord = getTexPos(texPos);
 	data_out.currentPos = currentPos;
 	data_out.fragPosLight = lightProjection * vec4(currentPos,1.0f);
 

@@ -1210,7 +1210,7 @@ void Chunk::generateTerrain()
 	if (range <= 0)
 		return;
 	srand(seed + x + y + z);
-	srand(time(NULL));
+	//srand(time(NULL));
 	Tile** t = generateVilage(range);
 	for (int x = 0; x < range; x++)
 		for (int z = 0; z < range; z++)
