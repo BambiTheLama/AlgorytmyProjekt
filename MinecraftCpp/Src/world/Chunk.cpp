@@ -1228,6 +1228,7 @@ void Chunk::generateTerrain()
 					continue;
 				for (int i = 0; i < (tile->rotate) % 4; i++)
 					str->rotate();
+				game->deleteBlock(viligex, viligey, viligez);
 				if (!game->addBlock(str))
 					delete str;
 			}
