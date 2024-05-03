@@ -25,23 +25,31 @@ void Tile::rotateTile()
 
 bool Tile::canConnect(Dir dir, Tile tile)
 {
-	if (bilding && tile.bilding)
-		return false;
+
 	switch (dir)
 	{
 	case Dir::Up:
-		return tile.down == up;
+		if(!bilding || !tile.bilding)
+			return tile.down == up;
+		return up == 0 && tile.down == up;
 	case Dir::Down:
-		return tile.up == down;
+		if (!bilding || !tile.bilding)
+			return tile.up == down;
+		return down == 0 && tile.up == down;
 	case Dir::Left:
-		return tile.right == left;
+		if (!bilding || !tile.bilding)
+			return tile.right == left;
+		return left == 0 && tile.right == left;
 	case Dir::Right:
-		return tile.left == right;
+		if (!bilding || !tile.bilding)
+			return tile.left == right;
+		return right == 0 && tile.left == right;
 	}
 	return false;	
 }
 
 static std::vector<Tile> allPosibleTiles{
+
 	Tile(),
 
 	Tile(1,0,1,0,0,0,true),
@@ -56,7 +64,9 @@ static std::vector<Tile> allPosibleTiles{
 	Tile(3,1,1,0,1,1),
 	Tile(3,1,1,0,1,2),
 	Tile(3,1,1,0,1,3),
+	//10
 
+	//11
 	Tile(4,1,0,0,1,0),
 	Tile(4,1,0,0,1,1),
 	Tile(4,1,0,0,1,2),
@@ -68,14 +78,34 @@ static std::vector<Tile> allPosibleTiles{
 	Tile(6,0,1,0,0,1,true),
 	Tile(6,0,1,0,0,2,true),
 	Tile(6,0,1,0,0,3,true),
+	//19
 
-
+	//20
 	Tile(7,0,1,0,0,0,true),
 	Tile(7,0,1,0,0,1,true),
 	Tile(7,0,1,0,0,2,true),
 	Tile(7,0,1,0,0,3,true),
 
+	Tile(8,1,1,1,1,0,true),
+	Tile(8,1,1,1,1,1,true),
 
+
+
+
+
+};
+
+static std::vector<Tile> wall{
+	Tile(9,2,0,0,2,0,true),
+	Tile(9,2,0,0,2,1,true),
+	Tile(9,2,0,0,2,2,true),
+	Tile(9,2,0,0,2,3,true),
+
+	Tile(10,0,0,2,2,0,false),
+	Tile(10,0,0,2,2,1,false),
+
+	Tile(11,1,1,2,2,0,true),
+	Tile(11,1,1,2,2,1,true),
 };
 
 struct PosiblesTiles
@@ -108,7 +138,6 @@ static void genPosibleTiles(Tile** tiles, int r, PosiblesTiles* t)
 	Tile* tileDown = getTileAt(tiles, r, t->x, t->y + 1);
 	Tile* tileLeft = getTileAt(tiles, r, t->x - 1, t->y);
 	Tile* tileRight = getTileAt(tiles, r, t->x + 1, t->y);
-
 	for (int i = 0; i < allPosibleTiles.size(); i++)
 	{
 		posibleID.push_back(i);
@@ -178,9 +207,9 @@ static void genTile(Tile** tiles, int &r,int x,int y, std::vector<PosiblesTiles*
 {
 	if (x < 0 || x >= r || y < 0 || y >= r)
 		return;
-	int circlePoint = r / 2 + r % 2;
-	if (pow(x - circlePoint, 2) + pow(y - circlePoint, 2) > pow(r / 2, 2))
-		return;
+	//int circlePoint = r / 2 + r % 2;
+	//if (pow(x - circlePoint, 2) + pow(y - circlePoint, 2) > pow(r / 2, 2))
+	//	return;
 	if (!getTileAt(tiles, r, x, y))
 	{
 		if (hasPosibleTileAt(x, y, posibleTiles))
@@ -205,12 +234,30 @@ Tile** generateVilage(int r)
 	Tile** tilesToRet = new Tile*[r * r];
 	for (int i = 0; i < r * r; i++)
 		tilesToRet[i] = NULL;
+	if (r > 5)
+	{
+		tilesToRet[0] = new Tile(wall[2]);
+		tilesToRet[r * r - 1] = new Tile(wall[0]);
+		tilesToRet[r - 1] = new Tile(wall[3]);
+		tilesToRet[(r - 1)*r] = new Tile(wall[1]);
+		for (int i = 1; i < r - 1; i++)
+		{
+			tilesToRet[(r - 1) * r+i] = new Tile(wall[4]);
+			tilesToRet[i] = new Tile(wall[4]);
+			tilesToRet[(i) * r] = new Tile(wall[5]);
+			tilesToRet[(i)*r + r - 1] = new Tile(wall[5]);
+		}
+		tilesToRet[(r/2)*r] = new Tile(wall[7]);
+		tilesToRet[(r/2)*r + r - 1] = new Tile(wall[7]);
+		tilesToRet[(0)*r+r/2] = new Tile(wall[6]);
+		tilesToRet[(r-1)*r+r/2] = new Tile(wall[6]);
 
+	}
 	std::vector<PosiblesTiles*> posibleTiles;
 	{
 		PosiblesTiles* posibleTile = new PosiblesTiles();
-		posibleTile->x = rand() % r;
-		posibleTile->y = rand() % r;
+		posibleTile->x = 1;
+		posibleTile->y = 1;
 		genPosibleTiles(tilesToRet, r, posibleTile);
 		posibleTiles.push_back(posibleTile);
 	}

@@ -14,6 +14,7 @@
 #include "../core/Shader.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <math.h>
+#include "Blocks/WaveColapsFunction.h"
 
 
 #define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
@@ -894,6 +895,8 @@ void Chunk::setBlockAt(Block* b, int x, int y, int z)
 
 void Chunk::genPlants(int &x, int &z, int y, float &temperature, float &structureNoise)
 {
+	if (structureNoise > 0.85)
+		return;
 	if (y >= chunkH|| y <= waterH)
 		return;
 	int blockX = x + this->x * (chunkW);
@@ -979,9 +982,8 @@ void Chunk::genStructures(int &x, int &z, int y, float &temperature, float &stru
 	}
 }
 
-int getMapHeight(float terain,float erozja,float pv,float river)
+int getMapHeight(float terain, float erozja, float pv, float river, float structure)
 {
-	return waterH + 1;
 	int h = minH + (terain + erozja / 3 + pv / 18) * 18.0f / 25.0f * (maxH - minH);
 	if (0.90f < river)
 	{
@@ -1000,7 +1002,102 @@ int getMapHeight(float terain,float erozja,float pv,float river)
 	if (h <= 0)
 		return 0;
 
+	if (structure >= 0.90)
+	{
+		return ViligeH;
+	}
+	if (structure >= 0.80)
+	{
+		float p = (0.90 - structure);
+		return ViligeH * (1 - p) + h * p;
+	}
+	if (structure >= 0.50)
+	{
+		float p = (0.80 - structure) * 10.0f / 3.0f + 0.1;
+		if (p > 1)
+			p = 1;
+		return ViligeH * (1 - p) + h * p;
+	}
+	
+
+
 	return h;
+}
+
+int getTereinH(FastNoiseLite& terrain, FastNoiseLite& erosion, FastNoiseLite& picksAndValues, FastNoiseLite& riverNoise, FastNoiseLite& structureNoise, float x, float z)
+{
+	float t = (getValueTerrain(terrain.GetNoise(x, z)) + 1) / 2;
+	float e = getValueTerrain(erosion.GetNoise(x, z));
+	float pv = getValueTerrain(picksAndValues.GetNoise(x, z));
+	float riverV = riverNoise.GetNoise(x, z);
+	float structureV = structureNoise.GetNoise(x, z);
+
+	return getMapHeight(t, e, pv, riverV, structureV);
+}
+
+glm::vec2 getMaxViligeNoisePoint(FastNoiseLite& structureNoise, float x, float z)
+{
+	glm::vec2 maxP = { -1,-1 };
+	float maxV = 0.0f;
+	glm::ivec2 startPos(x, z);
+	std::vector<glm::ivec2> points = { glm::ivec2(x,z) };
+	std::vector<glm::ivec2> checkPoints;
+	while (points.size() > 0)
+	{
+		glm::ivec2 point = points.back();
+		points.pop_back();
+
+		float structureV = structureNoise.GetNoise((float)point.x, (float)point.y);
+		if (structureV > 0.90f && structureV > maxV)
+		{
+			auto it = std::find(checkPoints.begin(), checkPoints.end(), point + glm::ivec2(0, 1));
+			auto it2 = std::find(points.begin(), points.end(), point + glm::ivec2(0, 1));
+			if (it == checkPoints.end() && it2 == points.end())
+				points.push_back(point + glm::ivec2(0, 1));
+			it = std::find(checkPoints.begin(), checkPoints.end(), point + glm::ivec2(0, -1));
+			it2 = std::find(points.begin(), points.end(), point + glm::ivec2(0, -1));
+			if (it == checkPoints.end() && it2 == points.end())
+				points.push_back(point + glm::ivec2(0, -1));
+			it = std::find(checkPoints.begin(), checkPoints.end(), point + glm::ivec2(1, 0));
+			it2 = std::find(points.begin(), points.end(), point + glm::ivec2(1, 0));
+			if (it == checkPoints.end() && it2 == points.end())
+				points.push_back(point + glm::ivec2(1, 0));
+			it = std::find(checkPoints.begin(), checkPoints.end(), point + glm::ivec2(-1, 0));
+			it2 = std::find(points.begin(), points.end(), point + glm::ivec2(-1, 0));
+			if (it == checkPoints.end() && it2 == points.end())
+				points.push_back(point + glm::ivec2(-1, 0));
+			if (structureV > maxV)
+			{
+				maxP = point;
+				maxV = structureV;
+
+			}
+			else if (structureV == maxV)
+			{
+				if(glm::distance(glm::vec2(x,z),maxP) > glm::distance(glm::vec2(x, z), glm::vec2(point)))
+				{
+					maxP = point;
+					maxV = structureV;
+				}
+			}
+		}
+
+
+		checkPoints.push_back(point);
+	}
+	return glm::vec2(maxP.x, maxP.y);
+}
+
+int getAvgH(float x, float z, float w, float t,FastNoiseLite& terrain, FastNoiseLite& erosion, FastNoiseLite& picksAndValues, FastNoiseLite& riverNoise, FastNoiseLite& structureNoise)
+{
+	if (w <= 0 || t <= 0)
+		return 0;
+	int h = 0;
+	for (int i = 0; i < w; i++)
+		for (int j = 0; j < t; j++)
+			h += getTereinH(terrain, erosion, picksAndValues, riverNoise, structureNoise, x + i, j + z);
+	
+	return h / (w * t);
 }
 
 void Chunk::generateTerrain()
@@ -1013,7 +1110,7 @@ void Chunk::generateTerrain()
 	FastNoiseLite temperatureNoise(seed);
 	FastNoiseLite structureNoise(seed);
 	{
-		float multiplay = 0.5f;
+		float multiplay = 0.3f;
 		terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
 		terrain.SetFrequency(0.001f * multiplay);
 		terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
@@ -1043,21 +1140,24 @@ void Chunk::generateTerrain()
 		riverNoise.SetFractalGain(0.53f);
 		riverNoise.SetFractalWeightedStrength(0.000f);
 		temperatureNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-		temperatureNoise.SetFrequency(0.001f * multiplay);
+		temperatureNoise.SetFrequency(0.0001f * multiplay);
 		temperatureNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
 		temperatureNoise.SetFractalOctaves(3);
 		temperatureNoise.SetFractalLacunarity(1.3f);
 		temperatureNoise.SetFractalGain(0.32f);
 		temperatureNoise.SetFractalWeightedStrength(6.16f);
 		structureNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-		structureNoise.SetFrequency(0.001f * multiplay);
+		structureNoise.SetFrequency(0.006f * multiplay);
 		structureNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
 		structureNoise.SetFractalOctaves(4);
-		structureNoise.SetFractalLacunarity(1.3f);
+		structureNoise.SetFractalLacunarity(0.95f);
 		structureNoise.SetFractalGain(0.5f);
-		structureNoise.SetFractalWeightedStrength(9.0f);
+		structureNoise.SetFractalWeightedStrength(6.960f);
 	}
-
+	bool hasVilage = false;
+	int viligeX = -1;
+	int viligeZ = -1;
+	float structurePower = 0.0f;
 	const int height = maxH - minH;
 	const int dirtSize = 8;
 	for (int i = 0; i < chunkW; i++)
@@ -1066,15 +1166,17 @@ void Chunk::generateTerrain()
 			float x = i + this->x * (chunkW);
 			float z = k + this->z * (chunkT);
 
-			float t = (getValueTerrain(terrain.GetNoise(x, z)) + 1)/2;
-			float e = getValueTerrain(erosion.GetNoise(x, z));
-			float pv = getValueTerrain(picksAndValues.GetNoise(x, z));
-			float riverV = riverNoise.GetNoise(x, z);
-
 			float temperatureV = temperatureNoise.GetNoise(x, z);
 			float structureV = structureNoise.GetNoise(x, z);
 
-			int h = getMapHeight(t, e, pv, riverV);
+			int h = getTereinH(terrain, erosion, picksAndValues, riverNoise, structureNoise, x, z);
+			if (structureV >= 0.9 && structureV > structurePower)
+			{
+				hasVilage = true;
+				viligeX = x;
+				viligeZ = z;
+				structurePower = structureV;
+			}
 
 			genStone(i, k, h - 7);
 			biomLayer(i, k, h - 7, h, temperatureV, structureV);
@@ -1082,21 +1184,60 @@ void Chunk::generateTerrain()
 			fillWater(i, k, h, temperatureV);
 
 			genPlants(i, k, h + 1, temperatureV, structureV);
-			int avgH = 0;
-			for (int tx = -3; tx < 4; tx++)
+
+		}
+	if (!hasVilage)
+		return;
+	
+	glm::vec2 pos = getMaxViligeNoisePoint(structureNoise, viligeX, viligeZ);
+	int posX = pos.x - this->x * chunkW;
+	int posZ = pos.y - this->z * chunkT;
+	if (posX < 0 || posX >= chunkW || posZ < 0 || posZ >= chunkT)
+		return;
+	float r = 0;
+	const float maxViligeValue = 0.7;
+	for (r = 0;; r++)
+	{
+		float structureUp = structureNoise.GetNoise(pos.x, pos.y + r);
+		float structureDown = structureNoise.GetNoise(pos.x, pos.y - r);
+		float structureLeft = structureNoise.GetNoise(pos.x + r, pos.y);
+		float structureRight = structureNoise.GetNoise(pos.x - r, pos.y);
+		if (structureUp < maxViligeValue || structureDown < maxViligeValue || structureLeft < maxViligeValue || structureRight < maxViligeValue)
+			break;
+	}
+
+	int range = r / StructureTileSize + 1;
+	if (range <= 0)
+		return;
+	srand(seed + x + y + z);
+	srand(time(NULL));
+	Tile** t = generateVilage(range);
+	for (int x = 0; x < range; x++)
+		for (int z = 0; z < range; z++)
+		{
+			if (t[x + z * range])
 			{
-				for (int tz = -3; tz < 4; tz++)
-				{
-					avgH += getMapHeight((getValueTerrain(terrain.GetNoise(x, z)) + 1) / 2,
-						getValueTerrain(erosion.GetNoise(x, z)),
-						getValueTerrain(picksAndValues.GetNoise(x, z)),
-						riverNoise.GetNoise(x, z));
-				}
+				int viligex = pos.x + x * StructureTileSize - r / 2;
+				int viligez = pos.y + z * StructureTileSize - r / 2;
+				int viligey = getAvgH(viligex + StructureTileSize / 2 - 2, viligez + StructureTileSize / 2 - 2, 5, 5, terrain, erosion, picksAndValues, riverNoise, structureNoise);
+				if (viligey < ViligeH-2)
+					viligey = ViligeH-2;
+				Tile* tile = t[x + z * range];
+				StructureHalder* str = createStructure(tile->ID, viligex, viligey, viligez);
+				if (!str)
+					continue;
+				for (int i = 0; i < (tile->rotate) % 4; i++)
+					str->rotate();
+				if (!game->addBlock(str))
+					delete str;
 			}
-			avgH /= 49;
-			//genStructures(i, k, avgH, temperatureV, structureV);
 		}
 
+	for (auto i = 0; i < range * range; i++)
+		if (t[i])
+			delete t[i];
+	delete t;
+	
 }
 
 int getBlockX(int x)

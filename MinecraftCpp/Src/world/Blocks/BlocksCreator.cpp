@@ -74,7 +74,7 @@ Block* createBlock(int i, int x, int y, int z)
 	case 28:///SandStone
 		return new CubeBlock(i, x, y, z, 36, 3);
 	case 29://PathDirt
-		return new CubeBlock(i, x, y, z, 39, 3);
+		return new Water(i, x, y, z, 39,3);
 	default:
 		return NULL;
 	}
@@ -248,6 +248,150 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 
 		structure->setBlock(w / 2, 1, t - 3, 100000);
 		structure->setBlock(w / 2, 2, t - 3, 100000);
+		break;
+	}
+	case 8: {
+		structure = new StructureHalder(-i, x, y, z, w, 10, t);
+
+		for (int z = 0; z < t; z++)
+			for (int x = w / 2 - 1; x < w / 2 + 2; x++)
+			{
+				structure->setBlock(x, 0, z, 29);
+				structure->setBlock(z, 0, x, 29);
+			}
+		for (int z = 2; z < t-2; z++)
+			for (int x = 2; x < w-2; x++)
+				structure->setBlock(x, 0, z, 29);
+
+		for (int y = 0; y < 10; y++)
+		{
+			structure->setBlock(w / 2, y, t / 2, 26);
+		}
+		for (int i = 1; i < 3; i++)
+		{
+			structure->setBlock(w / 2 + i, 7, t / 2, 26);
+			structure->setBlock(w / 2 - i, 7, t / 2, 26);
+
+		}
+		for (int y = 0; y < 4; y++)
+			for (int x = w / 2 - 3 + y; x < w / 2 + 4 - y; x++)
+				for (int z = t / 2 - 3 + y; z < t / 2 + 4 - y; z++)
+					structure->setBlock(x, y, z, 26);
+				
+
+
+
+		break;
+	}
+	case 9: {
+		structure = new StructureHalder(-i, x, y, z, w, 10, t);
+		for (int y = 0; y < 5; y++)
+		{
+			for (int x = 0; x < w / 2; x++)
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					structure->setBlock(x, y, t / 2 - 1 + i, 26);
+					structure->setBlock(w / 2 - 1 + i, y, x, 26);
+				}
+
+			}
+		}
+		for (int x = 1; x < w / 2; x+=2)
+		{
+			structure->setBlock(x, 5, t / 2 - 1, 26);
+			structure->setBlock(x, 5, t / 2 + 1, 26);
+			structure->setBlock(t / 2 - 1, 5, x, 26);
+			structure->setBlock(t / 2 + 1, 5, x, 26);
+		}
+		for (int y = 0; y < 9; y++)
+			for (int x = w / 2 - 3; x < w / 2 + 4; x++)
+				for (int z = t / 2 - 3; z < t / 2 + 4; z++)
+					structure->setBlock(x, y, z, 26);
+
+		for (int y = 1; y < 8; y++)
+			for (int x = w / 2 - 2; x < w / 2 + 3; x++)
+				for (int z = t / 2 - 2; z < t / 2 + 3; z++)
+					structure->setBlock(x, y, z, 1000000);
+
+		for (int x = w / 2 - 3; x < w / 2 + 4; x += 2)
+		{
+			structure->setBlock(x, 9, t / 2 - 3, 26);
+			structure->setBlock(x, 9, t / 2 + 3, 26);
+			structure->setBlock(w / 2 - 3, 9, x, 26);
+			structure->setBlock(w / 2 + 3, 9, x, 26);
+		}
+		break;
+	}
+	case 10: {
+		structure = new StructureHalder(-i, x, y, z, w, 6, t);
+		for (int y = 0; y < 5; y++)
+		{
+			for (int x = 0; x < w; x++)
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					structure->setBlock(x, y, t / 2 - 1 + i, 26);
+				}
+
+			}
+		}
+		for (int x = 0; x < w; x += 2)
+		{
+			structure->setBlock(x, 5, t / 2 - 1, 26);
+			structure->setBlock(x, 5, t / 2 + 1, 26);
+		}
+
+		break;
+	}
+	case 11: {
+		structure = new StructureHalder(-i, x, y, z, w, 10, t);
+		for (int y = 0; y < 5; y++)
+		{
+			for (int x = 0; x < w; x++)
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					structure->setBlock(x, y, t / 2 - 1 + i, 26);
+				}
+
+			}
+		}
+		for (int x = w / 2 - 3; x < w / 2 + 4; x += 2)
+		{
+			structure->setBlock(x, 9, t / 2 - 3, 26);
+			structure->setBlock(x, 9, t / 2 + 3, 26);
+			structure->setBlock(w / 2 - 3, 9, x, 26);
+			structure->setBlock(w / 2 + 3, 9, x, 26);
+		}
+		for (int x = 0; x < w; x += 2)
+		{
+			structure->setBlock(x, 5, t / 2 - 1, 26);
+			structure->setBlock(x, 5, t / 2 + 1, 26);
+		}
+
+		for (int y = 0; y < 9; y++)
+			for (int x = w / 2 - 3; x < w / 2 + 4; x++)
+				for (int z = t / 2 - 3; z < t / 2 + 4; z++)
+					structure->setBlock(x, y, z, 26);
+
+		for (int y = 1; y < 8; y++)
+			for (int x = w / 2 - 2; x < w / 2 + 3; x++)
+				for (int z = t / 2 - 2; z < t / 2 + 3; z++)
+					structure->setBlock(x, y, z, 1000000);
+
+		for (int z = 0; z < t; z++)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				structure->setBlock(w / 2 - 1 + i, 0, z, 29);
+				for (int y = 1; y < 4; y++)
+					structure->setBlock(w / 2 - 1 + i, y, z, 1000000);
+
+			}
+
+		}
+
 		break;
 	}
 

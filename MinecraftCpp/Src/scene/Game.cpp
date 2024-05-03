@@ -184,8 +184,8 @@ void Game::draw()
 	bool genVillige = false;
 	static int seed = Chunk::seed;
 	static int rotate = 0;
-	static int rangeVilige = 2;
-	static int posToSpawn[3] = { 0,100,0 };
+	static int rangeVilige = 8;
+	static int posToSpawn[3] = { 68,waterH+1,-120 };
 	static int blockID = 0;
 	ImGui::Begin(" ");
 	ImGui::DragFloat3("LightDir", lightDir, 0.01, -1, 1);
@@ -226,7 +226,11 @@ void Game::draw()
 				if (t[x + z * rangeVilige])
 				{
 					Tile* tile = t[x + z * rangeVilige];
-					StructureHalder* str = createStructure(tile->ID, posToSpawn[0] + x * StructureTileSize, posToSpawn[1], posToSpawn[2] + z * StructureTileSize);
+					int posX = posToSpawn[0] + x * StructureTileSize - rangeVilige / 2 * StructureTileSize;
+					int posY = posToSpawn[1];
+					int posZ = posToSpawn[2] + z * StructureTileSize - rangeVilige / 2 * StructureTileSize;
+
+					StructureHalder* str = createStructure(tile->ID, posX, posY, posZ);
 					if (!str)
 						continue;
 					for (int i = 0; i < (tile->rotate)%4; i++)
@@ -623,21 +627,7 @@ void Game::genWorld()
 	
 	if (abs(pos.x - camPos.x) <= range && abs(pos.y - camPos.z) <= range)
 	{
-		chunksMutex.lock();
-		bool hasData = Chunk::hasDataToRead(pos.x, 0, pos.y);
-		if (hasData)
-		{
-			c = new Chunk(pos.x, 0, pos.y);
-			chunksMutex.unlock();
-		}
-		else
-		{
-			chunksMutex.unlock();
-			c = new Chunk(pos.x, 0, pos.y);
-		}
-
-
-
+		c = new Chunk(pos.x, 0, pos.y);
 	}
 
 	toAddMutex.lock();
