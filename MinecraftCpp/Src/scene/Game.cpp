@@ -202,7 +202,7 @@ void Game::draw()
 	ImGui::Checkbox("StopGenDestyWorld", &stopGenDestyWorld);
 	ImGui::Text("Camera Pos [x,y,z] %lf %lf %lf", cameraPos.x, cameraPos.y, cameraPos.z);
 	ImGui::Checkbox("Gen Villige", &genVillige);
-	ImGui::DragInt("Vilige range", &rangeVilige, 1, 0, 15);
+	ImGui::DragInt("Vilige range", &rangeVilige, 1, 0, 20);
 	
 	ImGui::End();
 

@@ -172,7 +172,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 
 		for (int z = t / 2 - 3; z < t / 2 + 4; z++)
 		{
-			for (int x = 1; x < w - 2; x++)
+			for (int x = 1; x < w - 1; x++)
 				structure->setBlock(x, 0, z, 26);
 			for (int y = 1; y < 4; y++)
 			{

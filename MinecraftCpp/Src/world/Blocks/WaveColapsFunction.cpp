@@ -252,6 +252,20 @@ Tile** generateVilage(int r)
 		tilesToRet[(0)*r+r/2] = new Tile(wall[6]);
 		tilesToRet[(r-1)*r+r/2] = new Tile(wall[6]);
 
+		if(r>7)
+		{
+
+			tilesToRet[(r / 2) * r + r / 2] = new Tile(allPosibleTiles[24]);
+
+			tilesToRet[(r / 2) * r + r / 2 - 1] = new Tile(allPosibleTiles[15]);
+			tilesToRet[(r / 2) * r + r / 2 + 1] = new Tile(allPosibleTiles[15]);
+			tilesToRet[(r / 2 + 1) * r + r / 2] = new Tile(allPosibleTiles[15]);
+			tilesToRet[(r / 2 - 1) * r + r / 2] = new Tile(allPosibleTiles[15]);
+			
+
+		}
+
+
 	}
 	std::vector<PosiblesTiles*> posibleTiles;
 	{

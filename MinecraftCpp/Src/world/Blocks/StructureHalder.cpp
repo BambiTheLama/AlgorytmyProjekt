@@ -26,7 +26,7 @@ void StructureHalder::update(float deltaTime)
 	int startX = x - w / 2;
 	int startZ = z - t / 2;
 	Block* b;
-	if (h == 1)
+	if (h == -1)
 	{
 		for (int i = 0; i < w; i++)
 			for (int j = 0; j < t; j++)
