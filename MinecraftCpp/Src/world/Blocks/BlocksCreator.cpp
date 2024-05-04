@@ -88,7 +88,9 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	const int t = StructureTileSize;
 	switch (i)
 	{
-	case 1:{
+	///Simple House
+	case 1:
+	{
 
 		structure = new StructureHalder(-i, x, y, z, w, 5, t);
 		for (int x = w / 2 - 2; x < w / 2 + 3; x++)
@@ -123,6 +125,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 				structure->setBlock(x, 0, z, 29);
 		break;
 	}
+	///LinePath
 	case 2:{
 		structure = new StructureHalder(-i, x, y, z, w, 1, t);
 
@@ -131,6 +134,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 				structure->setBlock(x, 0, z, 29);
 		break;
 	}
+	///3 sides Path
 	case 3: {
 		structure = new StructureHalder(-i, x, y, z, w, 1, t);
 		for (int z = 0; z < t; z++)
@@ -141,6 +145,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 				structure->setBlock(x, 0, z, 29);
 		break;
 	}
+	///2 sides Path
 	case 4: {
 		structure = new StructureHalder(-i, x, y, z, w, 1, t);
 
@@ -152,6 +157,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 				structure->setBlock(x, 0, z, 29);
 		break;
 	}
+	///4 sides Path
 	case 5: {
 		structure = new StructureHalder(-i, x, y, z, w, 1, t);
 
@@ -164,6 +170,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 
 		break;
 	}
+	///Wood house
 	case 6:{
 		structure = new StructureHalder(-i, x, y, z, w, 8, t);
 		for (int z = t / 2 + 1; z < t; z++)
@@ -205,6 +212,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 
 		break;
 	}
+	///Stone house
 	case 7: {
 		structure = new StructureHalder(-i, x, y, z, w, 8, t);
 		for (int z = t / 2 + 1; z < t; z++)
@@ -250,6 +258,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 		structure->setBlock(w / 2, 2, t - 3, 100000);
 		break;
 	}
+	///Cross
 	case 8: {
 		structure = new StructureHalder(-i, x, y, z, w, 10, t);
 
@@ -283,6 +292,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 
 		break;
 	}
+	///Tower
 	case 9: {
 		structure = new StructureHalder(-i, x, y, z, w, 10, t);
 		for (int y = 0; y < 5; y++)
@@ -323,6 +333,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 		}
 		break;
 	}
+	///WALL WE MUST BUILD
 	case 10: {
 		structure = new StructureHalder(-i, x, y, z, w, 6, t);
 		for (int y = 0; y < 5; y++)
@@ -344,6 +355,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 
 		break;
 	}
+	///Wall with path
 	case 11: {
 		structure = new StructureHalder(-i, x, y, z, w, 10, t);
 		for (int y = 0; y < 5; y++)
