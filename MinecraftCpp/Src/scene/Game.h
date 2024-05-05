@@ -9,6 +9,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "../world/SkyBox.h"
 
 class Texture;
 class RenderTexture;
@@ -40,7 +41,7 @@ class Game :
     std::vector<GLuint> index;
     std::vector<GLuint> vertices;
     Cube* cube;
-
+    SkyBox* skybox;
     glm::vec3 cameraDir;
     glm::vec3 cameraPos;
     Shader* shader = NULL;

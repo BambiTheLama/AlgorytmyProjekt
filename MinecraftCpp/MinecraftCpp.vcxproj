@@ -198,6 +198,7 @@
     <ClCompile Include="Src\world\Blocks\WaveColapsFunction.cpp" />
     <ClCompile Include="Src\world\Chunk.cpp" />
     <ClCompile Include="Src\world\ChunkMesh.cpp" />
+    <ClCompile Include="Src\world\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Res\Textures.json" />
@@ -207,6 +208,8 @@
     <None Include="Shader\Diff.geom" />
     <None Include="Shader\Diff.vert" />
     <None Include="Shader\Shadow.frag" />
+    <None Include="Shader\SkyBox.frag" />
+    <None Include="Shader\SkyBox.vert" />
     <None Include="Shader\text.frag" />
     <None Include="Shader\text.vert" />
     <None Include="Shader\texture.frag" />
@@ -240,6 +243,7 @@
     <ClInclude Include="Src\world\Blocks\WaveColapsFunction.h" />
     <ClInclude Include="Src\world\Chunk.h" />
     <ClInclude Include="Src\world\ChunkMesh.h" />
+    <ClInclude Include="Src\world\SkyBox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

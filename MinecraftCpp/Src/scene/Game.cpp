@@ -34,6 +34,7 @@ Game::Game(int w,int h,GLFWwindow* window, ImGuiIO* io)
 	BlocksN = new GameTextures("Res/BlocksN/", "Textures");
 	watherTexture = new Texture("Res/Water/Water.png");
 	watherTexture2 = new Texture("Res/Water/Water_C.png");
+	skybox = new SkyBox("Res/Skybox/");
 
 	shader->active();
 	Blocks->setTextures(*shader, "tex0");
@@ -51,6 +52,7 @@ Game::Game(int w,int h,GLFWwindow* window, ImGuiIO* io)
 
 Game::~Game()
 {
+	delete skybox;
 	gameRunning = false;
 	if (worldGenerateT.joinable())
 		worldGenerateT.join();
@@ -250,6 +252,8 @@ void Game::draw()
 		delete t;
 	}
 
+	skybox->draw(camera);
+
 	camera->useCamera(*shader, "camera");
 
 	glm::mat4 model(1.0f);
@@ -270,6 +274,10 @@ void Game::draw()
 	camera->useCamera(*shaderShadow, "camera");
 	renderScene(shaderShadow, true);
 	ShadowMap->endUse();
+
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	shader->active();
 	watherTexture->useTexture(*shader, "watherTex0");
 	watherTexture->bind();
