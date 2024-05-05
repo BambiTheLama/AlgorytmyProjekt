@@ -1115,7 +1115,7 @@ void Chunk::generateTerrain()
 	FastNoiseLite temperatureNoise(seed);
 	FastNoiseLite structureNoise(seed);
 	{
-		float multiplay = 1.f;
+		float multiplay = 0.3f;
 		terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
 		terrain.SetFrequency(0.001f * multiplay);
 		terrain.SetFractalType(FastNoiseLite::FractalType_FBm);

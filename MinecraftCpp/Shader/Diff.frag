@@ -59,16 +59,8 @@ vec3 getNormal(vec3 normal)
 
 vec3 getNormalColor()
 {
-	vec3 color=vec3(0);
-	int samples=0;
-	vec2 pixelSize = 1.0 / textureSize(texN[frag.textID], 0);
 
-	for(int i=-samples;i<=samples;i++)
-		for(int j=-samples;j<=samples;j++)
-		{
-			color += texture(texN[frag.textID], frag.texCoord+pixelSize*vec2(i,j)).rgb;
-		}
-	return color/pow((samples * 2 + 1), 2);
+	return texture(texN[frag.textID], frag.texCoord).rgb / 2+1.0f/4.0f;
 }
 
 vec3 directLight()
