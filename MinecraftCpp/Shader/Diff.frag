@@ -121,7 +121,7 @@ vec3 directLight()
 		vec3 watherRedSpotsColor = vec3(texture(watherTex1, frag.texCoord+t+0.02).r,0,0);
 		vec3 watherGreenSpotsColor = vec3(0,texture(watherTex1, frag.texCoord+t+0.04).g,0);
 		vec3 watherBlueSpotsColor = vec3(0,0,texture(watherTex1, frag.texCoord+t+0.06).b);
-		ambientColor += watherColor+watherWhiteSpotsColor+watherRedSpotsColor+watherGreenSpotsColor+watherBlueSpotsColor;
+		ambientColor += watherWhiteSpotsColor+watherRedSpotsColor+watherGreenSpotsColor+watherBlueSpotsColor;
 		specularColor*=watherColor;
 		diffuseColor*=watherColor;
 	}
@@ -129,7 +129,7 @@ vec3 directLight()
 
 
 	if(shadow == 1)
-		return albedoText *  ambient;
+		return ambientColor;
 	
 	return ambientColor + specularColor + diffuseColor;
 }

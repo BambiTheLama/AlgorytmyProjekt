@@ -194,18 +194,29 @@ void Game::draw()
 	static int posToSpawn[3] = { 68,waterH+1,-120 };
 	static int blockID = 0;
 	ImGui::Begin(" ");
-	ImGui::DragFloat3("LightDir", lightDir, 0.01, -1, 1);
-	ImGui::ColorEdit3("LightColor", lightColor);
-	ImGui::DragInt("ChunkRange", &range, 1, 1, 32);
-	ImGui::Checkbox("Spawn Block", &spawn);
-	ImGui::DragInt3("Pos to Spawn", posToSpawn);
-	ImGui::DragInt("Block Id", &blockID, 1);
-	ImGui::DragInt("Rotate", &rotate, 1, 0, 3);
-	ImGui::Checkbox("StopGenDestyWorld", &stopGenDestyWorld);
+	if (ImGui::CollapsingHeader("Render"))
+	{
+		ImGui::DragInt("ChunkRange", &range, 1, 1, 32);
+		ImGui::Checkbox("StopGenDestyWorld", &stopGenDestyWorld);
+	}
+
+	if (ImGui::CollapsingHeader("Light"))
+	{
+		ImGui::DragFloat3("LightDir", lightDir, 0.01, -1, 1);
+		ImGui::ColorEdit3("LightColor", lightColor);
+	}
+	if (ImGui::CollapsingHeader("Spawn Objects"))
+	{
+		ImGui::Checkbox("Spawn Block", &spawn);
+		ImGui::DragInt3("Pos to Spawn", posToSpawn);
+		ImGui::DragInt("Block Id", &blockID, 1);
+		ImGui::DragInt("Rotate", &rotate, 1, 0, 3);
+		ImGui::Checkbox("Gen Villige", &genVillige);
+		ImGui::DragInt("Vilige range", &rangeVilige, 1, 0, 20);
+	}
+
 	ImGui::Text("Camera Pos [x,y,z] %lf %lf %lf", cameraPos.x, cameraPos.y, cameraPos.z);
-	ImGui::Checkbox("Gen Villige", &genVillige);
-	ImGui::DragInt("Vilige range", &rangeVilige, 1, 0, 20);
-	
+
 	ImGui::End();
 
 
