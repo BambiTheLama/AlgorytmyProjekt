@@ -33,6 +33,7 @@ class Chunk
 	bool wasCleared = false;
 	static std::string path;
 	static std::vector<SaveChunkData*> data;
+	float avgTemperature;
 public:
 	Chunk(int x, int y, int z);
 
@@ -68,7 +69,7 @@ public:
 
 	void clearBlocks();
 
-	static void saveBlockToChunk(int x, int y, int z, int ID, int rotate = 0);
+	static void saveBlockToChunk(int x, int y, int z, int ID, int rotate = 0,int variant = 0);
 
 	static std::string fileName(int x, int y, int z) { return path + "chunk " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z) + ".json"; }
 
@@ -82,9 +83,9 @@ public:
 
 	friend class Game;
 private:
-	static void saveBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID, int &rotate);
+	static void saveBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID, int &rotate, int& variant);
 
-	static void readBlockToJson(nlohmann::json& j, int &x, int &y, int &z, int &ID, int &rotate);
+	static void readBlockToJson(nlohmann::json& j, int &x, int &y, int &z, int &ID, int &rotate, int& variant);
 
 	static void saveBlockData();
 

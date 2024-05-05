@@ -357,7 +357,17 @@ void Game::deleteBlock(int x,int y,int z)
 {
 	for (auto c : chunks)
 		if (c->isThisChunk(x, y, z))
-			c->deleteBlock(x,y,z);
+		{
+			c->deleteBlock(x, y, z);
+			return;
+		}
+
+	for (auto c : toAdd)
+		if (c->isThisChunk(x, y, z))
+		{
+			c->deleteBlock(x, y, z);
+			return;
+		}
 }
 
 bool Game::isBlockAt(int x, int y, int z)
@@ -384,8 +394,8 @@ bool Game::addBlock(Block* b)
 	if (b->ID < 0)
 	{
 		StructureHalder* heandler = dynamic_cast<StructureHalder*>(b);
-		if(heandler)
-			Chunk::saveBlockToChunk(x, y, z, heandler->ID, heandler->getTimeRotated());
+		if (heandler)
+			Chunk::saveBlockToChunk(x, y, z, heandler->ID, heandler->getTimeRotated(), heandler->getVariant());
 	}
 	else
 	{

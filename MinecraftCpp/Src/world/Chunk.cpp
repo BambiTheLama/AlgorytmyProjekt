@@ -314,6 +314,7 @@ void Chunk::save()
 	}
 	json["Blocks"][b][0] = ID;
 	json["Blocks"][b][1] = times;
+	json["AvgTemperature"] = avgTemperature;
 
 	save << json;
 	save.close();
@@ -365,6 +366,8 @@ bool Chunk::loadGame(nlohmann::json json)
 			setBlockAt(createBlock(ID, chunkX + i, j, chunkZ + k), i,j,k);
 		}
 	}
+	if (json.contains("AvgTemperature"))
+		avgTemperature = json["AvgTemperature"];
 	return true;
 }
 
@@ -386,7 +389,7 @@ void Chunk::clearBlocks()
 	toUpdate.clear();
 }
 
-void Chunk::saveBlockToChunk(int x, int y, int z, int ID,int rotate)
+void Chunk::saveBlockToChunk(int x, int y, int z, int ID,int rotate,int variant)
 {
 	int cx=0;
 	int cy=0;
@@ -440,7 +443,7 @@ void Chunk::saveBlockToChunk(int x, int y, int z, int ID,int rotate)
 	}
 
 	nlohmann::json j;
-	saveBlockToJson(j, x, y, z, ID, rotate);
+	saveBlockToJson(j, x, y, z, ID, rotate, variant);
 	saveData->j["ToAddBlock"][n] = j;
 }
 
@@ -761,22 +764,24 @@ void genValues(float** tab)
 		}
 }
 
-void Chunk::saveBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID, int& rotate)
+void Chunk::saveBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID, int& rotate, int& variant)
 {
 	j[0] = ID;
 	j[1] = x;
 	j[2] = y;
 	j[3] = z;
 	j[4] = rotate;
+	j[5] = variant;
 }
 
-void Chunk::readBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID, int& rotate)
+void Chunk::readBlockToJson(nlohmann::json& j, int& x, int& y, int& z, int& ID, int& rotate, int& variant)
 {
 	ID = j[0];
 	x = j[1];
 	y = j[2];
 	z = j[3];
 	rotate = j[4];
+	variant = j[5];
 }
 
 void Chunk::saveBlockData()
@@ -1110,7 +1115,7 @@ void Chunk::generateTerrain()
 	FastNoiseLite temperatureNoise(seed);
 	FastNoiseLite structureNoise(seed);
 	{
-		float multiplay = 0.3f;
+		float multiplay = 1.f;
 		terrain.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
 		terrain.SetFrequency(0.001f * multiplay);
 		terrain.SetFractalType(FastNoiseLite::FractalType_FBm);
@@ -1140,7 +1145,7 @@ void Chunk::generateTerrain()
 		riverNoise.SetFractalGain(0.53f);
 		riverNoise.SetFractalWeightedStrength(0.000f);
 		temperatureNoise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-		temperatureNoise.SetFrequency(0.0001f * multiplay);
+		temperatureNoise.SetFrequency(0.0005f * multiplay);
 		temperatureNoise.SetFractalType(FastNoiseLite::FractalType_FBm);
 		temperatureNoise.SetFractalOctaves(3);
 		temperatureNoise.SetFractalLacunarity(1.3f);
@@ -1160,6 +1165,7 @@ void Chunk::generateTerrain()
 	float structurePower = 0.0f;
 	const int height = maxH - minH;
 	const int dirtSize = 8;
+	avgTemperature = 0;
 	for (int i = 0; i < chunkW; i++)
 		for (int k = 0; k < chunkT; k++)
 		{
@@ -1168,7 +1174,7 @@ void Chunk::generateTerrain()
 
 			float temperatureV = temperatureNoise.GetNoise(x, z);
 			float structureV = structureNoise.GetNoise(x, z);
-
+			avgTemperature += temperatureV;
 			int h = getTereinH(terrain, erosion, picksAndValues, riverNoise, structureNoise, x, z);
 			if (structureV >= 0.9 && structureV > structurePower)
 			{
@@ -1186,6 +1192,7 @@ void Chunk::generateTerrain()
 			genPlants(i, k, h + 1, temperatureV, structureV);
 
 		}
+	avgTemperature /= chunkW * chunkT;
 	if (!hasVilage)
 		return;
 	
@@ -1226,6 +1233,10 @@ void Chunk::generateTerrain()
 				StructureHalder* str = createStructure(tile->ID, viligex, viligey, viligez);
 				if (!str)
 					continue;
+				if (avgTemperature > 0.3)
+					str->setVariant(1);
+				else if (avgTemperature < -0.3)
+					str->setVariant(2);
 				for (int i = 0; i < (tile->rotate) % 4; i++)
 					str->rotate();
 				game->deleteBlock(viligex, viligey, viligez);
@@ -1354,8 +1365,8 @@ void Chunk::readDataFromDataFile(SaveChunkData* saveData)
 	nlohmann::json j = saveData->j["ToAddBlock"];
 	for (int i = 0; i < j.size(); i++)
 	{
-		int x, y, z, ID, rotate;
-		readBlockToJson(j[i], x, y, z, ID, rotate);
+		int x, y, z, ID, rotate, variant;
+		readBlockToJson(j[i], x, y, z, ID, rotate, variant);
 		deleteBlock(x, y, z);
 		
 		if (ID < 0)
@@ -1365,6 +1376,7 @@ void Chunk::readDataFromDataFile(SaveChunkData* saveData)
 			{
 				for (int i = 0; i < rotate; i++)
 					structure->rotate();
+				structure->setVariant(variant);
 				addBlock(structure);
 			}
 

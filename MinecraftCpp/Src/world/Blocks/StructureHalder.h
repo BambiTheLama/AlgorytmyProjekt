@@ -6,6 +6,7 @@ class StructureHalder :
     int* structure;
     int w, h,t;
     int timesToRotate = 0;
+    int variant = 0;
 public:
     StructureHalder(int ID, int x, int y, int z, int w, int h, int t);
 
@@ -30,5 +31,9 @@ public:
     virtual bool isUpdateBlock() { return true; }
 
     int getTimeRotated() { return timesToRotate; }
+
+    int getVariant() { return variant; }
+
+    void setVariant(int variant);
 };
 

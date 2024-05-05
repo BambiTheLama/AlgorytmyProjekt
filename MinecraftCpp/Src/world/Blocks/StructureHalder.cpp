@@ -102,3 +102,35 @@ void StructureHalder::swapBlocks(int oldID, int newID)
 		if (structure[i] == oldID)
 			structure[i] = newID;
 }
+
+void StructureHalder::setVariant(int variant)
+{
+	if (this->variant == 0)
+	{
+		//str->swapBlocks(26, 28);
+	}
+	else if (this->variant == 1)
+	{
+		swapBlocks(28, 26);
+	}
+	else if (this->variant == 2)
+	{
+		swapBlocks(9, 5);
+		swapBlocks(25, 23);
+	}
+
+	if (variant == 0)
+	{
+		//str->swapBlocks(26, 28);
+	}
+	else if (variant == 1)
+	{
+		swapBlocks(26, 28);
+	}
+	else if (variant == 2)
+	{
+		swapBlocks(5, 9);
+		swapBlocks(23, 25);
+	}
+	this->variant = variant;
+}
