@@ -99,7 +99,9 @@ SkyBox::~SkyBox()
 
 void SkyBox::draw(Camera* camera)
 {
+	glDisable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
+	
 	shader->active();
 	camera->useCamera(*shader, "camera");
 	shader->setUniformVec3(camera->getPos(), "cameraPos");
@@ -109,4 +111,5 @@ void SkyBox::draw(Camera* camera)
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTextur);
 	glDrawElements(GL_TRIANGLES, indices.size() , GL_UNSIGNED_INT, 0);
 	glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
 }
