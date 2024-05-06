@@ -9,7 +9,7 @@
 #include "../core/RenderTexture.h"
 #include <algorithm>
 #include <windows.h> 
-//#include <experimental/filesystem>
+
 Game* Game::game = NULL;
 
 Game::Game(int w,int h,GLFWwindow* window, ImGuiIO* io)
@@ -32,8 +32,8 @@ Game::Game(int w,int h,GLFWwindow* window, ImGuiIO* io)
 	Blocks = new GameTextures("Res/Blocks/", "Textures");
 	BlocksH = new GameTextures("Res/BlocksH/", "Textures");
 	BlocksN = new GameTextures("Res/BlocksN/", "Textures");
-	watherTexture = new Texture("Res/Water/Water.png");
-	watherTexture2 = new Texture("Res/Water/Water_C.png");
+	waterTexture = new Texture("Res/Water/Water.png");
+	waterTexture2 = new Texture("Res/Water/Water_C.png");
 	skybox = new SkyBox("Res/Skybox/");
 
 	shader->active();
@@ -73,8 +73,8 @@ Game::~Game()
 	delete Blocks;
 	delete BlocksH;
 	delete BlocksN;
-	delete watherTexture;
-	delete watherTexture2;
+	delete waterTexture;
+	delete waterTexture2;
 
 	delete shaderShadow;
 	game = NULL;
@@ -181,16 +181,16 @@ void Game::update(float deltaTime)
 	chunksMutex.unlock();
 }
 #include "../world/Blocks/BlocksCreator.h"
-#include "../world/Blocks/WaveColapsFunction.h"
+#include "../world/Blocks/WaveColapseFunction.h"
 
 void Game::draw()
 {
 
 	bool spawn = false;
-	bool genVillige = false;
+	bool genVillage = false;
 	static int seed = Chunk::seed;
 	static int rotate = 0;
-	static int rangeVilige = 8;
+	static int rangeVillage = 8;
 	static int posToSpawn[3] = { 68,waterH+1,-120 };
 	static int blockID = 0;
 	ImGui::Begin(" ");
@@ -211,8 +211,8 @@ void Game::draw()
 		ImGui::DragInt3("Pos to Spawn", posToSpawn);
 		ImGui::DragInt("Block Id", &blockID, 1);
 		ImGui::DragInt("Rotate", &rotate, 1, 0, 3);
-		ImGui::Checkbox("Gen Villige", &genVillige);
-		ImGui::DragInt("Vilige range", &rangeVilige, 1, 0, 20);
+		ImGui::Checkbox("Gen Village", &genVillage);
+		ImGui::DragInt("Village range", &rangeVillage, 1, 0, 20);
 	}
 
 	ImGui::Text("Camera Pos [x,y,z] %lf %lf %lf", cameraPos.x, cameraPos.y, cameraPos.z);
@@ -223,7 +223,7 @@ void Game::draw()
 	if (spawn)
 	{
 		Block* b = createBlock(blockID, posToSpawn[0], posToSpawn[1], posToSpawn[2]);
-		StructureHalder* s = dynamic_cast<StructureHalder*>(b);
+		StructureHandler* s = dynamic_cast<StructureHandler*>(b);
 		if (s)
 		{
 			for (int i = 0; i < rotate; i++)
@@ -234,20 +234,20 @@ void Game::draw()
 		if (!addBlock(b))
 			delete b;
 	}
-	if (genVillige)
+	if (genVillage)
 	{
-		Tile** t = generateVilage(rangeVilige);
-		for (int x = 0; x < rangeVilige; x++)
-			for (int z = 0; z < rangeVilige; z++)
+		Tile** t = generateVillage(rangeVillage);
+		for (int x = 0; x < rangeVillage; x++)
+			for (int z = 0; z < rangeVillage; z++)
 			{
-				if (t[x + z * rangeVilige])
+				if (t[x + z * rangeVillage])
 				{
-					Tile* tile = t[x + z * rangeVilige];
-					int posX = posToSpawn[0] + x * StructureTileSize - rangeVilige / 2 * StructureTileSize;
+					Tile* tile = t[x + z * rangeVillage];
+					int posX = posToSpawn[0] + x * StructureTileSize - rangeVillage / 2 * StructureTileSize;
 					int posY = posToSpawn[1];
-					int posZ = posToSpawn[2] + z * StructureTileSize - rangeVilige / 2 * StructureTileSize;
+					int posZ = posToSpawn[2] + z * StructureTileSize - rangeVillage / 2 * StructureTileSize;
 
-					StructureHalder* str = createStructure(tile->ID, posX, posY, posZ);
+					StructureHandler* str = createStructure(tile->ID, posX, posY, posZ);
 					if (!str)
 						continue;
 					for (int i = 0; i < (tile->rotate)%4; i++)
@@ -257,7 +257,7 @@ void Game::draw()
 				}
 			}
 
-		for (auto i = 0; i < rangeVilige * rangeVilige; i++)
+		for (auto i = 0; i < rangeVillage * rangeVillage; i++)
 			if (t[i])
 				delete t[i];
 		delete t;
@@ -290,10 +290,10 @@ void Game::draw()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	shader->active();
-	watherTexture->useTexture(*shader, "watherTex0");
-	watherTexture->bind();
-	watherTexture2->useTexture(*shader, "watherTex1");
-	watherTexture2->bind();
+	waterTexture->useTexture(*shader, "waterTex0");
+	waterTexture->bind();
+	waterTexture2->useTexture(*shader, "waterTex1");
+	waterTexture2->bind();
 	shader->setUniformI1(debug, "debug");
 	glm::mat4 modelMat(1.0f);
 	shader->setUniformMat4(modelMat, "model");
@@ -404,7 +404,7 @@ bool Game::addBlock(Block* b)
 			return a->addBlock(b);
 	if (b->ID < 0)
 	{
-		StructureHalder* heandler = dynamic_cast<StructureHalder*>(b);
+		StructureHandler* heandler = dynamic_cast<StructureHandler*>(b);
 		if (heandler)
 			Chunk::saveBlockToChunk(x, y, z, heandler->ID, heandler->getTimeRotated(), heandler->getVariant());
 	}

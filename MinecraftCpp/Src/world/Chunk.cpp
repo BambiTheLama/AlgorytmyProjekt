@@ -14,7 +14,7 @@
 #include "../core/Shader.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <math.h>
-#include "Blocks/WaveColapsFunction.h"
+#include "Blocks/WaveColapseFunction.h"
 
 
 #define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
@@ -1218,7 +1218,7 @@ void Chunk::generateTerrain()
 		return;
 	srand(seed + x + y + z);
 	//srand(time(NULL));
-	Tile** t = generateVilage(range);
+	Tile** t = generateVillage(range);
 	for (int x = 0; x < range; x++)
 		for (int z = 0; z < range; z++)
 		{
@@ -1230,7 +1230,7 @@ void Chunk::generateTerrain()
 				if (viligey < ViligeH-2)
 					viligey = ViligeH-2;
 				Tile* tile = t[x + z * range];
-				StructureHalder* str = createStructure(tile->ID, viligex, viligey, viligez);
+				StructureHandler* str = createStructure(tile->ID, viligex, viligey, viligez);
 				if (!str)
 					continue;
 				if (avgTemperature > 0.3)
@@ -1371,7 +1371,7 @@ void Chunk::readDataFromDataFile(SaveChunkData* saveData)
 		
 		if (ID < 0)
 		{
-			StructureHalder* structure = createStructure(-ID, x, y, z);
+			StructureHandler* structure = createStructure(-ID, x, y, z);
 			if (structure)
 			{
 				for (int i = 0; i < rotate; i++)

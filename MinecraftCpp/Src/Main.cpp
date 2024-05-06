@@ -4,7 +4,7 @@
 #include <iostream>
 #include "json.hpp"
 #include <fstream>
-#include "world/Blocks/WaveColapsFunction.h"
+#include "world/Blocks/WaveColapseFunction.h"
 
 extern "C" {
 	__declspec(dllexport) unsigned long long NvOptimusEnablement = 0x00000001;

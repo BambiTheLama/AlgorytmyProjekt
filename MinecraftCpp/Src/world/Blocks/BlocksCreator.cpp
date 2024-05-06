@@ -6,7 +6,7 @@
 #include "Water.h"
 #include "Cactus.h"
 #include "SpruceTree.h"
-#include "StructureHalder.h"
+#include "StructureHandler.h"
 
 Block* createBlock(int i, int x, int y, int z)
 {
@@ -81,9 +81,9 @@ Block* createBlock(int i, int x, int y, int z)
 	return NULL;
 }
 
-StructureHalder* createStructure(int i, int x, int y, int z)
+StructureHandler* createStructure(int i, int x, int y, int z)
 {
-	StructureHalder* structure = NULL;
+	StructureHandler* structure = NULL;
 	const int w = StructureTileSize;
 	const int t = StructureTileSize;
 	switch (i)
@@ -92,7 +92,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	case 1:
 	{
 
-		structure = new StructureHalder(-i, x, y, z, w, 5, t);
+		structure = new StructureHandler(-i, x, y, z, w, 5, t);
 		for (int x = w / 2 - 2; x < w / 2 + 3; x++)
 			for (int z = t / 2 - 2; z < t / 2 + 3; z++)
 				structure->setBlock(x, 0, z, 26);
@@ -127,7 +127,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	}
 	///LinePath
 	case 2:{
-		structure = new StructureHalder(-i, x, y, z, w, 1, t);
+		structure = new StructureHandler(-i, x, y, z, w, 1, t);
 
 		for (int z = 0; z < t; z++)
 			for (int x = w / 2 - 1; x < w / 2 + 2; x++)
@@ -136,7 +136,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	}
 	///3 sides Path
 	case 3: {
-		structure = new StructureHalder(-i, x, y, z, w, 1, t);
+		structure = new StructureHandler(-i, x, y, z, w, 1, t);
 		for (int z = 0; z < t; z++)
 			for (int x = w / 2 - 1; x < w / 2 + 2; x++)
 				structure->setBlock(x, 0, z, 29);
@@ -147,7 +147,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	}
 	///2 sides Path
 	case 4: {
-		structure = new StructureHalder(-i, x, y, z, w, 1, t);
+		structure = new StructureHandler(-i, x, y, z, w, 1, t);
 
 		for (int z = 0; z < w / 2 + 1; z++)
 			for (int x = w / 2 - 1; x < w / 2 + 2; x++)
@@ -159,7 +159,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	}
 	///4 sides Path
 	case 5: {
-		structure = new StructureHalder(-i, x, y, z, w, 1, t);
+		structure = new StructureHandler(-i, x, y, z, w, 1, t);
 
 		for (int z = 0; z < t; z++)
 			for (int x = w / 2 - 1; x < w / 2 + 2; x++)
@@ -172,7 +172,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	}
 	///Wood house
 	case 6:{
-		structure = new StructureHalder(-i, x, y, z, w, 8, t);
+		structure = new StructureHandler(-i, x, y, z, w, 8, t);
 		for (int z = t / 2 + 1; z < t; z++)
 			for (int x = w / 2 - 1; x < w / 2 + 2; x++)
 				structure->setBlock(x, 0, z, 29);
@@ -214,7 +214,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	}
 	///Stone house
 	case 7: {
-		structure = new StructureHalder(-i, x, y, z, w, 8, t);
+		structure = new StructureHandler(-i, x, y, z, w, 8, t);
 		for (int z = t / 2 + 1; z < t; z++)
 			for (int x = w / 2 - 1; x < w / 2 + 2; x++)
 				structure->setBlock(x, 0, z, 29);
@@ -260,7 +260,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	}
 	///Cross
 	case 8: {
-		structure = new StructureHalder(-i, x, y, z, w, 10, t);
+		structure = new StructureHandler(-i, x, y, z, w, 10, t);
 
 		for (int z = 0; z < t; z++)
 			for (int x = w / 2 - 1; x < w / 2 + 2; x++)
@@ -294,7 +294,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	}
 	///Tower
 	case 9: {
-		structure = new StructureHalder(-i, x, y, z, w, 10, t);
+		structure = new StructureHandler(-i, x, y, z, w, 10, t);
 		for (int y = 0; y < 5; y++)
 		{
 			for (int x = 0; x < w / 2; x++)
@@ -335,7 +335,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	}
 	///WALL WE MUST BUILD
 	case 10: {
-		structure = new StructureHalder(-i, x, y, z, w, 6, t);
+		structure = new StructureHandler(-i, x, y, z, w, 6, t);
 		for (int y = 0; y < 5; y++)
 		{
 			for (int x = 0; x < w; x++)
@@ -357,7 +357,7 @@ StructureHalder* createStructure(int i, int x, int y, int z)
 	}
 	///Wall with path
 	case 11: {
-		structure = new StructureHalder(-i, x, y, z, w, 10, t);
+		structure = new StructureHandler(-i, x, y, z, w, 10, t);
 		for (int y = 0; y < 5; y++)
 		{
 			for (int x = 0; x < w; x++)

@@ -1,8 +1,8 @@
-#include "StructureHalder.h"
+#include "StructureHandler.h"
 #include "../../scene/Game.h"
 #include "BlocksCreator.h"
 
-StructureHalder::StructureHalder(int ID, int x, int y, int z, int w, int h, int t) :Block(ID, x, y, z)
+StructureHandler::StructureHandler(int ID, int x, int y, int z, int w, int h, int t) :Block(ID, x, y, z)
 {
 	this->t = t;
 	this->h = h;
@@ -12,12 +12,12 @@ StructureHalder::StructureHalder(int ID, int x, int y, int z, int w, int h, int 
 		structure[i] = -1;
 }
 
-StructureHalder::~StructureHalder()
+StructureHandler::~StructureHandler()
 {
 	delete structure;
 }
 
-void StructureHalder::update(float deltaTime)
+void StructureHandler::update(float deltaTime)
 {
 	Game* g = getCurrentGame();
 	if (!g)
@@ -65,7 +65,7 @@ void StructureHalder::update(float deltaTime)
 			}
 }
 
-void StructureHalder::rotate()
+void StructureHandler::rotate()
 {
 	int *structureTmp = new int[t * h * w];
 	for (int i = 0; i < w; i++)
@@ -82,32 +82,31 @@ void StructureHalder::rotate()
 	timesToRotate++;
 }
 
-void StructureHalder::setBlock(int x, int y,int z, int ID)
+void StructureHandler::setBlock(int x, int y,int z, int ID)
 {
 	if (x < 0 || x >= w || y < 0 || y >= h || z < 0 || z >= t)
 		return;
 	structure[x + z * w + y * w * t] = ID;
 }
 
-void StructureHalder::removeBlock(int x, int y,int z)
+void StructureHandler::removeBlock(int x, int y,int z)
 {
 	if (x < 0 || x >= w || y < 0 || y >= h || z < 0 || z >= t)
 		return;
 	structure[x + z * w + y * w * t] = -1;
 }
 
-void StructureHalder::swapBlocks(int oldID, int newID)
+void StructureHandler::swapBlocks(int oldID, int newID)
 {
 	for (int i = 0; i < h * w * t; i++)
 		if (structure[i] == oldID)
 			structure[i] = newID;
 }
 
-void StructureHalder::setVariant(int variant)
+void StructureHandler::setVariant(int variant)
 {
 	if (this->variant == 0)
 	{
-		//str->swapBlocks(26, 28);
 	}
 	else if (this->variant == 1)
 	{
@@ -121,7 +120,6 @@ void StructureHalder::setVariant(int variant)
 
 	if (variant == 0)
 	{
-		//str->swapBlocks(26, 28);
 	}
 	else if (variant == 1)
 	{

@@ -32,7 +32,7 @@ out DATA
 	vec4 fragPosLight;
 	flat int textID;
 	float bright;
-	flat bool underWather;
+	flat bool underWater;
 } data_out;
 
 vec2 getTexPos(vec2 tPos)
@@ -138,7 +138,7 @@ void main()
 	d.cutSides = ((tmpData >> 1) & 1) == 1;				/// 0b00000000000000000000000000000010
 	d.animatedUp = ((tmpData >> 2) & 1) == 1;			/// 0b00000000000000000000000000000100
 	d.animatedDown = ((tmpData >> 3) & 1) == 1;			/// 0b00000000000000000000000000001000
-	data_out.underWather = ((tmpData >> 4) & 1) == 1;	/// 0b00000000000000000000000000010000
+	data_out.underWater = ((tmpData >> 4) & 1) == 1;	/// 0b00000000000000000000000000010000
 	liquid = ((tmpData >> 5) & 1) == 1;					/// 0b00000000000000000000000000100000
 	d.scaleF = ((tmpData >> 21) & 63) + 1;				/// 0b00000111111000000000000000000000
 	d.scaleS = ((tmpData >> 27) & 31) + 1;				/// 0b11111000000000000000000000000000

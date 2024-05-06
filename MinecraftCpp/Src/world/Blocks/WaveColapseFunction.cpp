@@ -1,7 +1,7 @@
-#include "WaveColapsFunction.h"
+#include "WaveColapseFunction.h"
 #include <vector>
 #include <algorithm>
-Tile::Tile(int ID, int up, int down, int left, int right, int rotate, bool bilding)
+Tile::Tile(int ID, int up, int down, int left, int right, int rotate, bool building)
 {
 	this->ID = ID;
 	this->up = up;
@@ -9,7 +9,7 @@ Tile::Tile(int ID, int up, int down, int left, int right, int rotate, bool bildi
 	this->left = left;
 	this->right = right;
 	this->rotate = rotate % 4;
-	this->bilding = bilding;
+	this->building = building;
 	for (int i = 0; i < this->rotate; i++)
 		rotateTile();
 }
@@ -29,26 +29,26 @@ bool Tile::canConnect(Dir dir, Tile tile)
 	switch (dir)
 	{
 	case Dir::Up:
-		if(!bilding || !tile.bilding)
+		if(!building || !tile.building)
 			return tile.down == up;
 		return up == 0 && tile.down == up;
 	case Dir::Down:
-		if (!bilding || !tile.bilding)
+		if (!building || !tile.building)
 			return tile.up == down;
 		return down == 0 && tile.up == down;
 	case Dir::Left:
-		if (!bilding || !tile.bilding)
+		if (!building || !tile.building)
 			return tile.right == left;
 		return left == 0 && tile.right == left;
 	case Dir::Right:
-		if (!bilding || !tile.bilding)
+		if (!building || !tile.building)
 			return tile.left == right;
 		return right == 0 && tile.left == right;
 	}
 	return false;	
 }
 
-static std::vector<Tile> allPosibleTiles{
+static std::vector<Tile> allPossibleTiles{
 
 	Tile(),
 
@@ -88,11 +88,6 @@ static std::vector<Tile> allPosibleTiles{
 
 	Tile(8,1,1,1,1,0,true),
 	Tile(8,1,1,1,1,1,true),
-
-
-
-
-
 };
 
 static std::vector<Tile> wall{
@@ -108,7 +103,7 @@ static std::vector<Tile> wall{
 	Tile(11,1,1,2,2,1,true),
 };
 
-struct PosiblesTiles
+struct PossibleTiles
 {
 	int x, y;
 	std::vector<int> tiles;
@@ -119,7 +114,7 @@ struct PosiblesTiles
 	}
 };
 
-static bool compareTiles(PosiblesTiles* t1, PosiblesTiles* t2)
+static bool compareTiles(PossibleTiles* t1, PossibleTiles* t2)
 {
 	return t1->tiles.size() < t2->tiles.size();
 }
@@ -131,105 +126,103 @@ static Tile* getTileAt(Tile** tiles, int r, int x, int y)
 	return tiles[x + y * r];
 }
 
-static void genPosibleTiles(Tile** tiles, int r, PosiblesTiles* t)
+static void genPossibleTiles(Tile** tiles, int r, PossibleTiles* t)
 {
-	std::vector<int> posibleID;
+	std::vector<int> possibleID;
 	Tile* tileUp = getTileAt(tiles, r, t->x, t->y - 1);
 	Tile* tileDown = getTileAt(tiles, r, t->x, t->y + 1);
 	Tile* tileLeft = getTileAt(tiles, r, t->x - 1, t->y);
 	Tile* tileRight = getTileAt(tiles, r, t->x + 1, t->y);
-	for (int i = 0; i < allPosibleTiles.size(); i++)
+	for (int i = 0; i < allPossibleTiles.size(); i++)
 	{
-		posibleID.push_back(i);
+		possibleID.push_back(i);
 	}
 	if (tileUp)
 	{
-		std::vector<int> posibleIDTmp;
-		for(auto p:posibleID)
+		std::vector<int> possibleIDTmp;
+		for(auto p:possibleID)
 		{
-			if (tileUp->canConnect(Dir::Down, allPosibleTiles[p]))
-				posibleIDTmp.push_back(p);
+			if (tileUp->canConnect(Dir::Down, allPossibleTiles[p]))
+				possibleIDTmp.push_back(p);
 		}
-		posibleID = posibleIDTmp;
+		possibleID = possibleIDTmp;
 	}
 	if (tileDown)
 	{
-		std::vector<int> posibleIDTmp;
-		for (auto p : posibleID)
+		std::vector<int> possibleIDTmp;
+		for (auto p : possibleID)
 		{
-			if (tileDown->canConnect(Dir::Up, allPosibleTiles[p]))
-				posibleIDTmp.push_back(p);
+			if (tileDown->canConnect(Dir::Up, allPossibleTiles[p]))
+				possibleIDTmp.push_back(p);
 		}
-		posibleID = posibleIDTmp;
+		possibleID = possibleIDTmp;
 	}
 	if (tileLeft)
 	{
-		std::vector<int> posibleIDTmp;
-		for (auto p : posibleID)
+		std::vector<int> possibleIDTmp;
+		for (auto p : possibleID)
 		{
-			if (tileLeft->canConnect(Dir::Right, allPosibleTiles[p]))
-				posibleIDTmp.push_back(p);
+			if (tileLeft->canConnect(Dir::Right, allPossibleTiles[p]))
+				possibleIDTmp.push_back(p);
 		}
-		posibleID = posibleIDTmp;
+		possibleID = possibleIDTmp;
 	}
 	if (tileRight)
 	{
-		std::vector<int> posibleIDTmp;
-		for (auto p : posibleID)
+		std::vector<int> possibleIDTmp;
+		for (auto p : possibleID)
 		{
-			if (tileRight->canConnect(Dir::Left, allPosibleTiles[p]))
-				posibleIDTmp.push_back(p);
+			if (tileRight->canConnect(Dir::Left, allPossibleTiles[p]))
+				possibleIDTmp.push_back(p);
 		}
-		posibleID = posibleIDTmp;
+		possibleID = possibleIDTmp;
 	}
-	if (posibleID.size() <= 0)
-		posibleID.push_back(0);
-	t->tiles = posibleID;
+	if (possibleID.size() <= 0)
+		possibleID.push_back(0);
+	t->tiles = possibleID;
 }
 
-static bool hasPosibleTileAt(int x, int y, std::vector<PosiblesTiles*> posibleTiles)
+static bool hasPossibleTileAt(int x, int y, std::vector<PossibleTiles*> possibleTiles)
 {
-	for (auto p : posibleTiles)
+	for (auto p : possibleTiles)
 		if (p->x == x && p->y == y)
 			return true;
 	return false;
 }
 
-static PosiblesTiles* getPosibleTileAt(int x,int y, std::vector<PosiblesTiles*> posibleTiles)
+static PossibleTiles* getPossibleTileAt(int x,int y, std::vector<PossibleTiles*> possibleTiles)
 {
-	for (auto p : posibleTiles)
+	for (auto p : possibleTiles)
 		if (p->x == x && p->y == y)
 			return p;
 	return NULL;
 }
 
-static void genTile(Tile** tiles, int &r,int x,int y, std::vector<PosiblesTiles*>& posibleTiles)
+static void genTile(Tile** tiles, int &r,int x,int y, std::vector<PossibleTiles*>& possibleTiles)
 {
 	if (x < 0 || x >= r || y < 0 || y >= r)
 		return;
-	//int circlePoint = r / 2 + r % 2;
-	//if (pow(x - circlePoint, 2) + pow(y - circlePoint, 2) > pow(r / 2, 2))
-	//	return;
+
 	if (!getTileAt(tiles, r, x, y))
 	{
-		if (hasPosibleTileAt(x, y, posibleTiles))
+		if (hasPossibleTileAt(x, y, possibleTiles))
 		{
-			PosiblesTiles* t = getPosibleTileAt(x, y, posibleTiles);
+			PossibleTiles* t = getPossibleTileAt(x, y, possibleTiles);
 			if(t)
-				genPosibleTiles(tiles, r, t);
+				genPossibleTiles(tiles, r, t);
 		}
 		else
 		{
-			PosiblesTiles* t = new PosiblesTiles();
+			PossibleTiles* t = new PossibleTiles();
 			t->x = x;
 			t->y = y;
-			genPosibleTiles(tiles, r, t);
-			posibleTiles.push_back(t);
+			genPossibleTiles(tiles, r, t);
+			possibleTiles.push_back(t);
 		}
 	}
 }
 
-Tile** generateVilage(int r)
+Tile** generateVillage(int r)
 {
 	Tile** tilesToRet = new Tile*[r * r];
 	for (int i = 0; i < r * r; i++)
@@ -254,40 +247,35 @@ Tile** generateVilage(int r)
 
 		if(r>7)
 		{
+			tilesToRet[(r / 2) * r + r / 2] = new Tile(allPossibleTiles[24]);
 
-			tilesToRet[(r / 2) * r + r / 2] = new Tile(allPosibleTiles[24]);
-
-			tilesToRet[(r / 2) * r + r / 2 - 1] = new Tile(allPosibleTiles[15]);
-			tilesToRet[(r / 2) * r + r / 2 + 1] = new Tile(allPosibleTiles[15]);
-			tilesToRet[(r / 2 + 1) * r + r / 2] = new Tile(allPosibleTiles[15]);
-			tilesToRet[(r / 2 - 1) * r + r / 2] = new Tile(allPosibleTiles[15]);
-			
-
+			tilesToRet[(r / 2) * r + r / 2 - 1] = new Tile(allPossibleTiles[15]);
+			tilesToRet[(r / 2) * r + r / 2 + 1] = new Tile(allPossibleTiles[15]);
+			tilesToRet[(r / 2 + 1) * r + r / 2] = new Tile(allPossibleTiles[15]);
+			tilesToRet[(r / 2 - 1) * r + r / 2] = new Tile(allPossibleTiles[15]);
 		}
-
-
 	}
-	std::vector<PosiblesTiles*> posibleTiles;
+	std::vector<PossibleTiles*> possibleTiles;
 	{
-		PosiblesTiles* posibleTile = new PosiblesTiles();
+		PossibleTiles* posibleTile = new PossibleTiles();
 		posibleTile->x = 1;
 		posibleTile->y = 1;
-		genPosibleTiles(tilesToRet, r, posibleTile);
-		posibleTiles.push_back(posibleTile);
+		genPossibleTiles(tilesToRet, r, posibleTile);
+		possibleTiles.push_back(posibleTile);
 	}
 
-	while (posibleTiles.size() > 0)
+	while (possibleTiles.size() > 0)
 	{
-		PosiblesTiles *tile = posibleTiles.back();
-		posibleTiles.pop_back();
+		PossibleTiles *tile = possibleTiles.back();
+		possibleTiles.pop_back();
 		int t = tile->randTile();
-		tilesToRet[tile->x + tile->y * r] = new Tile(allPosibleTiles[t]);
-		genTile(tilesToRet, r, tile->x, tile->y + 1, posibleTiles);
-		genTile(tilesToRet, r, tile->x, tile->y - 1, posibleTiles);
-		genTile(tilesToRet, r, tile->x + 1, tile->y, posibleTiles);
-		genTile(tilesToRet, r, tile->x - 1, tile->y, posibleTiles);
+		tilesToRet[tile->x + tile->y * r] = new Tile(allPossibleTiles[t]);
+		genTile(tilesToRet, r, tile->x, tile->y + 1, possibleTiles);
+		genTile(tilesToRet, r, tile->x, tile->y - 1, possibleTiles);
+		genTile(tilesToRet, r, tile->x + 1, tile->y, possibleTiles);
+		genTile(tilesToRet, r, tile->x - 1, tile->y, possibleTiles);
 		delete tile;
-		std::sort(posibleTiles.begin(), posibleTiles.end(), compareTiles);
+		std::sort(possibleTiles.begin(), possibleTiles.end(), compareTiles);
 	}
 
 

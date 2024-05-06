@@ -8,9 +8,8 @@ layout (bindless_sampler) uniform sampler2D texN[64];
 layout (bindless_sampler) uniform sampler2D texH[64];
 layout (bindless_sampler) uniform sampler2D tex0[64];
 
-
-uniform sampler2D watherTex1;
-uniform sampler2D watherTex0;
+uniform sampler2D waterTex1;
+uniform sampler2D waterTex0;
 uniform sampler2D texShadow;
 
 uniform vec3 lightDir;
@@ -26,7 +25,7 @@ in DATA
 	vec4 fragPosLight;
 	flat int textID;
 	float bright;
-	flat bool underWather;
+	flat bool underWater;
 } frag;
 
 uniform vec3 camPos;
@@ -59,22 +58,21 @@ vec3 getNormal(vec3 normal)
 
 vec3 getNormalColor()
 {
-
 	return texture(texN[frag.textID], frag.texCoord).rgb / 2+1.0f/4.0f;
 }
 
 vec3 directLight()
 {
-	vec3 normalText = getNormalColor();
-	vec3 heightText = texture(texH[frag.textID], frag.texCoord).rgb;
-	vec3 albedoText = texture(tex0[frag.textID], frag.texCoord).rgb;
+	vec3 normalTex = getNormalColor();
+	vec3 heightTex = texture(texH[frag.textID], frag.texCoord).rgb;
+	vec3 albedoTex = texture(tex0[frag.textID], frag.texCoord).rgb;
 
 
 	// ambient lighting
 	float ambient = 0.30f;
 
 	// diffuse lighting
-	vec3 normal = normalize(getNormal(normalize(normalText * 2.0f - 1.0f)));
+	vec3 normal = normalize(getNormal(normalize(normalTex * 2.0f - 1.0f)));
 
 	vec3 lightDirection = lightDir;
 	float diffuse = min(max(dot(normal, lightDirection), 0.0f),0.5f);
@@ -85,7 +83,6 @@ vec3 directLight()
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 4);
 	float specular = specAmount * specularLight;
-
 
 	float shadow = 0.0f;
 	vec3 lightCoords = frag.fragPosLight.xyz / frag.fragPosLight.w;
@@ -110,23 +107,21 @@ vec3 directLight()
 	
 	}
 
-	vec3 diffuseColor = albedoText * diffuse * (1.0f - shadow) * lightColor;
-	vec3 specularColor = albedoText * heightText.r * specular * (1.0f - shadow) * albedoText * lightColor;
-	vec3 ambientColor = albedoText * ambient;
-	if(frag.underWather)
+	vec3 diffuseColor = albedoTex * diffuse * (1.0f - shadow) * lightColor;
+	vec3 specularColor = albedoTex * heightTex.r * specular * (1.0f - shadow) * albedoTex * lightColor;
+	vec3 ambientColor = albedoTex * ambient;
+	if(frag.underWater)
 	{
 		float t = (time/16-int(time/16));
-		vec3 watherColor=texture(watherTex0, frag.texCoord+t).rgb/3;
-		vec3 watherWhiteSpotsColor=texture(watherTex1, frag.texCoord+t).rgb;
-		vec3 watherRedSpotsColor = vec3(texture(watherTex1, frag.texCoord+t+0.02).r,0,0);
-		vec3 watherGreenSpotsColor = vec3(0,texture(watherTex1, frag.texCoord+t+0.04).g,0);
-		vec3 watherBlueSpotsColor = vec3(0,0,texture(watherTex1, frag.texCoord+t+0.06).b);
-		ambientColor += watherWhiteSpotsColor+watherRedSpotsColor+watherGreenSpotsColor+watherBlueSpotsColor;
-		specularColor*=watherColor;
-		diffuseColor*=watherColor;
+		vec3 waterColor=texture(waterTex0, frag.texCoord+t).rgb/3;
+		vec3 waterWhiteSpotsColor=texture(waterTex1, frag.texCoord+t).rgb;
+		vec3 waterRedSpotsColor = vec3(texture(waterTex1, frag.texCoord+t+0.02).r,0,0);
+		vec3 waterGreenSpotsColor = vec3(0,texture(waterTex1, frag.texCoord+t+0.04).g,0);
+		vec3 waterBlueSpotsColor = vec3(0,0,texture(waterTex1, frag.texCoord+t+0.06).b);
+		ambientColor += waterWhiteSpotsColor+waterRedSpotsColor+waterGreenSpotsColor+waterBlueSpotsColor;
+		specularColor*=waterColor;
+		diffuseColor*=waterColor;
 	}
-
-
 
 	if(shadow == 1)
 		return ambientColor;
@@ -136,18 +131,14 @@ vec3 directLight()
 
 void main()
 {
-
 	float text = texture(texN[frag.textID], frag.texCoord).a;
 	if (text < 0.1)
 		discard;
 	if(debug)
 	{
-		vec3 normalText = (getNormal(getNormalColor())+1)/2;
-
-		FragColor = vec4(normalText,text);
+		vec3 normalTex = (getNormal(getNormalColor())+1)/2;
+		FragColor = vec4(normalTex,text);
 	}
 	else
 		FragColor = vec4(min(directLight()*frag.bright,1.0f),text);
-
-
 }

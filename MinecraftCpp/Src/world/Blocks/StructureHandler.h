@@ -1,6 +1,6 @@
 #pragma once
 #include "Block.h"
-class StructureHalder :
+class StructureHandler :
     public Block
 {
     int* structure;
@@ -8,9 +8,9 @@ class StructureHalder :
     int timesToRotate = 0;
     int variant = 0;
 public:
-    StructureHalder(int ID, int x, int y, int z, int w, int h, int t);
+    StructureHandler(int ID, int x, int y, int z, int w, int h, int t);
 
-    ~StructureHalder();
+    ~StructureHandler();
 
     void update(float deltaTime);
 

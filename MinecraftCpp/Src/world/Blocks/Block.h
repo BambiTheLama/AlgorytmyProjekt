@@ -9,7 +9,7 @@ class Block
 	int ID;
 protected:
 	int x, y, z;
-	char underWather = 0;
+	char underWater = 0;
 public:
 	Block(int ID, int x, int y, int z);
 
@@ -39,7 +39,7 @@ public:
 
 	virtual bool isUpdateBlock() { return false; }
 
-	void setFaceUnderWather(int face) { underWather = ((~face) & underWather) + face; }
+	void setFaceUnderWater(int face) { underWater = ((~face) & underWater) + face; }
 
 	virtual bool isLiquid() { return false; }
 
