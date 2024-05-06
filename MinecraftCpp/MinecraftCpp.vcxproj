@@ -193,9 +193,9 @@
     <ClCompile Include="Src\world\Blocks\OakTree.cpp" />
     <ClCompile Include="Src\world\Blocks\Plant.cpp" />
     <ClCompile Include="Src\world\Blocks\SpruceTree.cpp" />
-    <ClCompile Include="Src\world\Blocks\StructureHalder.cpp" />
+    <ClCompile Include="Src\world\Blocks\StructureHandler.cpp" />
     <ClCompile Include="Src\world\Blocks\Water.cpp" />
-    <ClCompile Include="Src\world\Blocks\WaveColapsFunction.cpp" />
+    <ClCompile Include="Src\world\Blocks\WaveColapseFunction.cpp" />
     <ClCompile Include="Src\world\Chunk.cpp" />
     <ClCompile Include="Src\world\ChunkMesh.cpp" />
     <ClCompile Include="Src\world\SkyBox.cpp" />
@@ -238,9 +238,9 @@
     <ClInclude Include="Src\world\Blocks\OakTree.h" />
     <ClInclude Include="Src\world\Blocks\Plant.h" />
     <ClInclude Include="Src\world\Blocks\SpruceTree.h" />
-    <ClInclude Include="Src\world\Blocks\StructureHalder.h" />
+    <ClInclude Include="Src\world\Blocks\StructureHandler.h" />
     <ClInclude Include="Src\world\Blocks\Water.h" />
-    <ClInclude Include="Src\world\Blocks\WaveColapsFunction.h" />
+    <ClInclude Include="Src\world\Blocks\WaveColapseFunction.h" />
     <ClInclude Include="Src\world\Chunk.h" />
     <ClInclude Include="Src\world\ChunkMesh.h" />
     <ClInclude Include="Src\world\SkyBox.h" />

@@ -126,10 +126,10 @@
     <ClCompile Include="Src\include_Cpp\imgui_widgets.cpp">
       <Filter>Src\Include_Cpp</Filter>
     </ClCompile>
-    <ClCompile Include="Src\world\Blocks\StructureHalder.cpp">
+    <ClCompile Include="Src\world\Blocks\StructureHandler.cpp">
       <Filter>Src\World\Blocks</Filter>
     </ClCompile>
-    <ClCompile Include="Src\world\Blocks\WaveColapsFunction.cpp">
+    <ClCompile Include="Src\world\Blocks\WaveColapseFunction.cpp">
       <Filter>Src\World\Blocks</Filter>
     </ClCompile>
     <ClCompile Include="Src\world\SkyBox.cpp">
@@ -253,10 +253,10 @@
     <ClInclude Include="Src\Properties.h">
       <Filter>Src</Filter>
     </ClInclude>
-    <ClInclude Include="Src\world\Blocks\StructureHalder.h">
+    <ClInclude Include="Src\world\Blocks\StructureHandler.h">
       <Filter>Src\World\Blocks</Filter>
     </ClInclude>
-    <ClInclude Include="Src\world\Blocks\WaveColapsFunction.h">
+    <ClInclude Include="Src\world\Blocks\WaveColapseFunction.h">
       <Filter>Src\World\Blocks</Filter>
     </ClInclude>
     <ClInclude Include="Src\world\SkyBox.h">
