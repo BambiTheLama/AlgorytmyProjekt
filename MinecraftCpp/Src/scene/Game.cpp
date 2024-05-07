@@ -103,9 +103,12 @@ void Game::update(float deltaTime)
 	if(!io->WantCaptureMouse)
 		camera->update(window, deltaTime);
 	chunksMutex.lock();
-	toAddMutex.lock();
-	for (auto c : chunks)
-		c->update(deltaTime);
+
+		//toAddMutex.lock();
+		for (auto c : chunks)
+			c->update(deltaTime);
+
+
 	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	if (glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS)
@@ -127,39 +130,42 @@ void Game::update(float deltaTime)
 	{
 		start();
 	}
-	toAddMutex.unlock();
+
 	glm::vec3 pos = camera->getPos();
 	glm::vec3 dir = camera->getDir();
-	
-	
-	toAddMutex.lock();
-	for (auto a : toAdd)
-	{
-		a->start();
-		a->update(0.0f);
 
-		auto it = std::find(chunks.begin(), chunks.end(), a);
-		if (it == chunks.end())
-			chunks.push_back(a);
+
+	if (toAddMutex.try_lock())
+	{
+		for (auto a : toAdd)
+		{
+			a->start();
+			a->update(0.0f);
+
+			auto it = std::find(chunks.begin(), chunks.end(), a);
+			if (it == chunks.end())
+				chunks.push_back(a);
+		}
+		toAdd.clear();
+		toAddMutex.unlock();
+	}
+	if (toDeleteMutex.try_lock())
+	{
+		for (auto d : toDelete)
+		{
+			auto it = std::find(chunks.begin(), chunks.end(), d);
+			if (it != chunks.end())
+				chunks.erase(it);
+
+			reloadChunksNextTo(d);
+
+			delete d;
+		}
+
+		toDelete.clear();
+		toDeleteMutex.unlock();
 	}
 
-	toAdd.clear();
-	toAddMutex.unlock();
-	toDeleteMutex.lock();
-	for (auto d : toDelete)
-	{
-		auto it = std::find(chunks.begin(), chunks.end(), d);
-		if (it != chunks.end())
-			chunks.erase(it);
-
-		reloadChunksNextTo(d);
-
-		delete d;
-	}
-
-	toDelete.clear();
-
-	toDeleteMutex.unlock();
 
 	toDraw = chunks;
 
@@ -650,26 +656,28 @@ void Game::genWorld()
 
 	if (posToGenChunk.size() <= 0)
 		return;
-	glm::vec2 pos = posToGenChunk.back();
-	posToGenChunk.pop_back();
-	toAddMutex.lock();
-	bool breked = false;
-	for (auto c : toAdd)
-		if (c->z == pos.y && c->x == pos.x)
-		{
-			breked = true;
-			break;
-		}
-	toAddMutex.unlock();
-	Chunk* c = NULL;
-	
-	if (abs(pos.x - camPos.x) <= range && abs(pos.y - camPos.z) <= range)
+
+	std::vector<std::thread> chunksToGen;
+	while (posToGenChunk.size() > 0)
 	{
-		c = new Chunk(pos.x, 0, pos.y);
+		glm::vec2 pos = posToGenChunk.back();
+		posToGenChunk.pop_back();
+		chunksToGen.push_back(std::thread(&Game::genOneChunk, this, pos, camPos));
 	}
+	for (int i = 0; i < chunksToGen.size(); i++)
+		chunksToGen[i].join();
+
+}
+
+void Game::genOneChunk(glm::vec2 pos,glm::vec3 camPos)
+{
+	if (abs(pos.x - camPos.x) > range || abs(pos.y - camPos.z) > range)
+		return;
+	
+	Chunk* c = new Chunk(pos.x, 0, pos.y);
 
 	toAddMutex.lock();
-	if(c)
+	if (c)
 		toAdd.push_back(c);
 	toAddMutex.unlock();
 }

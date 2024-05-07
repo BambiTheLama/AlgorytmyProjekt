@@ -108,7 +108,7 @@ vec3 directLight()
 	}
 
 	vec3 diffuseColor = albedoTex * diffuse * (1.0f - shadow) * lightColor;
-	vec3 specularColor = albedoTex * heightTex.r * specular * (1.0f - shadow) * albedoTex * lightColor;
+	vec3 specularColor =  heightTex.r * specular * (1.0f - shadow) * albedoTex * lightColor;
 	vec3 ambientColor = albedoTex * ambient;
 	if(frag.underWater)
 	{

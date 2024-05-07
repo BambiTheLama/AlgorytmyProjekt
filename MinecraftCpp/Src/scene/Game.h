@@ -110,6 +110,8 @@ private:
     void genWorld();
 
     void desWorld();
+
+    void genOneChunk(glm::vec2 pos, glm::vec3 cameraPos);
 };
 
 Game* getCurrentGame();
