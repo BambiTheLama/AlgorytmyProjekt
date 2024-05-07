@@ -48,9 +48,8 @@ Chunk::Chunk(int x, int y, int z)
 		auto iterator = std::find(data.begin(), data.end(), saveData);
 		data.erase(iterator);
 		readDataFromDataFile(saveData);
-		setFacing();
 		delete saveData;
-		return;
+
 	}
 	else
 	{
@@ -58,9 +57,8 @@ Chunk::Chunk(int x, int y, int z)
 			generateTerrain();
 	}
 	
-
-	if (toAdd.size() <= 0 && toDelete.size() <= 0)
-		setFacing();
+	genVertices = true;
+	setFacing();
 }
 
 Chunk::~Chunk()

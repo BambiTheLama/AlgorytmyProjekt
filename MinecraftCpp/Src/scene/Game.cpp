@@ -202,7 +202,7 @@ void Game::draw()
 	ImGui::Begin(" ");
 	if (ImGui::CollapsingHeader("Render"))
 	{
-		ImGui::DragInt("ChunkRange", &range, 1, 1, 32);
+		ImGui::DragInt("ChunkRange", &range, 1, 1, 12);
 		ImGui::Checkbox("StopGenDestyWorld", &stopGenDestyWorld);
 	}
 
