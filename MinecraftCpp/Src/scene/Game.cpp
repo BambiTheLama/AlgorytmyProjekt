@@ -659,25 +659,23 @@ void Game::genWorld()
 
 	if (posToGenChunk.size() <= 0)
 		return;
+	glm::vec2 pos = posToGenChunk.back();
+	posToGenChunk.pop_back();
+	toAddMutex.lock();
+	bool breked = false;
+	for (auto c : toAdd)
+		if (c->z == pos.y && c->x == pos.x)
+		{
+			breked = true;
+			break;
+		}
+	toAddMutex.unlock();
+	Chunk* c = NULL;
 
-	std::vector<std::thread> chunksToGen;
-	while (posToGenChunk.size() > 0)
+	if (abs(pos.x - camPos.x) <= range && abs(pos.y - camPos.z) <= range)
 	{
-		glm::vec2 pos = posToGenChunk.back();
-		posToGenChunk.pop_back();
-		chunksToGen.push_back(std::thread(&Game::genOneChunk, this, pos, camPos));
+		c = new Chunk(pos.x, 0, pos.y);
 	}
-	for (int i = 0; i < chunksToGen.size(); i++)
-		chunksToGen[i].join();
-
-}
-
-void Game::genOneChunk(glm::vec2 pos,glm::vec3 camPos)
-{
-	if (abs(pos.x - camPos.x) > range || abs(pos.y - camPos.z) > range)
-		return;
-	
-	Chunk* c = new Chunk(pos.x, 0, pos.y);
 
 	toAddMutex.lock();
 	if (c)
