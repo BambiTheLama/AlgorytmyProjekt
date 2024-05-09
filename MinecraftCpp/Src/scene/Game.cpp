@@ -83,7 +83,7 @@ Game::~Game()
 
 void Game::start()
 {
-	gameRunning = true;
+	//gameRunning = true;
 	if(!worldGenerateT.joinable())
 		worldGenerateT = std::thread(&Game::worldGenerateFun, this);
 	if (!worldDestroyT.joinable())
@@ -179,6 +179,8 @@ void Game::update(float deltaTime)
 	}
 
 	chunksMutex.unlock();
+	genWorld();
+	desWorld();
 }
 #include "../world/Blocks/BlocksCreator.h"
 #include "../world/Blocks/WaveColapseFunction.h"
@@ -279,7 +281,7 @@ void Game::draw()
 	camera->setDir(shadowMapLightDir);
 
 	camera->setUseProjection(false);
-	camera->newPos(glm::vec3(((int)cameraPos.x / 16) * 16, 255, ((int)cameraPos.z / 16) * 16));
+	camera->newPos(glm::vec3((cameraPos.x, 255, cameraPos.z)));
 
 	shaderShadow->active();
 	camera->useCamera(*shaderShadow, "camera");

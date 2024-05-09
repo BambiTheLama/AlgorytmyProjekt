@@ -10,7 +10,6 @@
 #include <math.h>
 
 
-
 Cube::Cube()
 {
 	face = 0b111111;
