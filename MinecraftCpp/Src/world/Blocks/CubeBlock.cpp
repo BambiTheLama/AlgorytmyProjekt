@@ -41,16 +41,6 @@ void CubeBlock::setOneFace(int face, Block* b)
 
 glm::uvec2 CubeBlock::getVertex(int dir)
 {
-	int x = this->x;
-	int z = this->z;
-	if (x >= 0)
-		x %= chunkW;
-	else
-		x = (chunkW - (abs(x) % chunkW)) % chunkW;
-	if (z >= 0)
-		z %= chunkT;
-	else
-		z = (chunkT - (abs(z) % chunkT)) % chunkT;
 	int d = 0b1 << (dir);
 	return glm::uvec2(cube->getVertex(x, y, z, textureFaces, textureID, d), (underWater & d) > 0 ? 16 : 0);
 }

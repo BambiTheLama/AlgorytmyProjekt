@@ -83,11 +83,11 @@ Game::~Game()
 
 void Game::start()
 {
-	gameRunning = true;
-	if(!worldGenerateT.joinable())
-		worldGenerateT = std::thread(&Game::worldGenerateFun, this);
-	if (!worldDestroyT.joinable())
-		worldDestroyT = std::thread(&Game::worldDestroyFun, this);
+	//gameRunning = false;
+	//if(!worldGenerateT.joinable())
+	//	worldGenerateT = std::thread(&Game::worldGenerateFun, this);
+	//if (!worldDestroyT.joinable())
+	//	worldDestroyT = std::thread(&Game::worldDestroyFun, this);
 }
 
 glm::vec3 camPos;
@@ -99,6 +99,7 @@ static bool compareObj(Chunk* c1, Chunk* c2)
 
 void Game::update(float deltaTime)
 {
+
 	time += deltaTime;
 	if(!io->WantCaptureMouse)
 		camera->update(window, deltaTime);
@@ -185,6 +186,8 @@ void Game::update(float deltaTime)
 	}
 
 	chunksMutex.unlock();
+	genWorld();
+	desWorld();
 }
 #include "../world/Blocks/BlocksCreator.h"
 #include "../world/Blocks/WaveColapseFunction.h"
