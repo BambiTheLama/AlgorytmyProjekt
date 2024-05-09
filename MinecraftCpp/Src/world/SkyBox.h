@@ -13,7 +13,7 @@ class SkyBox
 	VBO* vbo = NULL;
 	EBO* ebo = NULL;
 	Shader* shader = NULL;
-	GLuint cubeTextur;
+	GLuint cubeTexture;
 public:
 	SkyBox(const char* path);
 

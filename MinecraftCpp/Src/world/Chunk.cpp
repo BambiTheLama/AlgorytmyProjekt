@@ -1007,19 +1007,19 @@ int getMapHeight(float terain, float erozja, float pv, float river, float struct
 
 	if (structure >= 0.90)
 	{
-		return ViligeH;
+		return VillageH;
 	}
 	if (structure >= 0.80)
 	{
 		float p = (0.90 - structure);
-		return ViligeH * (1 - p) + h * p;
+		return VillageH * (1 - p) + h * p;
 	}
 	if (structure >= 0.50)
 	{
 		float p = (0.80 - structure) * 10.0f / 3.0f + 0.1;
 		if (p > 1)
 			p = 1;
-		return ViligeH * (1 - p) + h * p;
+		return VillageH * (1 - p) + h * p;
 	}
 	
 
@@ -1027,7 +1027,7 @@ int getMapHeight(float terain, float erozja, float pv, float river, float struct
 	return h;
 }
 
-int getTereinH(FastNoiseLite& terrain, FastNoiseLite& erosion, FastNoiseLite& picksAndValues, FastNoiseLite& riverNoise, FastNoiseLite& structureNoise, float x, float z)
+int getTerrainH(FastNoiseLite& terrain, FastNoiseLite& erosion, FastNoiseLite& picksAndValues, FastNoiseLite& riverNoise, FastNoiseLite& structureNoise, float x, float z)
 {
 	float t = (getValueTerrain(terrain.GetNoise(x, z)) + 1) / 2;
 	float e = getValueTerrain(erosion.GetNoise(x, z));
@@ -1038,7 +1038,7 @@ int getTereinH(FastNoiseLite& terrain, FastNoiseLite& erosion, FastNoiseLite& pi
 	return getMapHeight(t, e, pv, riverV, structureV);
 }
 
-glm::vec2 getMaxViligeNoisePoint(FastNoiseLite& structureNoise, float x, float z)
+glm::vec2 getMaxVillageNoisePoint(FastNoiseLite& structureNoise, float x, float z)
 {
 	glm::vec2 maxP = { -1,-1 };
 	float maxV = 0.0f;
@@ -1098,7 +1098,7 @@ int getAvgH(float x, float z, float w, float t,FastNoiseLite& terrain, FastNoise
 	int h = 0;
 	for (int i = 0; i < w; i++)
 		for (int j = 0; j < t; j++)
-			h += getTereinH(terrain, erosion, picksAndValues, riverNoise, structureNoise, x + i, j + z);
+			h += getTerrainH(terrain, erosion, picksAndValues, riverNoise, structureNoise, x + i, j + z);
 	
 	return h / (w * t);
 }
@@ -1158,8 +1158,8 @@ void Chunk::generateTerrain()
 		structureNoise.SetFractalWeightedStrength(6.960f);
 	}
 	bool hasVilage = false;
-	int viligeX = -1;
-	int viligeZ = -1;
+	int villageX = -1;
+	int villageZ = -1;
 	float structurePower = 0.0f;
 	const int height = maxH - minH;
 	const int dirtSize = 8;
@@ -1173,12 +1173,12 @@ void Chunk::generateTerrain()
 			float temperatureV = temperatureNoise.GetNoise(x, z);
 			float structureV = structureNoise.GetNoise(x, z);
 			avgTemperature += temperatureV;
-			int h = getTereinH(terrain, erosion, picksAndValues, riverNoise, structureNoise, x, z);
+			int h = getTerrainH(terrain, erosion, picksAndValues, riverNoise, structureNoise, x, z);
 			if (structureV >= 0.9 && structureV > structurePower)
 			{
 				hasVilage = true;
-				viligeX = x;
-				viligeZ = z;
+				villageX = x;
+				villageZ = z;
 				structurePower = structureV;
 			}
 
@@ -1194,20 +1194,20 @@ void Chunk::generateTerrain()
 	if (!hasVilage)
 		return;
 	
-	glm::vec2 pos = getMaxViligeNoisePoint(structureNoise, viligeX, viligeZ);
+	glm::vec2 pos = getMaxVillageNoisePoint(structureNoise, villageX, villageZ);
 	int posX = pos.x - this->x * chunkW;
 	int posZ = pos.y - this->z * chunkT;
 	if (posX < 0 || posX >= chunkW || posZ < 0 || posZ >= chunkT)
 		return;
 	float r = 0;
-	const float maxViligeValue = 0.7;
+	const float maxVillageValue = 0.7;
 	for (r = 0;; r++)
 	{
 		float structureUp = structureNoise.GetNoise(pos.x, pos.y + r);
 		float structureDown = structureNoise.GetNoise(pos.x, pos.y - r);
 		float structureLeft = structureNoise.GetNoise(pos.x + r, pos.y);
 		float structureRight = structureNoise.GetNoise(pos.x - r, pos.y);
-		if (structureUp < maxViligeValue || structureDown < maxViligeValue || structureLeft < maxViligeValue || structureRight < maxViligeValue)
+		if (structureUp < maxVillageValue || structureDown < maxVillageValue || structureLeft < maxVillageValue || structureRight < maxVillageValue)
 			break;
 	}
 
@@ -1216,19 +1216,20 @@ void Chunk::generateTerrain()
 		return;
 	srand(seed + x + y + z);
 	//srand(time(NULL));
+
 	Tile** t = generateVillage(range);
 	for (int x = 0; x < range; x++)
 		for (int z = 0; z < range; z++)
 		{
 			if (t[x + z * range])
 			{
-				int viligex = pos.x + x * StructureTileSize - r / 2;
-				int viligez = pos.y + z * StructureTileSize - r / 2;
-				int viligey = getAvgH(viligex + StructureTileSize / 2 - 2, viligez + StructureTileSize / 2 - 2, 5, 5, terrain, erosion, picksAndValues, riverNoise, structureNoise);
-				if (viligey < ViligeH-2)
-					viligey = ViligeH-2;
+				int villagex = pos.x + x * StructureTileSize - r / 2;
+				int villagez = pos.y + z * StructureTileSize - r / 2;
+				int villagey = getAvgH(villagex + StructureTileSize / 2 - 2, villagez + StructureTileSize / 2 - 2, 5, 5, terrain, erosion, picksAndValues, riverNoise, structureNoise);
+				if (villagey < VillageH-2)
+					villagey = VillageH-2;
 				Tile* tile = t[x + z * range];
-				StructureHandler* str = createStructure(tile->ID, viligex, viligey, viligez);
+				StructureHandler* str = createStructure(tile->ID, villagex, villagey, villagez);
 				if (!str)
 					continue;
 				if (avgTemperature > 0.3)
@@ -1237,7 +1238,7 @@ void Chunk::generateTerrain()
 					str->setVariant(2);
 				for (int i = 0; i < (tile->rotate) % 4; i++)
 					str->rotate();
-				game->deleteBlock(viligex, viligey, viligez);
+				game->deleteBlock(villagex, villagey, villagez);
 				if (!game->addBlock(str))
 					delete str;
 			}

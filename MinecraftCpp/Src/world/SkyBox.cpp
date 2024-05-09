@@ -51,8 +51,8 @@ SkyBox::SkyBox(const char* path)
 	vao->unbind();
 	ebo->unbind();
 
-	glGenTextures(1, &cubeTextur);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTextur);
+	glGenTextures(1, &cubeTexture);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTexture);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -93,7 +93,7 @@ SkyBox::~SkyBox()
 	delete vbo;
 	delete shader;
 	delete ebo;
-	glDeleteTextures(1, &cubeTextur);
+	glDeleteTextures(1, &cubeTexture);
 
 }
 
@@ -108,7 +108,7 @@ void SkyBox::draw(Camera* camera)
 	vao->bind();
 	ebo->bind();
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTextur);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTexture);
 	glDrawElements(GL_TRIANGLES, indices.size() , GL_UNSIGNED_INT, 0);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
