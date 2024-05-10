@@ -1115,7 +1115,7 @@ void Chunk::genTerrainAt(FastNoiseLite* terrain, FastNoiseLite* erosion, FastNoi
 			float temperatureV = temperatureNoise->GetNoise(x, z);
 			float structureV = structureNoise->GetNoise(x, z);
 			avgTemperature += temperatureV;
-			int h = getTereinH(*terrain, *erosion, *picksAndValues, *riverNoise, *structureNoise, x, z);
+			int h = getTerrainH(*terrain, *erosion, *picksAndValues, *riverNoise, *structureNoise, x, z);
 
 			genStone(i, k, h - 7);
 			biomLayer(i, k, h - 7, h, temperatureV, structureV);
