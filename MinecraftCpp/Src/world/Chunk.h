@@ -28,6 +28,8 @@ class Chunk
 	std::vector<Block*> toAdd;
 	std::vector<Block*> toDraw;
 	ChunkMesh* mesh[10];
+	ChunkMesh* transMesh[10];
+	
 	static Game* game;
 	static int seed;
 	bool genVertices = false;
@@ -100,7 +102,7 @@ private:
 
 	void readDataFromDataFile(SaveChunkData* saveData);
 
-	void genVerticPos(int dir);
+	void genVerticPos(int dir, bool trans);
 
 	void genVerticesPos();
 

@@ -34,6 +34,7 @@ Chunk::Chunk(int x, int y, int z)
 	for (int i = 0; i < 10; i++)
 	{
 		mesh[i] = new ChunkMesh(i);
+		transMesh[i] = new ChunkMesh(i);
 	}
 
 	forAllBlocks
@@ -64,7 +65,10 @@ Chunk::Chunk(int x, int y, int z)
 Chunk::~Chunk()
 {
 	for (int i = 0; i < 10; i++)
+	{
+		delete transMesh[i];
 		delete mesh[i];
+	}
 	if (wasCleared)
 		return;
 	forAllBlocks
@@ -80,6 +84,8 @@ void Chunk::start()
 	{
 		mesh[i]->start();
 		mesh[i]->genMesh();
+		transMesh[i]->start();
+		transMesh[i]->genMesh();
 	}	
 	SaveChunkData* data = getChunkData(x, y, z);
 	if (data)
@@ -143,7 +149,11 @@ void Chunk::update(float deltaTime)
 		toAdd.clear();
 		genVerticesPos();
 		for (int i = 0; i < 10; i++)
+		{
 			mesh[i]->genMesh();
+			transMesh[i]->genMesh();
+		}
+
 	}
 }
 
@@ -153,9 +163,15 @@ void Chunk::draw(Shader* s)
 	model = glm::translate(model, glm::vec3(x * chunkW, y * chunkH, z * chunkT));
 	s->setUniformI1(x * chunkW, "chunkX");
 	s->setUniformI1(z * chunkT, "chunkZ");
+	glDisable(GL_BLEND);
 	for (int i = 0; i < 10; i++)
 	{
 		mesh[i]->draw(s);
+	}
+	glEnable(GL_BLEND);
+	for (int i = 0; i < 10; i++)
+	{
+		transMesh[i]->draw(s);
 	}
 }
 
@@ -504,7 +520,7 @@ void Chunk::reloadBlocksRight()
 	genVertices = true;
 }
 
-void Chunk::genVerticPos(int dir)
+void Chunk::genVerticPos(int dir,bool trans)
 {
 	std::vector<glm::uvec2> vertices;
 	int sizeX = 0;
@@ -520,7 +536,7 @@ void Chunk::genVerticPos(int dir)
 			for (int j = 0; j < chunkH; j++)
 				for (int k = 0; k < chunkT; k++)
 				{
-					if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
+					if (blocks[j][i][k] && trans == blocks[j][i][k]->isTransparent() && blocks[j][i][k]->isRenderedSide(dir))
 						blocksID[j][k] = blocks[j][i][k]->getID();
 					else
 						blocksID[j][k] = -1;
@@ -575,7 +591,7 @@ void Chunk::genVerticPos(int dir)
 			for (int j = 0; j < chunkH; j++)
 				for (int i = 0; i < chunkW; i++)
 				{
-					if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
+					if (blocks[j][i][k] && trans == blocks[j][i][k]->isTransparent() && blocks[j][i][k]->isRenderedSide(dir))
 						blocksID[j][i] = blocks[j][i][k]->getID();
 					else
 						blocksID[j][i] = -1;
@@ -629,7 +645,7 @@ void Chunk::genVerticPos(int dir)
 			for (int k = 0; k < chunkT; k++)
 				for (int i = 0; i < chunkW; i++)
 				{
-					if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
+					if (blocks[j][i][k] && trans == blocks[j][i][k]->isTransparent() && blocks[j][i][k]->isRenderedSide(dir))
 						blocksID[i][k] = blocks[j][i][k]->getID();
 					else
 						blocksID[i][k] = -1;
@@ -680,7 +696,7 @@ void Chunk::genVerticPos(int dir)
 			{
 				for (int j = 0; j < chunkH; j++)
 				{
-					if (blocks[j][i][k] && blocks[j][i][k]->isRenderedSide(dir))
+					if (blocks[j][i][k] && trans == blocks[j][i][k]->isTransparent() && blocks[j][i][k]->isRenderedSide(dir))
 						blocksID[j] = blocks[j][i][k]->getID();
 					else
 						blocksID[j] = -1;
@@ -707,8 +723,17 @@ void Chunk::genVerticPos(int dir)
 				
 			}
 	}
-	mesh[dir]->clearMesh();
-	mesh[dir]->addData(vertices);
+	if (trans)
+	{
+		transMesh[dir]->clearMesh();
+		transMesh[dir]->addData(vertices);
+	}
+	else
+	{
+		mesh[dir]->clearMesh();
+		mesh[dir]->addData(vertices);
+	}
+
 }
 
 void Chunk::genVerticesPos()
@@ -717,12 +742,18 @@ void Chunk::genVerticesPos()
 	const int vecSize = 10;
 
 	std::thread worker[vecSize];
+	std::thread worker2[vecSize];
 	for (int i = 0; i < vecSize; i++)
 	{
-		worker[i] = std::thread(&Chunk::genVerticPos, this, i);
+		worker[i] = std::thread(&Chunk::genVerticPos, this, i, false);
+		worker2[i] = std::thread(&Chunk::genVerticPos, this, i, true);
 	}
 	for (int i = 0; i < vecSize; i++)
+	{
 		worker[i].join();
+		worker2[i].join();
+	}
+
 	return;
 	
 }

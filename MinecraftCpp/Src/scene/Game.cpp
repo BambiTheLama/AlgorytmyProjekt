@@ -296,8 +296,7 @@ void Game::draw()
 	ShadowMap->endUse();
 
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	shader->active();
 	waterTexture->useTexture(*shader, "waterTex0");
 	waterTexture->bind();
