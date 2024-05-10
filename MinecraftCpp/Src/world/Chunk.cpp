@@ -15,7 +15,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <math.h>
 #include "Blocks/WaveColapseFunction.h"
-
+#include <thread>
 
 #define forAllBlocks 	for (int j = 0; j < chunkH; j++)\
 							for (int i = 0; i < chunkW; i++)\
@@ -1103,6 +1103,30 @@ int getAvgH(float x, float z, float w, float t,FastNoiseLite& terrain, FastNoise
 	return h / (w * t);
 }
 
+void Chunk::genTerrainAt(FastNoiseLite* terrain, FastNoiseLite* erosion, FastNoiseLite* picksAndValues, FastNoiseLite* riverNoise,
+	FastNoiseLite* temperatureNoise, FastNoiseLite* structureNoise, int startX, int startZ,int endX,int endZ)
+{
+	for (int i = startX; i < endX; i++)
+		for (int k = startZ; k < endZ; k++)
+		{
+			float x = i + this->x * (chunkW);
+			float z = k + this->z * (chunkT);
+
+			float temperatureV = temperatureNoise->GetNoise(x, z);
+			float structureV = structureNoise->GetNoise(x, z);
+			avgTemperature += temperatureV;
+			int h = getTereinH(*terrain, *erosion, *picksAndValues, *riverNoise, *structureNoise, x, z);
+
+			genStone(i, k, h - 7);
+			biomLayer(i, k, h - 7, h, temperatureV, structureV);
+			genSandForWater(i, k, h - 3, h);
+			fillWater(i, k, h, temperatureV);
+
+			genPlants(i, k, h + 1, temperatureV, structureV);
+		}
+
+}
+
 void Chunk::generateTerrain()
 {
 
@@ -1164,6 +1188,17 @@ void Chunk::generateTerrain()
 	const int height = maxH - minH;
 	const int dirtSize = 8;
 	avgTemperature = 0;
+	std::vector<std::thread> genWorldThread;
+	int divBy = 2;
+	int chunkSizeW = chunkW / divBy;
+	int chunkSizeT = chunkT / divBy;
+	for (int i = 0; i < divBy; i++)
+	{
+		for (int j = 0; j < divBy; j++)
+			genWorldThread.push_back(std::thread(&Chunk::genTerrainAt, this, &terrain, &erosion, &picksAndValues
+				, &riverNoise, &temperatureNoise, &structureNoise, i * chunkSizeW, j * chunkSizeT, (i + 1) * chunkSizeW, (j + 1) * chunkSizeT));
+	}
+
 	for (int i = 0; i < chunkW; i++)
 		for (int k = 0; k < chunkT; k++)
 		{
@@ -1173,7 +1208,6 @@ void Chunk::generateTerrain()
 			float temperatureV = temperatureNoise.GetNoise(x, z);
 			float structureV = structureNoise.GetNoise(x, z);
 			avgTemperature += temperatureV;
-			int h = getTereinH(terrain, erosion, picksAndValues, riverNoise, structureNoise, x, z);
 			if (structureV >= 0.9 && structureV > structurePower)
 			{
 				hasVilage = true;
@@ -1181,18 +1215,22 @@ void Chunk::generateTerrain()
 				viligeZ = z;
 				structurePower = structureV;
 			}
+			//genTerrainAt(terrain, erosion, picksAndValues, riverNoise, temperatureNoise, structureNoise, i, k);
 
-			genStone(i, k, h - 7);
-			biomLayer(i, k, h - 7, h, temperatureV, structureV);
-			genSandForWater(i, k, h - 3, h);
-			fillWater(i, k, h, temperatureV);
 
-			genPlants(i, k, h + 1, temperatureV, structureV);
 
 		}
+
 	avgTemperature /= chunkW * chunkT;
+	for (int i = 0; i < genWorldThread.size(); i++)
+	{
+		genWorldThread[i].join();
+	}
+	genWorldThread.clear();
 	if (!hasVilage)
 		return;
+
+
 	
 	glm::vec2 pos = getMaxViligeNoisePoint(structureNoise, viligeX, viligeZ);
 	int posX = pos.x - this->x * chunkW;
@@ -1212,11 +1250,15 @@ void Chunk::generateTerrain()
 	}
 
 	int range = r / StructureTileSize + 1;
+
+
 	if (range <= 0)
 		return;
+
 	srand(seed + x + y + z);
 	//srand(time(NULL));
 	Tile** t = generateVillage(range);
+
 	for (int x = 0; x < range; x++)
 		for (int z = 0; z < range; z++)
 		{
@@ -1266,88 +1308,108 @@ int getBlockZ(int z)
 	return (chunkT - (abs(z) % chunkT)) % chunkT;
 }
 
+void Chunk::setFacingData(Chunk* lChunk, Chunk* rChunk, Chunk* bChunk, Chunk* fChunk, int y, int h)
+{
+	for (int j = y; j < h; j++)
+		for (int i = 0; i < chunkW; i++)
+			for (int k = 0; k < chunkT; k++)
+			{
+				if (!blocks[j][i][k])
+					continue;
+				if (j - 1 > 0 && blocks[j - 1][i][k])
+				{
+					blocks[j][i][k]->setOneFace((int)Faces::Down, blocks[j - 1][i][k]);
+					blocks[j - 1][i][k]->setOneFace((int)Faces::Up, blocks[j][i][k]);
+				}
+				if (j + 1 < chunkH && blocks[j + 1][i][k])
+				{
+					blocks[j][i][k]->setOneFace((int)Faces::Up, blocks[j + 1][i][k]);
+					blocks[j + 1][i][k]->setOneFace((int)Faces::Down, blocks[j][i][k]);
+				}
+				if (i - 1 > 0 && blocks[j][i - 1][k])
+				{
+					blocks[j][i][k]->setOneFace((int)Faces::Left, blocks[j][i - 1][k]);
+					blocks[j][i - 1][k]->setOneFace((int)Faces::Right, blocks[j][i][k]);
+				}
+				if (i + 1 < chunkW && blocks[j][i + 1][k])
+				{
+					blocks[j][i][k]->setOneFace((int)Faces::Right, blocks[j][i + 1][k]);
+					blocks[j][i + 1][k]->setOneFace((int)Faces::Left, blocks[j][i][k]);
+				}
+				if (k - 1 > 0 && blocks[j][i][k - 1])
+				{
+					blocks[j][i][k]->setOneFace((int)Faces::Back, blocks[j][i][k - 1]);
+					blocks[j][i][k - 1]->setOneFace((int)Faces::Front, blocks[j][i][k]);
+				}
+				if (k + 1 < chunkT && blocks[j][i][k + 1])
+				{
+					blocks[j][i][k]->setOneFace((int)Faces::Front, blocks[j][i][k + 1]);
+					blocks[j][i][k + 1]->setOneFace((int)Faces::Back, blocks[j][i][k]);
+				}
+				if (i == 0 && blocks[j][i][k])
+				{
+					if (lChunk && lChunk->blocks[j][chunkW - 1][k])
+					{
+						Block* b1 = blocks[j][i][k];
+						Block* b2 = lChunk->blocks[j][chunkW - 1][k];
+						b1->setOneFace((int)Faces::Left, b2);
+						b2->setOneFace((int)Faces::Right, b1);
+					}
+				}
+				else if (i == chunkW - 1 && blocks[j][i][k])
+				{
+					if (rChunk && rChunk->blocks[j][0][k])
+					{
+						Block* b1 = blocks[j][i][k];
+						Block* b2 = rChunk->blocks[j][0][k];
+						b1->setOneFace((int)Faces::Right, b2);
+						b2->setOneFace((int)Faces::Left, b1);
+					}
+				}
+				if (k == 0 && blocks[j][i][k])
+				{
+					if (bChunk && bChunk->blocks[j][i][chunkT - 1])
+					{
+						Block* b1 = blocks[j][i][k];
+						Block* b2 = bChunk->blocks[j][i][chunkT - 1];
+						b1->setOneFace((int)Faces::Back, b2);
+						b2->setOneFace((int)Faces::Front, b1);
+					}
+				}
+				else if (k == chunkT - 1 && blocks[j][i][k])
+				{
+					if (fChunk && fChunk->blocks[j][i][0])
+					{
+						Block* b1 = blocks[j][i][k];
+						Block* b2 = fChunk->blocks[j][i][0];
+						b1->setOneFace((int)Faces::Front, b2);
+						b2->setOneFace((int)Faces::Back, b1);
+					}
+				}
+
+			}
+}
+
 void Chunk::setFacing()
 {
 	Chunk* lChunk = game->getChunkAt(x - 1, y, z);
 	Chunk* rChunk = game->getChunkAt(x + 1, y, z);
 	Chunk* bChunk = game->getChunkAt(x, y, z - 1);
 	Chunk* fChunk = game->getChunkAt(x, y, z + 1);
-	forAllBlocks
-	{
-		if (!blocks[j][i][k])
-			continue;
-		if (j - 1 > 0  && blocks[j - 1][i][k])
-		{
-			blocks[j][i][k]->setOneFace((int)Faces::Down, blocks[j - 1][i][k]);
-			blocks[j - 1][i][k]->setOneFace((int)Faces::Up, blocks[j][i][k]);
-		}
-		if (j + 1 < chunkH  && blocks[j + 1][i][k])
-		{
-			blocks[j][i][k]->setOneFace((int)Faces::Up, blocks[j + 1][i][k]);
-			blocks[j + 1][i][k]->setOneFace((int)Faces::Down, blocks[j][i][k]);
-		}
-		if (i - 1 > 0  && blocks[j][i - 1][k])
-		{
-			blocks[j][i][k]->setOneFace((int)Faces::Left, blocks[j][i - 1][k]);
-			blocks[j][i - 1][k]->setOneFace((int)Faces::Right, blocks[j][i][k]);
-		}
-		if (i + 1 < chunkW  && blocks[j][i + 1][k])
-		{
-			blocks[j][i][k]->setOneFace((int)Faces::Right, blocks[j][i + 1][k]);
-			blocks[j][i + 1][k]->setOneFace((int)Faces::Left, blocks[j][i][k]);
-		}
-		if (k - 1 > 0  && blocks[j][i][k - 1])
-		{
-			blocks[j][i][k]->setOneFace((int)Faces::Back, blocks[j][i][k - 1]);
-			blocks[j][i][k - 1]->setOneFace((int)Faces::Front, blocks[j][i][k]);
-		}
-		if (k + 1 < chunkT  && blocks[j][i][k + 1])
-		{
-			blocks[j][i][k]->setOneFace((int)Faces::Front, blocks[j][i][k + 1]);
-			blocks[j][i][k + 1]->setOneFace((int)Faces::Back, blocks[j][i][k]);
-		}
-		if (i == 0 && blocks[j][i][k])
-		{
-			if (lChunk && lChunk->blocks[j][chunkW - 1][k])
-			{
-				Block* b1 = blocks[j][i][k];
-				Block* b2 = lChunk->blocks[j][chunkW - 1][k];
-				b1->setOneFace((int)Faces::Left, b2);
-				b2->setOneFace((int)Faces::Right, b1);
-			}
-		} 
-		else if (i == chunkW - 1 && blocks[j][i][k])
-		{
-			if (rChunk && rChunk->blocks[j][0][k])
-			{
-				Block* b1 = blocks[j][i][k];
-				Block* b2 = rChunk->blocks[j][0][k];
-				b1->setOneFace((int)Faces::Right, b2);
-				b2->setOneFace((int)Faces::Left, b1);
-			}
-		}
-		if (k == 0 && blocks[j][i][k])
-		{
-			if (bChunk && bChunk->blocks[j][i][chunkT - 1])
-			{
-				Block* b1 = blocks[j][i][k];
-				Block* b2 = bChunk->blocks[j][i][chunkT - 1];
-				b1->setOneFace((int)Faces::Back, b2);
-				b2->setOneFace((int)Faces::Front, b1);
-			}
-		}
-		else if (k == chunkT - 1 && blocks[j][i][k])
-		{
-			if (fChunk && fChunk->blocks[j][i][0])
-			{
-				Block* b1 = blocks[j][i][k];
-				Block* b2 = fChunk->blocks[j][i][0];
-				b1->setOneFace((int)Faces::Front, b2);
-				b2->setOneFace((int)Faces::Back, b1);
-			}
-		}
 
+	std::vector<std::thread> facingThreads;
+
+	const int n = 16;
+	const int divH = chunkH / n;
+	for (int i = 0; i < n; i++)
+	{
+		facingThreads.push_back(std::thread(&Chunk::setFacingData, this, lChunk, rChunk, bChunk, fChunk, i * divH, (i + 1) * divH));
 	}
+
+
+	for (int i = 0; i < facingThreads.size(); i++)
+		facingThreads[i].join();
+
 	if (lChunk)
 		lChunk->genVerticesFlag();
 	if (rChunk)

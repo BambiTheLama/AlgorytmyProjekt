@@ -9,6 +9,7 @@ class EBO;
 
 class SkyBox
 {
+
 	VAO* vao = NULL;
 	VBO* vbo = NULL;
 	EBO* ebo = NULL;

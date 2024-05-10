@@ -4,6 +4,7 @@
 #include <string>
 #include "ChunkMesh.h"
 #include <json.hpp>
+#include <FastNoiseLite.h>
 #define chunkW 32
 #define chunkH 256
 #define chunkT 32
@@ -93,6 +94,8 @@ private:
 
 	static SaveChunkData* getChunkData(int x, int y, int z);
 
+	void setFacingData(Chunk* lChunk, Chunk* rChunk, Chunk* bChunk, Chunk* fChunk, int y, int h);
+
 	void setFacing();
 
 	void readDataFromDataFile(SaveChunkData* saveData);
@@ -116,6 +119,9 @@ private:
 	void biomLayer(int &x, int &z, int y, int h, float &temperature, float &structureNoise);
 
 	void setBlockAt(Block* b,int x, int y, int z);
+
+	void genTerrainAt(FastNoiseLite* terrain, FastNoiseLite* erosion, FastNoiseLite* picksAndValues, FastNoiseLite* riverNoise,
+		FastNoiseLite* temperatureNoise, FastNoiseLite* structureNoise, int startX, int startZ, int endX, int endZ);
 
 };
 
