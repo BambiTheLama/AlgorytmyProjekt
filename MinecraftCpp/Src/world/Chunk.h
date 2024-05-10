@@ -11,7 +11,7 @@
 #define minH 5
 #define maxH 256
 #define waterH 75
-#define ViligeH 100
+#define VillageH 100
 //#define noSave
 
 class Game;
