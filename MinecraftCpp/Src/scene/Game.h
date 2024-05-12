@@ -36,7 +36,6 @@ class Game :
     VAO *vao;
     VBO *vbo;
     EBO *ebo;
-    Texture* selection;
     glm::vec3 chunkPos;
     std::vector<GLuint> index;
     std::vector<GLuint> vertices;
@@ -53,6 +52,7 @@ class Game :
     Texture* waterTexture2;
 
     RenderTexture* ShadowMap = NULL;
+    RenderTexture* RefractionMap = NULL;
     static Game* game;
     float time = 0.0f;
     bool debug = false;

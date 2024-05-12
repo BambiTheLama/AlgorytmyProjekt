@@ -23,7 +23,7 @@ Game::Game(int w,int h,GLFWwindow* window, ImGuiIO* io)
 	vao = new VAO();
 	vbo = new VBO();
 	ebo = new EBO();
-	selection = new Texture("Res/Selected.jpg");
+
 
 
 	shader = new Shader("Shader/Diff.vert", "Shader/Diff.frag");
@@ -46,6 +46,8 @@ Game::Game(int w,int h,GLFWwindow* window, ImGuiIO* io)
 	shader->setUniformVec4(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "modelColor");
 	ShadowMap = new RenderTexture(2048, 2048);
 	ShadowMap->use(*shader, "texShadow");
+	RefractionMap = new RenderTexture(2048, 2048);
+	RefractionMap->use(*shader, "RefractionMap");
 	camera = new Camera(w, h, 0.1f, 1000, 60, glm::vec3(0.0f, 100.0f, -1.0f));
 	game = this;
 }
@@ -296,8 +298,21 @@ void Game::draw()
 	ShadowMap->endUse();
 
 
+	RefractionMap->startUse();
 
+	glm::mat4 shadowMatrix = camera->getMatrix();
+	camera->setDir({ cameraDir.x,-cameraDir.y,cameraDir.z });
+	float dist = (cameraPos.y - waterH) * 2;
+	glm::vec3 refractionPos = { cameraPos.x,cameraPos.y - dist,cameraDir.z };
+
+	camera->newPos(refractionPos);
+	camera->setUseProjection(true);
+	glm::mat4 refractionMatrix = camera->getMatrix();
+	skybox->draw(camera);
 	shader->active();
+
+	camera->useCamera(*shader, "camera");
+
 	waterTexture->useTexture(*shader, "waterTex0");
 	waterTexture->bind();
 	waterTexture2->useTexture(*shader, "waterTex1");
@@ -307,21 +322,32 @@ void Game::draw()
 	shader->setUniformMat4(modelMat, "model");
 	shader->setUniformVec3(camera->getPos(), "camPos");
 	shader->setUniformVec3(glm::vec3(lightColor[0], lightColor[1], lightColor[2]), "lightColor");
-	camera->useCamera(*shader, "lightProjection");
+	shader->setUniformMat4(shadowMatrix, "lightProjection");
+	shader->setUniformMat4(refractionMatrix, "refractionProjection");
+	shader->setUniformI1(false, "hasRefrectTexture");
+	shader->setUniformI1(true, "hideBelow");
+	shader->setUniformF1(waterH+1, "hightToHide");
 	shader->setUniformVec3(lightDir, "lightDir");
 	shader->setUniformVec3(shadowMapLightDir, "shadowMapLightDir");
 
 	ShadowMap->use(*shader, "texShadow");
 
+
+	renderScene(shader,true);
+	RefractionMap->endUse();
+
 	camera->setDir(cameraDir);
 	camera->newPos(cameraPos);
 	camera->setUseProjection(true);
 	camera->useCamera(*shader, "camera");
-	renderScene(shader,true);
-
+	shader->setUniformI1(true, "hasRefrectTexture");
+	shader->setUniformI1(false, "hideBelow");
+	RefractionMap->use(*shader, "texRefraction");
+	renderScene(shader, true);
 	drawBlock();
 
-	ShadowMap->draw();
+	ShadowMap->draw(-1.0f, 0.0f);
+	RefractionMap->draw();
 
 }
 

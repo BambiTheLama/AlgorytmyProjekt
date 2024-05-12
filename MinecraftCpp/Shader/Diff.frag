@@ -11,21 +11,27 @@ layout (bindless_sampler) uniform sampler2D tex0[64];
 uniform sampler2D waterTex1;
 uniform sampler2D waterTex0;
 uniform sampler2D texShadow;
+uniform sampler2D texRefraction;
 
 uniform vec3 lightDir;
 uniform int dir;
 uniform bool debug;
 uniform bool normalsMode;
 uniform float time;
-
+uniform float refractionDisctance;
+uniform bool hasRefrectTexture;
+uniform bool hideBelow;
+uniform float hightToHide;
 in DATA
 {
 	vec2 texCoord;
 	vec3 currentPos;
 	vec4 fragPosLight;
+	vec4 fragPosRefraction;
 	flat int textID;
 	float bright;
 	flat bool underWater;
+	flat bool isRefract;
 } frag;
 
 uniform vec3 camPos;
@@ -92,7 +98,7 @@ vec3 directLight()
 		float currentDepth = lightCoords.z;
 		float bias = max(0.5f * (1.0f - dot(normal, lightDirection)), 0.005f);
 	
-		int sampleRadius = 3;
+		int sampleRadius = 2;
 		vec2 pixelSize = 1.0 / textureSize(texShadow, 0);
 		for(int y = -sampleRadius; y <= sampleRadius; y++)
 		{
@@ -110,7 +116,23 @@ vec3 directLight()
 	vec3 diffuseColor = albedoTex * diffuse * (1.0f - shadow) * lightColor;
 	vec3 specularColor =  heightTex.r * specular * (1.0f - shadow) * albedoTex * lightColor;
 	vec3 ambientColor = albedoTex * ambient;
-	if(frag.underWater)
+
+	if(hasRefrectTexture && frag.isRefract)
+	{
+		vec3 refractCoords = frag.fragPosRefraction.xyz / frag.fragPosRefraction.w;
+
+		if(refractCoords.z <= 1.0f)
+		{
+			refractCoords = (refractCoords + 1.0f) / 2.0f;
+			//float t = (time/256-int(time/256));
+			//refractCoords.x += sin(refractCoords.x*t);
+			diffuseColor = texture(texRefraction, vec2(refractCoords.x,-refractCoords.y)).xyz;
+
+		}
+
+
+	}
+	else if(frag.underWater)
 	{
 		float t = (time/16-int(time/16));
 		vec3 waterColor=texture(waterTex0, frag.texCoord+t).rgb/3;
@@ -131,6 +153,8 @@ vec3 directLight()
 
 void main()
 {
+	if(hideBelow && frag.currentPos.y< hightToHide)
+		discard;
 	float text = texture(texN[frag.textID], frag.texCoord).a;
 	if (text < 0.1)
 		discard;

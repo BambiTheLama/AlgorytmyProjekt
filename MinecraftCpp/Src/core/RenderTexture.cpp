@@ -108,12 +108,13 @@ void RenderTexture::use(Shader& s, const char* uniform)
 
 }
 
-void RenderTexture::draw()
+void RenderTexture::draw(float x,float y)
 {
     shader->active();
     shader->setUniformVec3(glm::vec3(0.0f, 0.1f, 0.1f), "backgroundColor");
     vao->bind();
     use(*shader, "tex0");
+    shader->setUniformVec2(glm::vec2(x, y), "pos");
 
     glDisable(GL_DEPTH_TEST);
 

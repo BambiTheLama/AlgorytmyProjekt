@@ -23,7 +23,7 @@ public:
 
 	void use(Shader& s, const char* uniform);
 
-	void draw();
+	void draw(float x = 0, float y = 0);
 
 	friend class Engine;
 private:

@@ -44,5 +44,7 @@ public:
 
 	void setDir(glm::vec3 dir) { cameraOrientation = dir; }
 
+	glm::mat4 getMatrix();
+
 };
 

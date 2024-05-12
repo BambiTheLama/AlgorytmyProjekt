@@ -19,23 +19,8 @@ Camera::Camera(float width, float height, float nearest, float farthest, float c
 
 void Camera::useCamera(Shader& shader, const char* uniform)
 {
-	glm::mat4 view = glm::mat4(1.0f);
-	glm::mat4 projection = glm::mat4(1.0f);
 
-	view = glm::lookAt(cameraPos, cameraPos + cameraOrientation, up);
-	if (useProjection)
-	{
-
-		projection = glm::perspective(glm::radians(cameraAngleDeg), cameraWidth / cameraHeight, nearestt, farthest);
-
-	}
-	else
-	{ 
-		const float div = 2;
-		projection = glm::ortho(-cameraWidth / div, cameraWidth / div, -cameraHeight / div, cameraHeight / div, -200.0f, 300.0f);
-	}
-
-	shader.setUniformMat4(projection * view, uniform);
+	shader.setUniformMat4(getMatrix(), uniform);
 }
 
 void Camera::updatePos(glm::vec3 pos)
@@ -54,6 +39,26 @@ void Camera::draw(Shader& shader)
 	glm::vec3 right = glm::normalize(glm::cross(up, cameraOrientation));
 	shader.setUniformVec3(glm::vec3(0.0f), "pos");
 
+}
+
+glm::mat4 Camera::getMatrix()
+{
+	glm::mat4 view = glm::mat4(1.0f);
+	glm::mat4 projection = glm::mat4(1.0f);
+
+	view = glm::lookAt(cameraPos, cameraPos + cameraOrientation, up);
+	if (useProjection)
+	{
+
+		projection = glm::perspective(glm::radians(cameraAngleDeg), cameraWidth / cameraHeight, nearestt, farthest);
+
+	}
+	else
+	{
+		const float div = 2;
+		projection = glm::ortho(-cameraWidth / div, cameraWidth / div, -cameraHeight / div, cameraHeight / div, -200.0f, 300.0f);
+	}
+	return projection * view;
 }
 
 void Camera::update(GLFWwindow* window, float deltaTime)

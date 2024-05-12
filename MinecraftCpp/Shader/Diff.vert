@@ -9,11 +9,13 @@ uniform vec4 modelColor;
 uniform mat4 camera;
 uniform mat4 model;
 uniform mat4 lightProjection;
+uniform mat4 refractionProjection;
 uniform int dir;
 uniform float time;
 uniform int chunkX;
 uniform int chunkZ;
-
+uniform bool hasRefrectTexture;
+uniform float hightToHide;
 struct getData{
 	vec3 pos;
 	int textID;
@@ -30,9 +32,11 @@ out DATA
 	vec2 texCoord;
 	vec3 currentPos;
 	vec4 fragPosLight;
+	vec4 fragPosRefraction;
 	flat int textID;
 	float bright;
 	flat bool underWater;
+	flat bool isRefract;
 } data_out;
 
 vec2 getTexPos(vec2 tPos)
@@ -140,6 +144,7 @@ void main()
 	d.animatedDown = ((tmpData >> 3) & 1) == 1;			/// 0b00000000000000000000000000001000
 	data_out.underWater = ((tmpData >> 4) & 1) == 1;	/// 0b00000000000000000000000000010000
 	liquid = ((tmpData >> 5) & 1) == 1;					/// 0b00000000000000000000000000100000
+	data_out.isRefract = ((tmpData >> 6) & 1) == 1;
 	d.scaleF = ((tmpData >> 21) & 63) + 1;				/// 0b00000111111000000000000000000000
 	d.scaleS = ((tmpData >> 27) & 31) + 1;				/// 0b11111000000000000000000000000000
 
@@ -164,4 +169,9 @@ void main()
 		data_out.bright = 0.5;
 	else 
 		data_out.bright = 1;
+
+	if(hasRefrectTexture)
+	{
+		data_out.fragPosRefraction = camera * vec4(currentPos.x,currentPos.y,currentPos.z, 1.0f);
+	}
 }
