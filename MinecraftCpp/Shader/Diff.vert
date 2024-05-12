@@ -9,7 +9,6 @@ uniform vec4 modelColor;
 uniform mat4 camera;
 uniform mat4 model;
 uniform mat4 lightProjection;
-uniform mat4 refractionProjection;
 uniform int dir;
 uniform float time;
 uniform int chunkX;
@@ -172,6 +171,6 @@ void main()
 
 	if(hasRefrectTexture)
 	{
-		data_out.fragPosRefraction = camera * vec4(currentPos.x,currentPos.y,currentPos.z, 1.0f);
+		data_out.fragPosRefraction = gl_Position;
 	}
 }

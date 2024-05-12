@@ -50,6 +50,7 @@ class Game :
     GameTextures* BlocksN;
     Texture* waterTexture;
     Texture* waterTexture2;
+    Texture* waterTextureN;
 
     RenderTexture* ShadowMap = NULL;
     RenderTexture* RefractionMap = NULL;

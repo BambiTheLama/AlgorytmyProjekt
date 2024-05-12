@@ -10,6 +10,7 @@ layout (bindless_sampler) uniform sampler2D tex0[64];
 
 uniform sampler2D waterTex1;
 uniform sampler2D waterTex0;
+uniform sampler2D waterTexN;
 uniform sampler2D texShadow;
 uniform sampler2D texRefraction;
 
@@ -18,7 +19,6 @@ uniform int dir;
 uniform bool debug;
 uniform bool normalsMode;
 uniform float time;
-uniform float refractionDisctance;
 uniform bool hasRefrectTexture;
 uniform bool hideBelow;
 uniform float hightToHide;
@@ -124,9 +124,11 @@ vec3 directLight()
 		if(refractCoords.z <= 1.0f)
 		{
 			refractCoords = (refractCoords + 1.0f) / 2.0f;
-			//float t = (time/256-int(time/256));
-			//refractCoords.x += sin(refractCoords.x*t);
-			diffuseColor = texture(texRefraction, vec2(refractCoords.x,-refractCoords.y)).xyz;
+			vec2 distortion = texture(waterTexN, frag.texCoord).xy*2-1;
+			distortion*=0.01f;
+			vec3 refractColor = texture(texRefraction, vec2(refractCoords.x,-refractCoords.y)+distortion).xyz/2;
+
+			diffuseColor += refractColor;
 
 		}
 

@@ -34,6 +34,7 @@ Game::Game(int w,int h,GLFWwindow* window, ImGuiIO* io)
 	BlocksN = new GameTextures("Res/BlocksN/", "Textures");
 	waterTexture = new Texture("Res/Water/Water.png");
 	waterTexture2 = new Texture("Res/Water/Water_C.png");
+	waterTextureN = new Texture("Res/Water/Water_N.png");
 	skybox = new SkyBox("Res/Skybox/");
 
 	shader->active();
@@ -77,7 +78,7 @@ Game::~Game()
 	delete BlocksN;
 	delete waterTexture;
 	delete waterTexture2;
-
+	delete waterTextureN;
 	delete shaderShadow;
 	game = NULL;
 	Chunk::saveBlockData();
@@ -188,8 +189,12 @@ void Game::update(float deltaTime)
 	}
 
 	chunksMutex.unlock();
-	genWorld();
-	desWorld();
+	if (!stopGenDestyWorld)
+	{
+		genWorld();
+		desWorld();
+	}
+
 }
 #include "../world/Blocks/BlocksCreator.h"
 #include "../world/Blocks/WaveColapseFunction.h"
@@ -204,11 +209,15 @@ void Game::draw()
 	static int rangeVillage = 8;
 	static int posToSpawn[3] = { 68,waterH+1,-120 };
 	static int blockID = 0;
+	static bool showShadowMap = false;
+	static bool showRefractionMap = false;
 	ImGui::Begin(" ");
 	if (ImGui::CollapsingHeader("Render"))
 	{
 		ImGui::DragInt("ChunkRange", &range, 1, 1, 12);
 		ImGui::Checkbox("StopGenDestyWorld", &stopGenDestyWorld);
+		ImGui::Checkbox("showShadowMap", &showShadowMap);
+		ImGui::Checkbox("showRefractionMap", &showRefractionMap);
 	}
 
 	if (ImGui::CollapsingHeader("Light"))
@@ -303,7 +312,7 @@ void Game::draw()
 	glm::mat4 shadowMatrix = camera->getMatrix();
 	camera->setDir({ cameraDir.x,-cameraDir.y,cameraDir.z });
 	float dist = (cameraPos.y - waterH) * 2;
-	glm::vec3 refractionPos = { cameraPos.x,cameraPos.y - dist,cameraDir.z };
+	glm::vec3 refractionPos = { cameraPos.x, cameraPos.y - dist, cameraPos.z };
 
 	camera->newPos(refractionPos);
 	camera->setUseProjection(true);
@@ -317,16 +326,17 @@ void Game::draw()
 	waterTexture->bind();
 	waterTexture2->useTexture(*shader, "waterTex1");
 	waterTexture2->bind();
+	waterTextureN->useTexture(*shader, "waterTexN");
+	waterTextureN->bind();
 	shader->setUniformI1(debug, "debug");
 	glm::mat4 modelMat(1.0f);
 	shader->setUniformMat4(modelMat, "model");
 	shader->setUniformVec3(camera->getPos(), "camPos");
 	shader->setUniformVec3(glm::vec3(lightColor[0], lightColor[1], lightColor[2]), "lightColor");
 	shader->setUniformMat4(shadowMatrix, "lightProjection");
-	shader->setUniformMat4(refractionMatrix, "refractionProjection");
 	shader->setUniformI1(false, "hasRefrectTexture");
 	shader->setUniformI1(true, "hideBelow");
-	shader->setUniformF1(waterH+1, "hightToHide");
+	shader->setUniformF1(waterH, "hightToHide");
 	shader->setUniformVec3(lightDir, "lightDir");
 	shader->setUniformVec3(shadowMapLightDir, "shadowMapLightDir");
 
@@ -345,9 +355,10 @@ void Game::draw()
 	RefractionMap->use(*shader, "texRefraction");
 	renderScene(shader, true);
 	drawBlock();
-
-	ShadowMap->draw(-1.0f, 0.0f);
-	RefractionMap->draw();
+	if(showShadowMap)
+		ShadowMap->draw(-1.0f, 0.0f);
+	if(showRefractionMap)
+		RefractionMap->draw();
 
 }
 
