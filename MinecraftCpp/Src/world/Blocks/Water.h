@@ -12,7 +12,7 @@ public:
 
 	virtual void setOneFace(int face, bool state = true) { CubeBlock::setOneFace(face, state); }
 
-	virtual void setOneFace(int face, Block* b) { CubeBlock::setOneFace(face, false); }
+	virtual void setOneFace(int face, Block* b) { CubeBlock::setOneFace(face, isLiquid()!=b->isLiquid()); }
 
 	virtual glm::uvec2 getVertex(int dir);
 

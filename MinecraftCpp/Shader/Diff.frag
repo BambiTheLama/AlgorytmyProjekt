@@ -124,7 +124,8 @@ vec3 directLight()
 		if(refractCoords.z <= 1.0f)
 		{
 			refractCoords = (refractCoords + 1.0f) / 2.0f;
-			vec2 distortion = texture(waterTexN, frag.texCoord).xy*2-1;
+			vec2 textureCors=frag.texCoord+(time/16-int(time/16));
+			vec2 distortion = texture(waterTexN, textureCors).xy*2-1;
 			distortion*=0.01f;
 			vec3 refractColor = texture(texRefraction, vec2(refractCoords.x,-refractCoords.y)+distortion).xyz/2;
 
