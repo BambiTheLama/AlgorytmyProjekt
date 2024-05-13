@@ -311,7 +311,7 @@ void Game::draw()
 
 	glm::mat4 shadowMatrix = camera->getMatrix();
 	camera->setDir({ cameraDir.x,-cameraDir.y,cameraDir.z });
-	float dist = (cameraPos.y - waterH) * 2;
+	float dist = (cameraPos.y - waterH - 1) * 2;
 	glm::vec3 refractionPos = { cameraPos.x, cameraPos.y - dist, cameraPos.z };
 
 	camera->newPos(refractionPos);
