@@ -96,8 +96,6 @@ void Camera::update(GLFWwindow* window, float deltaTime)
 		speed = minSpeed;
 	}
 
-	useProjection = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) != GLFW_PRESS;
-
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
