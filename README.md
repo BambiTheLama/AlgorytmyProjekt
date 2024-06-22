@@ -1,6 +1,6 @@
-# GameEngine2D
+# MineGL
 
-![](Obrazy/Menu.png)
+![](Obrazy/mc.png)
 
 ## Opis
 
