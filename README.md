@@ -24,4 +24,4 @@ W projekcie zostało użytych kilka sposobów optymalizacji. Jednym z nich jest 
 
 ![](Obrazy/GrredMesh.png)
 
-![](Obrazy/Obraz pod ziemią.png)
+![](Obrazy/Obrazpodziemią.png)
