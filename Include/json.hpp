@@ -6,6 +6,7 @@
 // SPDX-FileCopyrightText: 2013-2022 Niels Lohmann <https://nlohmann.me>
 // SPDX-License-Identifier: MIT
 
+
 /****************************************************************************\
  * Note on documentation: The source files contain links to the online      *
  * documentation of the public API at https://json.nlohmann.me. This URL    *

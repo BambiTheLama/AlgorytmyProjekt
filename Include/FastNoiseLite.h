@@ -47,6 +47,7 @@
 // VERSION: 1.1.0
 // https://github.com/Auburn/FastNoiseLite
 
+
 #ifndef FASTNOISELITE_H
 #define FASTNOISELITE_H
 
