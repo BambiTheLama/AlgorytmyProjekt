@@ -22,7 +22,7 @@
 								for (int k = 0; k < chunkT; k++)
 Game* Chunk::game = NULL;
 std::string Chunk::path = "World/";
-int Chunk::seed = 2137;
+int Chunk::seed =331232133;
 std::vector<SaveChunkData*> Chunk::data;
 
 Chunk::Chunk(int x, int y, int z)

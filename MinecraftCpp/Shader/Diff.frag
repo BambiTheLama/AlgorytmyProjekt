@@ -143,7 +143,7 @@ vec3 directLight()
 		vec3 waterRedSpotsColor = vec3(texture(waterTex1, frag.texCoord+t+0.02).r,0,0);
 		vec3 waterGreenSpotsColor = vec3(0,texture(waterTex1, frag.texCoord+t+0.04).g,0);
 		vec3 waterBlueSpotsColor = vec3(0,0,texture(waterTex1, frag.texCoord+t+0.06).b);
-		ambientColor += waterWhiteSpotsColor+waterRedSpotsColor+waterGreenSpotsColor+waterBlueSpotsColor;
+		ambientColor += (waterWhiteSpotsColor+waterRedSpotsColor+waterGreenSpotsColor+waterBlueSpotsColor)* lightColor;
 		specularColor*=waterColor;
 		diffuseColor*=waterColor;
 	}

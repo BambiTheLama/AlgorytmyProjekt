@@ -15,6 +15,6 @@ void main()
 
     FragColor = texture(tex0, texPos);
     vec3 dif = FragColor.rgb-backgroundColor.rgb;
-    if(dif.x >= -0.1 && dif.x <= 0.1 && dif.y >= -0.1 && dif.y <= 0.1 && dif.z >= -0.1 && dif.z <= 0.1)
-        FragColor.a = 0.0f;
+    //if(dif.x >= -0.1 && dif.x <= 0.1 && dif.y >= -0.1 && dif.y <= 0.1 && dif.z >= -0.1 && dif.z <= 0.1)
+    //    FragColor.a = 0.0f;
 } 

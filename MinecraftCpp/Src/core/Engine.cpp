@@ -175,7 +175,7 @@ void Engine::start()
 			for (auto t : times)
 				dt += t;
 			dt /= times.size();
-			fps = std::string(std::to_string((int)(1.0f / dt)) + " FPS\n{c:255,0,0}F{c:0,255,0}P{c:0,0,255}S");
+			fps = std::string(std::to_string((int)(1.0f / dt)) + " FPS");
 			changeText = 0.2137f;
 			times.clear();
 		}

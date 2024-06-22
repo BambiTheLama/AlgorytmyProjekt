@@ -8,9 +8,9 @@ public:
 
     bool getDisplay(Block* b) { return true; }
 
-    virtual void setOneFace(int face, bool state) {}
+    virtual void setOneFace(int face, bool state = true) { CubeBlock::setOneFace(face, state); }
 
-    virtual void setOneFace(int face, Block* b) {  }
+    virtual void setOneFace(int face, Block* b) { CubeBlock::setOneFace(face, true); }
 
     virtual glm::uvec2 getVertex(int dir);
 };
